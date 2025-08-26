@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             // ✅ Use relative path so Nginx proxies it to Node.js
-            const response = await fetch("http://3.108.252.140:3001/api/login", {
+            const response = await fetch("api/login", {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ user_id, password_hash })
