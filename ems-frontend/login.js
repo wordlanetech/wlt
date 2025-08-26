@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
 
         const user_id = userIdInput.value.trim();
-        const password_hash = passwordInput.value;  // ✅ changed from password_hash → password
+        const password_hash = passwordInput.value;
 
         if (!user_id || !password_hash) {
             showMessage('Please enter both User ID and Password.', 'error');
@@ -48,10 +48,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         try {
-            const response = await fetch(`http://localhost:3001/api/login`, {
+            // ✅ Use relative path so Nginx proxies it to Node.js
+            const response = await fetch(`/api/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ user_id, password_hash })  // ✅ send correct keys
+                body: JSON.stringify({ user_id, password_hash })
             });
 
             const data = await response.json();
@@ -67,7 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 );
 
                 setTimeout(() => {
-                    window.location.href = data.redirect_page || "dashboard.html"; // ✅ fallback
+                    window.location.href = data.redirect_page || "dashboard.html";
                 }, 1000);
             } else {
                 showMessage(data.message || 'Invalid credentials.', 'error');
