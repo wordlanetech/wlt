@@ -78,7 +78,7 @@ async function markTaskComplete(taskId) {
     if (!confirm(`Mark task ${taskId} as complete?`)) return;
 
     try {
-        const response = await fetch(`http://localhost:3001/api/tasks/${taskId}/complete`, {
+        const response = await fetch(`/api/tasks/${taskId}/complete`, {
             method: 'PATCH'
         });
 
