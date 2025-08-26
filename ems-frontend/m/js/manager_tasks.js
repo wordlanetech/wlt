@@ -101,7 +101,7 @@ async function fetchEmployeeTasksData() {
         errorState.classList.add('hidden');
         tasksGrid.innerHTML = '';
 
-        const response = await fetch('http://localhost:3001/api/tasks');
+        const response = await fetch('/api/tasks');
         const tasks = await response.json();
 
         loadingState.classList.add('hidden');
