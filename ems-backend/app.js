@@ -11,10 +11,6 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-
-app.use(express.json()); // handles JSON request bodies
-app.use(express.urlencoded({ extended: true })); // handles form-urlencoded bodies
-
 // Routes
 const authRoutes = require('./routes/auth.route');
 const dashboardRoutes = require('./routes/hr_dashboard.route');
