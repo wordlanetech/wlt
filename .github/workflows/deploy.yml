@@ -3,7 +3,7 @@ name: EMS CI/CD
 on:
   push:
     branches:
-      - master   # run on push to master branch
+      - main   # run on push to main branch
 
 jobs:
   build-and-deploy:
@@ -54,7 +54,7 @@ jobs:
           cd /home/ubuntu/ems
 
           echo "📥 Pulling latest changes..."
-          git pull origin master
+          git pull origin main
 
           echo "📦 Backend setup..."
           cd ems-backend
