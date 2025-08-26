@@ -53,7 +53,6 @@ app.use('/api/', a_dashboard);
 app.use('/api/teams', teamRoutes);
 app.use('/api/leaves', leaveRoutes);
 app.use('/api', profileRoutes);
-app.use('/api/projects', projectRoutes);
 
 
 // Health check route
