@@ -175,7 +175,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Fetch teams from backend
     async function fetchTeams() {
         try {
-            const res = await fetch('http://localhost:3001/api/teams', {
+            const res = await fetch('/api/teams', {
                 method: 'GET',
                 headers: { 'Accept': 'application/json' }
             });
