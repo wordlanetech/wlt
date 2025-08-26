@@ -35,7 +35,7 @@ app.use('/api/projects', authMiddleware, projectRoutes);
 
 
 // Route mounts
-app.use('/api', authRoutes);
+app.use('/api/auth', authRoutes);
 app.use('/api/hr/dashboard', dashboardRoutes);
 app.use('/api/employee', employeeRoutes);
 app.use('/api/employees', employeeRoutes);
