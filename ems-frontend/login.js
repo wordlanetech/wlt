@@ -48,27 +48,24 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         try {
-            // ✅ Use relative path so Nginx proxies it to Node.js
+            // ✅ Correct API endpoint
             const response = await fetch("/api/auth/login", {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ user_id, password_hash })
-                });
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ user_id, password_hash })
+            });
 
             const data = await response.json();
 
             if (response.ok) {
                 localStorage.setItem('user_id', data.user_id);
-                if (data.role_id) localStorage.setItem('role_id', data.role_id);
-                if (data.token) localStorage.setItem('token', data.token);
+                localStorage.setItem('role_id', data.role_id);
+                localStorage.setItem('token', data.token);
 
-                showMessage(
-                    `✅ Login successful! Welcome, ${data.user_id}${data.role_id ? ' (Role: ' + data.role_id + ')' : ''}.`,
-                    'success'
-                );
+                showMessage(`✅ Login successful! Welcome, ${data.user_id} (Role: ${data.role_id}).`, 'success');
 
                 setTimeout(() => {
-                    window.location.href = data.redirect_page || "dashboard.html";
+                    window.location.href = data.redirect_page; // Absolute path from backend
                 }, 1000);
             } else {
                 showMessage(data.message || 'Invalid credentials.', 'error');
