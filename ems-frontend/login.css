@@ -1,0 +1,124 @@
+body {
+    font-family: 'Inter', sans-serif;
+    color: #374151;
+    /* Using a solid background color for stability */
+    background-image:url('https://www.shutterstock.com/image-photo/office-conference-room-meeting-diverse-600nw-2136488967.jpg');
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+body::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(8px);
+    z-index: -1;
+}
+
+.login-card {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: #6366f1;
+}
+
+.login-btn {
+    background: linear-gradient(90deg, #1f446a 0%, #446fa4 100%);
+    transition: all 0.3s ease;
+}
+
+.login-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+#messageBox {
+    opacity: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+#messageBox.show {
+    opacity: 1;
+    max-height: 60px;
+    margin-bottom: 1rem;
+}
+
+.message-success {
+    background-color: #d1fae5;
+    color: #065f46;
+}
+
+.message-error {
+    background-color: #fee2e2;
+    color: #991b1b;
+}
+
+#splashScreen {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #1F446A;
+    z-index: 100;
+    transition: opacity 1s ease-out;
+}
+
+#splashLogo {
+    width: 100px;
+    height: 120px;
+    opacity: 0;
+    animation: popIn 0.8s ease-out forwards, zoomOut 1.5s 1.2s forwards;
+    border-radius: 50%;
+}
+
+@keyframes popIn {
+    0% {
+        transform: scale(0.5);
+        opacity: 0;
+    }
+
+    80% {
+        transform: scale(1.1);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes zoomOut {
+    from {
+        transform: scale(1);
+    }
+
+    to {
+        transform: scale(20);
+        opacity: 0;
+    }
+}
+
+#loginContent {
+    opacity: 0;
+    transition: opacity 1s ease-in;
+}
+
+#loginContent.visible {
+    opacity: 1;
+}

@@ -1,0 +1,514 @@
+    <!DOCTYPE html>
+    <html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Admin Portal - Leaves</title>
+        <!-- Tailwind CSS CDN -->
+        <script src="https://cdn.tailwindcss.com"></script>
+        <!-- Google Fonts: Inter for a clean, modern look -->
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+        <!-- Font Awesome for icons -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+            crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+        <link rel="stylesheet" href="../h/hr_styles.css">
+        <style>
+            /* Custom form element styles for a polished look */
+            .form-input,
+            .form-textarea,
+            .form-select {
+                transition: all 0.2s ease-in-out;
+                border-radius: 12px;
+                border-width: 2px;
+            }
+
+            .form-input:focus,
+            .form-textarea:focus,
+            .form-select:focus {
+                border-color: #1F446A;
+                box-shadow: 0 0 0 3px rgba(31, 68, 106, 0.3);
+            }
+
+            /* Table specific styles for better readability and a modern look */
+            .table-header th {
+                text-align: left;
+                font-weight: 600;
+                padding: 1rem 1.5rem;
+                color: #4B5563;
+                background-color: #F9FAFB;
+            }
+
+            .table-body td {
+                padding: 1rem 1.5rem;
+                border-bottom: 1px solid #E5E7EB;
+            }
+
+            .table-body tr:last-child td {
+                border-bottom: none;
+            }
+
+            /* Modal styles */
+            .modal-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.7);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                backdrop-filter: blur(4px);
+                transition: all 0.3s ease-in-out;
+                z-index: 50;
+            }
+
+            .modal-content {
+                background: white;
+                border-radius: 1rem;
+                box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+                transition: all 0.3s ease-in-out;
+                transform: scale(0.95);
+                opacity: 0;
+                border-top: 4px solid #1F446A;
+            }
+
+            .modal-overlay.active {
+                opacity: 1;
+            }
+
+            .modal-content.active {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            /* Modal form styling to match employee pages */
+            .modal-content input,
+            .modal-content select,
+            .modal-content textarea {
+                width: 100%;
+                padding: 0.75rem 1rem;
+                border: 1px solid #E2E7ED;
+                border-radius: 0.5rem;
+                transition: all 0.3s ease;
+                background: white;
+            }
+
+            .modal-content input:focus,
+            .modal-content select:focus,
+            .modal-content textarea:focus {
+                outline: none;
+                border-color: #0ea5e9;
+                box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+            }
+
+            .modal-content label {
+                display: block;
+                font-size: 0.875rem;
+                font-weight: 500;
+                color: #1F446A;
+                margin-bottom: 0.5rem;
+            }
+
+            .modal-content button {
+                transition: all 0.3s ease;
+            }
+
+            .modal-content button:hover {
+                transform: translateY(-1px);
+            }
+        </style>
+    </head>
+
+    <body class="bg-gray-50 min-h-screen flex flex-col font-inter">
+
+        <!-- Header Section -->
+        <header class="header-gradient p-3 shadow-lg flex flex-col sm:flex-row items-center justify-between sticky top-0 z-10 mt-3 mr-5 ml-5 mb-3" style="border-radius: 25px;">
+        <!-- Left side: Logo and Company Name (clickable to dashboard) -->
+        <a href="admin_dashboard.html" class="flex items-center mb-2 sm:mb-0 text-gray-800 no-underline hover:opacity-80 transition duration-200">
+            <img src="../images/WLT_LOGO2.jpg" alt="Wordlane Tech Logo" class="mr-2 w-8 h-8" style="object-fit: cover; border-radius: 50px; border: 2px solid #1F446A;">
+            <h1 class="text-lg font-bold tracking-wide" style="color: #1F446A;">WordLane Tech</h1>
+        </a>
+        <!-- Center: Navigation Links -->
+        <nav class="bg-gray-100/50 p-1.5 rounded-full shadow-inner mb-2 md:mb-0" style="box-shadow:inset 1px 1px 6px 1px #57525224; padding: 8px 16px">
+            <ul class="flex flex-wrap justify-center md:flex-nowrap list-none p-0 m-0 text-xs" style="gap: 4px;">
+                <li><a href="admin_dashboard.html" class="nav-link flex items-center px-2 py-1 rounded-full text-gray-700 hover:bg-gray-200 transition-colors "><i class="fas fa-home mr-1.5" style="font-size: 0.95em;"></i> Dashboard</a></li>
+                <li><a href="admin_employees.html" class="nav-link flex items-center px-2 py-1 rounded-full text-gray-700 hover:bg-gray-200 transition-colors"><i class="fas fa-users mr-1.5" style="font-size: 0.95em;"></i> Employees</a></li>
+                <li><a href="admin_projects.html" class="nav-link flex items-center px-2 py-1 rounded-full text-gray-700 hover:bg-gray-200 transition-colors"><i class="fas fa-briefcase mr-1.5" style="font-size: 0.95em;"></i> Projects</a></li>
+                <li><a href="admin_tasks.html" class="nav-link flex items-center px-2 py-1 rounded-full text-gray-700 hover:bg-gray-200 transition-colors"><i class="fas fa-tasks mr-1.5" style="font-size: 0.95em;"></i> Tasks</a></li>
+                <li><a href="admin_departments.html" class="nav-link flex items-center px-2 py-1 rounded-full text-gray-700 hover:bg-gray-200 transition-colors"><i class="fas fa-building mr-1.5" style="font-size: 0.95em;"></i> Departments</a></li>
+                <li><a href="admin_teams.html" class="nav-link flex items-center px-2 py-1 rounded-full text-gray-700 hover:bg-gray-200 transition-colors"><i class="fas fa-user-friends mr-1.5" style="font-size: 0.95em;"></i> Teams</a></li>
+                <li><a href="admin_attendance.html" class="nav-link flex items-center px-2 py-1 rounded-full text-gray-700 hover:bg-gray-200 transition-colors"><i class="fas fa-clipboard-check mr-1.5" style="font-size: 0.95em;"></i> Attendance</a></li>
+                <li><a href="admin_leaves.html" class="nav-link flex items-center px-2 py-1 rounded-full text-gray-700 hover:bg-gray-200 transition-colors"><i class="fas fa-calendar-alt mr-1.5" style="font-size: 0.95em;"></i> Leaves</a></li>
+                <li><a href="admin_documents.html" class="nav-link flex items-center px-2 py-1 rounded-full text-gray-700 hover:bg-gray-200 transition-colors"><i class="fas fa-file-alt mr-1.5" style="font-size: 0.95em;"></i> Documents</a></li>
+                <li><a href="admin_reports.html" class="nav-link flex items-center px-2 py-1 rounded-full text-gray-700 hover:bg-gray-200 transition-colors"><i class="fas fa-chart-bar mr-1.5" style="font-size: 0.95em;"></i> Reports</a></li>
+            </ul>
+        </nav>
+        <!-- Right side: AMAZING Profile Capsule with dropdown -->
+        <div class="relative">
+            <button id="profileButton" class="profile-container focus:outline-none" aria-label="User Profile Menu">
+                <div class="profile-picture" style="width: 28px; height: 28px;">
+                    <img src="https://placehold.co/28x28/CCCCCC/FFFFFF?text=AD" alt="Admin Profile" />
+                </div>
+                <div class="profile-info">
+                    <p class="profile-name text-xs">Admin</p>
+                </div>
+            </button>
+
+            <!-- Enhanced Profile Dropdown Menu -->
+            <div id="profileDropdown" class="profile-dropdown">
+                <a href="hr_profile.html" class="flex items-center">
+                    <i class="fas fa-user" aria-hidden="true"></i>
+                    My Profile
+                </a>
+                <a href="../login.html" class="flex items-center">
+                    <i class="fas fa-sign-out-alt" aria-hidden="true"></i>
+                    Log Out
+                </a>
+            </div>
+        </div>
+    </header>
+
+        <!-- Main Content Area -->
+        <main class="flex-grow p-4 sm:p-8 bg-gray-50">
+            <div class="container mx-auto max-w-7xl">
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-6">Employee Leave Management</h2>
+
+                <!-- Enhanced Leave Control Bar -->
+                <div class="bg-transparent rounded-2xl  p-1 mb-6">
+                    <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <!-- Enhanced Status Filter -->
+                        <div class="relative w-full sm:max-w-xs">
+                            <label for="leaveStatusFilter" class="block text-sm font-medium text-gray-700 mb-2 flex items-center">
+                                <i class="fas fa-filter mr-2 text-[#1F446A]"></i>
+                                Filter by Status
+                            </label>
+                            <div class="relative">
+                                <select id="leaveStatusFilter" class="w-full px-4 py-3 pr-10 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#1F446A]/20 focus:border-[#1F446A] transition-all duration-200 bg-white shadow-sm appearance-none">
+                                    <option value="">All Statuses</option>
+                                    <option value="0"> Pending</option>
+                                    <option value="1"> Approved</option>
+                                    <option value="2"> Rejected</option>
+                                </select>
+                                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                    <i class="fas fa-chevron-down text-gray-400 text-sm"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Enhanced Add Leave Request Button -->
+                        <button id="addLeaveBtn"
+                            class="w-full sm:w-auto bg-gradient-to-r from-[#1F446A] to-[#0ea5e9] text-white px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center font-medium">
+                            <i class="fas fa-plus mr-2"></i> Add Leave Request
+                        </button>
+                    </div>
+                </div>  
+
+                <!-- Leave Table -->
+                <div class="bg-white rounded-3xl shadow-xl border border-gray-200 overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="table-header">
+                            <tr>
+                                <th scope="col" class="py-3 text-sm tracking-wider">Employee Name</th>
+                                <th scope="col" class="py-3 text-sm tracking-wider">Leave Type</th>
+                                <th scope="col" class="py-3 text-sm tracking-wider">Start Date</th>
+                                <th scope="col" class="py-3 text-sm tracking-wider">End Date</th>
+                                <th scope="col" class="py-3 text-sm tracking-wider">Status</th>
+                                <th scope="col" class="py-3 text-sm tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leavesTableBody" class="bg-white divide-y divide-gray-200 table-body">
+                            
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+
+        <!-- Add Leave Request Modal -->
+        <div id="addLeaveModal" class="modal-overlay hidden opacity-0">
+            <div class="modal-content w-full max-w-lg mx-4 p-6 bg-white rounded-3xl shadow-2xl">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-2xl font-bold text-gray-800">Add New Leave Request</h3>
+                    <button id="closeModalBtn" class="text-gray-400 hover:text-gray-600 transition-colors">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+                <form id="addLeaveForm" class="space-y-4">
+                    <!-- Employee Name (could be a dropdown or pre-filled for a logged-in user) -->
+                    <div>
+                        <label for="employeeName" class="block text-sm font-medium text-gray-700 mb-1">Employee Name</label>
+                        <input type="text" id="employeeName" name="employeeName" class="form-input w-full border-gray-300 focus:ring-[#1F446A]/50" required>
+                    </div>
+                    <!-- Leave Type -->
+                    <div>
+                        <label for="leaveType" class="block text-sm font-medium text-gray-700 mb-1">Leave Type</label>
+                        <select id="leaveType" name="leaveType" class="form-select w-full border-gray-300 focus:ring-[#1F446A]/50" required>
+                            <option value="">Select Leave Type</option>
+                            <option value="1">Sick Leave</option>
+                            <option value="2">Vacation</option>
+                            <option value="3">Personal Leave</option>
+                        </select>
+                    </div>
+                    <!-- Start Date -->
+                    <div>
+                        <label for="startDate" class="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
+                        <input type="date" id="startDate" name="startDate" class="form-input w-full border-gray-300 focus:ring-[#1F446A]/50" required>
+                    </div>
+                    <!-- End Date -->
+                    <div>
+                        <label for="endDate" class="block text-sm font-medium text-gray-700 mb-1">End Date</label>
+                        <input type="date" id="endDate" name="endDate" class="form-input w-full border-gray-300 focus:ring-[#1F446A]/50" required>
+                    </div>
+                    <!-- Reason -->
+                    <div>
+                        <label for="reason" class="block text-sm font-medium text-gray-700 mb-1">Reason</label>
+                        <textarea id="reason" name="reason" rows="3" class="form-textarea w-full border-gray-300 focus:ring-[#1F446A]/50" required></textarea>
+                    </div>
+
+                    <div class="flex justify-end gap-3 pt-4">
+                        <button type="button" id="cancelBtn"
+                            class="px-6 py-2.5 rounded-full border border-gray-300 text-gray-700 hover:bg-gray-100 transition-colors">
+                            Cancel
+                        </button>
+                        <button type="submit"
+                            class="px-6 py-2.5 rounded-full bg-[#1F446A] text-white hover:bg-[#1F446A]/90 transition-colors">
+                            Submit Request
+                        </button>
+                    </div>
+                </form>
+                <!-- Message Box -->
+                <div id="messageBox" class="mt-4 p-4 rounded-lg text-sm text-center hidden"></div>
+            </div>
+        </div>
+
+        <!-- Footer Section -->
+        <footer class="bg-gray-800 text-white p-4 text-center mt-auto rounded-t-lg">
+            <p class="text-sm">&copy; 2025 Wordlane Tech. All rights reserved.</p>
+        </footer>
+
+        <script src="../h/hr_script.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  'use strict';
+
+  const API_BASE_URL = 'http://localhost:3001/api';
+  const ENDPOINTS = {
+    list: `${API_BASE_URL}/leaves`,
+    create: `${API_BASE_URL}/leaves`,
+    status: (id) => `${API_BASE_URL}/leaves/${id}/status`,
+  };
+
+  const addLeaveBtn     = document.getElementById('addLeaveBtn');
+  const addLeaveModal   = document.getElementById('addLeaveModal');
+  const closeModalBtn   = document.getElementById('closeModalBtn');
+  const cancelBtn       = document.getElementById('cancelBtn');
+  const addLeaveForm    = document.getElementById('addLeaveForm');
+  const messageBox      = document.getElementById('messageBox');
+  const leavesTableBody = document.getElementById('leavesTableBody');
+
+  const hasEl = (el) => !!el;
+
+  function formatDate(dateStr) {
+    if (!dateStr) return '—';
+    const date = new Date(dateStr);
+    return Number.isNaN(date.getTime()) ? '—' : date.toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: '2-digit' });
+  }
+
+  function normalizeStatus(s) {
+    if (s === 0 || s === '0' || String(s).toLowerCase() === 'pending') return 'Pending';
+    if (s === 1 || s === '1' || String(s).toLowerCase() === 'approved') return 'Approved';
+    if (s === 2 || s === '2' || String(s).toLowerCase() === 'rejected') return 'Rejected';
+    return s;
+  }
+
+  function statusPillClass(status) {
+    const s = normalizeStatus(status);
+    if (s === 'Approved') return 'text-green-700 bg-green-100';
+    if (s === 'Rejected') return 'text-red-700 bg-red-100';
+    return 'text-yellow-700 bg-yellow-100';
+  }
+
+function showMessage(message, type = 'error') {
+  if (!hasEl(messageBox)) return;
+  messageBox.textContent = message;
+  messageBox.classList.remove('hidden', 'bg-red-100', 'text-red-800', 'bg-green-100', 'text-green-800');
+  if (type === 'error') {
+    messageBox.classList.add('bg-red-100', 'text-red-800');
+  } else {
+    messageBox.classList.add('bg-green-100', 'text-green-800');
+  }
+}
+
+
+  function openModal() {
+    if (!hasEl(addLeaveModal)) return;
+    addLeaveModal.classList.remove('hidden');
+    setTimeout(() => {
+      addLeaveModal.classList.add('active');
+      const c = addLeaveModal.querySelector('.modal-content');
+      if (c) c.classList.add('active');
+    }, 10);
+  }
+
+  function closeModal() {
+    if (!hasEl(addLeaveModal)) return;
+    addLeaveModal.classList.remove('active');
+    const c = addLeaveModal.querySelector('.modal-content');
+    if (c) c.classList.remove('active');
+    setTimeout(() => {
+      addLeaveModal.classList.add('hidden');
+      if (hasEl(addLeaveForm)) addLeaveForm.reset();
+      if (hasEl(messageBox)) messageBox.classList.add('hidden');
+    }, 300);
+  }
+
+  if (hasEl(addLeaveBtn))   addLeaveBtn.addEventListener('click', openModal);
+  if (hasEl(closeModalBtn)) closeModalBtn.addEventListener('click', closeModal);
+  if (hasEl(cancelBtn))     cancelBtn.addEventListener('click', closeModal);
+  if (hasEl(addLeaveModal)) addLeaveModal.addEventListener('click', (e) => { if (e.target === addLeaveModal) closeModal(); });
+
+  if (hasEl(addLeaveForm)) {
+    addLeaveForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (hasEl(messageBox)) messageBox.classList.add('hidden');
+
+      const fd = new FormData(addLeaveForm);
+      const v  = Object.fromEntries(fd.entries());
+
+      const payload = {
+        employee_id: v.employeeName || '', // replace with actual employee ID in production
+        leave_type:  v.leaveType,
+        start_date:  v.startDate,
+        end_date:    v.endDate,
+        reason:      v.reason,
+      };
+
+      try {
+        const resp = await fetch(ENDPOINTS.create, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        const result = await resp.json().catch(() => ({}));
+        if (!resp.ok) throw new Error(result.error || result.message || `HTTP ${resp.status}`);
+        showMessage(result.message || 'Leave submitted', 'success');
+        await fetchLeaves();
+        setTimeout(closeModal, 1200);
+      } catch (err) {
+        console.error('[Create Leave] Error:', err);
+        showMessage(err.message || 'Failed to submit leave');
+      }
+    });
+  }
+
+  async function fetchLeaves() {
+    if (!hasEl(leavesTableBody)) return;
+    leavesTableBody.innerHTML = `<tr><td colspan="6" class="py-6 text-center text-gray-500">Loading…</td></tr>`;
+
+    try {
+      const resp = await fetch(ENDPOINTS.list, { headers: { 'Accept': 'application/json' } });
+      const data = await resp.json().catch(() => []);
+
+      const rows = Array.isArray(data) ? data.map(item => {
+        const id    = item.id;
+        const name  = item.employee_name || '—';
+        const type  = item.leave_type_name || '—';
+        const sDate = item.start_date;
+        const eDate = item.end_date;
+        const stat  = normalizeStatus(item.status);
+
+        const initials = name.split(' ').map(w => w[0]).join('').slice(0, 3).toUpperCase() || 'EM';
+        const pill = statusPillClass(stat);
+
+        return {
+          id,
+          html: `
+            <td class="flex items-center space-x-3">
+              <img src="https://placehold.co/40x40/CCCCCC/FFFFFF?text=${initials}" class="w-10 h-10 rounded-full object-cover" alt="${name}">
+              <span class="font-semibold text-gray-800">${name}</span>
+            </td>
+            <td>${type}</td>
+            <td>${formatDate(sDate)}</td>
+            <td>${formatDate(eDate)}</td>
+            <td><span class="px-3 py-1 text-xs font-semibold ${pill} rounded-full">${stat}</span></td>
+            <td>
+              <div class="flex items-center space-x-2">
+                ${stat === 'Pending' ? `
+                  <button class="text-green-500 hover:text-green-700" data-action="approve" data-id="${id}" title="Approve"><i class="fas fa-check"></i></button>
+                  <button class="text-red-500 hover:text-red-700" data-action="reject"  data-id="${id}" title="Reject"><i class="fas fa-times"></i></button>
+                ` : ''}
+                <button class="text-blue-500 hover:text-blue-700" title="View Details"><i class="fas fa-eye"></i></button>
+              </div>
+            </td>
+          `,
+        };
+      }) : [];
+
+      leavesTableBody.innerHTML = rows.length
+        ? rows.map(r => `<tr data-id="${r.id}">${r.html}</tr>`).join('')
+        : `<tr><td colspan="6" class="py-6 text-center text-gray-500">No leave records found.</td></tr>`;
+
+      leavesTableBody.querySelectorAll('[data-action]').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+          const id = e.currentTarget.getAttribute('data-id');
+          const action = e.currentTarget.getAttribute('data-action');
+          if (!id || !action) return;
+          const targetStatus = action === 'approve' ? 'Approved' : 'Rejected';
+          await updateLeaveStatus(id, targetStatus);
+        });
+      });
+
+    } catch (err) {
+      console.error('[Fetch Leaves] Error:', err);
+      leavesTableBody.innerHTML = `<tr><td colspan="6" class="py-6 text-center text-red-600">Failed to load leaves. ${err.message || ''}</td></tr>`;
+    }
+  }
+
+  const statusMap = { 'Pending': 0, 'Approved': 1, 'Rejected': 2 };
+
+  async function updateLeaveStatus(id, statusStr) {
+    const status = statusMap[statusStr];
+    try {
+      const resp = await fetch(ENDPOINTS.status(id), {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({ status, approved_by: 1 }) // replace 1 with logged-in admin ID
+      });
+      const result = await resp.json().catch(() => ({}));
+      if (!resp.ok) throw new Error(result.error || result.message || `HTTP ${resp.status}`);
+      await fetchLeaves();
+    } catch (err) {
+      console.error('[Update Status] Error:', err);
+      alert('Error updating status: ' + (err.message || 'Unknown error'));
+    }
+  }
+
+  fetchLeaves();
+});
+</script>
+    </body>
+    <script>
+    function toggleDropdown(event) {
+        event.preventDefault();
+        var dropdown = event.target.closest('.more-dropdown');
+        if (dropdown.classList.contains('open')) {
+            dropdown.classList.remove('open');
+        } else {
+            document.querySelectorAll('.more-dropdown.open').forEach(function(el) {
+                el.classList.remove('open');
+            });
+            dropdown.classList.add('open');
+        }
+    }
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.more-dropdown')) {
+            document.querySelectorAll('.more-dropdown.open').forEach(function(el) {
+                el.classList.remove('open');
+            });
+        }
+    });
+    </script>
+    </html>

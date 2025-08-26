@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Wordlane Tech HR Departments - View and manage company departments.">
+    <meta name="keywords" content="HR, Departments, Company Structure, Wordlane Tech">
+    <meta name="author" content="Wordlane Tech">
+    <title>Wordlane Tech - HR Departments</title>
+
+    <!-- Google Fonts: Roboto for professional typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" xintegrity="sha512-Fo3rlrZj/k7ujTnHg4CGR2D7kSs0V4LLanw2qksYuRlEzO+tcaEPQogQ0KaoGN26/zrn20ImR1DfuLWnOo7aBA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="stylesheet" href="hr_styles.css">
+    <style>
+        /* Department card styles matching employee pages */
+        .department-card {
+            background: #ffffff;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 12px rgba(31, 68, 106, 0.08);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-top: 4px solid #1F446A;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .department-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #1F446A 0%, #0ea5e9 100%);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .department-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .department-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(31, 68, 106, 0.15);
+        }
+
+        .department-card h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #1F446A;
+            margin: 0 0 0.5rem 0;
+            line-height: 1.3;
+        }
+
+        .department-card .department-id {
+            font-size: 0.875rem;
+            color: #64748b;
+            font-weight: 500;
+            margin: 0 0 0.75rem 0;
+        }
+
+        .department-card p {
+            color: #4b5c6b;
+            line-height: 1.6;
+            margin: 0 0 1rem 0;
+        }
+
+        .department-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0.75rem;
+            background: #f8fafc;
+            border-radius: 0.5rem;
+            border-left: 3px solid #e2e7ed;
+        }
+
+        .info-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-value {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #1F446A;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.375rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 1rem;
+        }
+
+        .status-badge::before {
+            content: '';
+            width: 0.5rem;
+            height: 0.5rem;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+            animation: pulse 2s infinite;
+        }
+
+        .status-active {
+            background: #dcfce7;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+
+        .status-active::before {
+            background: #22c55e;
+        }
+
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+                align-items: center;
+            margin-top: auto;
+            padding-top: 1rem;
+            border-top: 1px solid #e2e7ed;
+        }
+
+        .department-card .action-buttons {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .department-card .action-buttons a {
+            color: #0ea5e9;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.5rem;
+            background: #f0f9ff;
+            border: 1px solid #e0f2fe;
+        }
+
+        .department-card .action-buttons a:hover {
+            color: #1F446A;
+            background: #e0f2fe;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.2);
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Modal styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            padding: 1rem;
+            max-height: 70vh;
+            overflow-y: auto;
+            transform: scale(0.9);
+            transition: all 0.3s ease-in-out;
+            border-top: 4px solid #1F446A;
+        }
+
+        .modal-content.active {
+            transform: scale(1);
+        }
+
+        .modal-content input,
+        .modal-content select,
+        .modal-content textarea {
+            width: 100%;
+            padding: 0.5rem 0.75rem;
+            border: 1px solid #E2E7ED;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .modal-content input:focus,
+        .modal-content select:focus,
+        .modal-content textarea:focus {
+            outline: none;
+            border-color: #0ea5e9;
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+        }
+
+        .modal-content label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: #1F446A;
+            margin-bottom: 0.25rem;
+        }
+
+        .modal-content button {
+            transition: all 0.3s ease;
+        }
+
+        .modal-content button:hover {
+            transform: translateY(-1px);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+
+    <!-- Header Section -->
+    <header class="header-gradient p-5 shadow-lg flex flex-col sm:flex-row items-center justify-between sticky top-0 z-10 mt-5 mr-5 ml-5 mb-5" style="border-radius: 40px;">
+        <!-- Left side: Logo and Company Name (clickable to dashboard) -->
+        <a href="hr_dashboard.html" class="flex items-center mb-4 sm:mb-0 text-gray-800 no-underline hover:opacity-80 transition duration-200">
+            <!-- Company Logo -->
+            <img src="../images/logo.png" alt="Wordlane Tech Logo" class="mr-3 w-12 h-12 " style="object-fit: cover; border-radius: 50px; border: 3px solid #1F446A;">
+            <h1 class="text-2xl font-bold tracking-wide" style="color: #1F446A;">WordLane Tech</h1>
+        </a>
+        <!-- Center: Navigation Links -->
+        <nav class="bg-gray-100/50 p-2 rounded-full shadow-inner mb-4 md:mb-0" style="box-shadow:inset 2px 2px 9px 2px #57525224; padding: 10px 20px ">
+            <ul class="flex flex-wrap justify-center md:flex-nowrap  list-none p-0 m-0 text-sm " style="gap: 10px;">
+                <li><a href="hr_dashboard.html" class="nav-link flex items-center px-4 py-2 rounded-full text-gray-700 hover:bg-gray-200 transition-colors"><i class="fas fa-home mr-2"></i> Dashboard</a></li>
+                <li><a href="hr_employees.html" class="nav-link flex items-center px-4 py-2 rounded-full text-gray-700 hover:bg-gray-200 transition-colors"><i class="fas fa-users mr-2"></i> Employees</a></li>
+                <li><a href="hr_departments.html" class="nav-link flex items-center px-4 py-2 rounded-full text-gray-700 hover:bg-gray-200 transition-colors active"><i class="fas fa-building mr-2"></i> Departments</a></li>
+                <li><a href="hr_attendance.html" class="nav-link flex items-center px-4 py-2 rounded-full text-gray-700 hover:bg-gray-200 transition-colors"><i class="fas fa-clock mr-2"></i> Attendance</a></li>
+                <li><a href="hr_leaves.html" class="nav-link flex items-center px-4 py-2 rounded-full text-gray-700 hover:bg-gray-200 transition-colors"><i class="fas fa-calendar-alt mr-2"></i> Leaves</a></li>
+                <li><a href="hr_documents.html" class="nav-link flex items-center px-4 py-2 rounded-full text-gray-700 hover:bg-gray-200 transition-colors"><i class="fas fa-file-alt mr-2"></i> Documents</a></li>
+                <li><a href="hr_reports.html" class="nav-link flex items-center px-4 py-2 rounded-full text-gray-700 hover:bg-gray-200 transition-colors"><i class="fas fa-chart-bar mr-2"></i> Reports</a></li>
+            </ul>
+        </nav>
+        <!-- Right side: AMAZING Profile Capsule with dropdown -->
+        <div class="relative">
+            <button id="profileButton" class="profile-container focus:outline-none" aria-label="User Profile Menu">
+                <div class="profile-picture">
+                    <img src="https://placehold.co/48x48/CCCCCC/FFFFFF?text=HR" alt="User Profile">
+                </div>
+                <div class="profile-info">
+                    <p class="profile-name">HR Manager</p>
+                </div>
+            </button>
+
+            <!-- Enhanced Profile Dropdown Menu -->
+            <div id="profileDropdown" class="profile-dropdown">
+                <a href="hr_profile.html" class="flex items-center">
+                    <i class="fas fa-user" aria-hidden="true"></i>
+                    My Profile
+                </a>
+                <a href="../login.html" class="flex items-center">
+                    <i class="fas fa-sign-out-alt" aria-hidden="true"></i>
+                    Log Out
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area - HR Department List (Cards) -->
+    <main class="flex-grow p-8 bg-gray-50">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-3xl font-extrabold text-gray-900 page-title">Departments</h2>
+                <button id="addDepartmentBtn" style="background: linear-gradient(0ea5e9, );" class="bg-gradient-to-r from-[#1F446A] to-[#0ea5e9] text-white font-bold py-2 px-4 rounded-lg shadow-md transition-all duration-500 ease-in-out flex items-center hover:shadow-lg hover:scale-105">
+                    <i class="fas fa-plus mr-2"></i> Add New Department
+                </button>
+            </div>
+
+            <!-- Department Cards Grid -->
+            <div id="departmentsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Department cards will be dynamically generated here -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer Section -->
+    <footer class="bg-gray-800 text-white p-4 text-center mt-auto rounded-t-lg">
+        <p class="text-sm">&copy; 2025 Wordlane Tech. All rights reserved.</p>
+    </footer>
+
+    <script src="hr_script.js"></script>
+    
+    <!-- Add Department Modal -->
+    <div id="addDepartmentModal" class="modal-overlay">
+        <div class="modal-content max-w-md w-full mx-4">
+            <div class="flex justify-between items-center mb-3">
+                <h3 class="text-xl font-bold text-gray-900">Add New Department</h3>
+                <button id="closeAddDepartmentModal" class="text-gray-400 hover:text-gray-600 transition-colors">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <form id="addDepartmentForm" class="space-y-3">
+                <div>
+                    <label for="departmentName" class="block text-sm font-medium text-gray-700 mb-1">Department Name</label>
+                    <input type="text" id="departmentName" name="department_name" required 
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                
+                <div>
+                    <label for="departmentId" class="block text-sm font-medium text-gray-700 mb-1">Department ID</label>
+                    <input type="text" id="departmentId" name="department_id" required 
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                
+                <div>
+                    <label for="departmentDescription" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                    <textarea id="departmentDescription" name="department_description" rows="2" required 
+                              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"></textarea>
+                </div>
+                
+                <div>
+                    <label for="departmentHead" class="block text-sm font-medium text-gray-700 mb-1">Department Head (Employee ID)</label>
+                    <input type="text" id="departmentHead" name="department_head" required 
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                
+                <div class="flex justify-end space-x-3 pt-3">
+                    <button type="button" id="cancelAddDepartment" 
+                            class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-300">
+                        Cancel
+                    </button>
+                    <button type="submit" 
+                            class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gradient-to-r from-[#1F446A] to-[#0ea5e9] hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-300">
+                        Add Department
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+    // Fetch and render departments on page load
+    document.addEventListener('DOMContentLoaded', () => {
+        fetchAndRenderDepartments();
+    });
+
+    // Fetch from backend and render
+    async function fetchAndRenderDepartments() {
+        try {
+            const response = await fetch('http://localhost:3001/api/full-departments');
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            const departments = await response.json();
+            renderDepartments(departments);
+        } catch (error) {
+            console.error('Error fetching departments:', error);
+            alert("Failed to load departments. Please try again.");
+        }
+    }
+
+    // Render department cards
+    function renderDepartments(departments) {
+        const container = document.getElementById('departmentsContainer');
+        container.innerHTML = '';
+
+        departments.forEach(dept => {
+            const deptCard = `
+                <div class="department-card">
+                    <h3>${dept.name}</h3>
+                    <p class="department-id">#${dept.id}</p>
+                    <p>${dept.description || 'No description provided.'}</p>
+                    <div class="department-info">
+                        <div class="info-item">
+                            <span class="info-label">Head</span>
+                            <span class="info-value">${dept.head_name || 'Not Assigned'}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Employees</span>
+                            <span class="info-value">${dept.employee_count ?? 0}</span>
+                        </div>
+                    </div>
+                    <span class="status-badge status-active">Active</span>
+                    <div class="card-footer">
+                        <div class="action-buttons">
+                            <a href="#" title="View Details"><i class="fas fa-eye"></i> View Details</a>
+                            <a href="#" title="Edit Department"><i class="fas fa-edit"></i> Edit</a>
+                            <a href="#" title="Delete Department"><i class="fas fa-trash-alt"></i> Delete</a>
+                        </div>
+                    </div>
+                </div>
+            `;
+            container.innerHTML += deptCard;
+        });
+    }
+
+    // Modal functionality
+    const addDepartmentBtn = document.getElementById('addDepartmentBtn');
+    const addDepartmentModal = document.getElementById('addDepartmentModal');
+    const closeAddDepartmentModal = document.getElementById('closeAddDepartmentModal');
+    const cancelAddDepartment = document.getElementById('cancelAddDepartment');
+    const addDepartmentForm = document.getElementById('addDepartmentForm');
+
+    // Open modal
+    addDepartmentBtn.addEventListener('click', () => {
+        addDepartmentModal.classList.add('active');
+        addDepartmentModal.querySelector('.modal-content').classList.add('active');
+        document.body.style.overflow = 'hidden';
+    });
+
+    // Close modal functions
+    function closeModal() {
+        addDepartmentModal.classList.remove('active');
+        addDepartmentModal.querySelector('.modal-content').classList.remove('active');
+        document.body.style.overflow = 'auto';
+        addDepartmentForm.reset();
+    }
+
+    closeAddDepartmentModal.addEventListener('click', closeModal);
+    cancelAddDepartment.addEventListener('click', closeModal);
+
+    addDepartmentModal.addEventListener('click', function (e) {
+        if (e.target === addDepartmentModal) {
+            closeModal();
+        }
+    });
+
+    // Handle add department form submit (optional: connect to backend)
+    addDepartmentForm.addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        const formData = new FormData(addDepartmentForm);
+        const newDepartment = {
+            name: formData.get('department_name'),
+            id: formData.get('department_id'),
+            description: formData.get('department_description'),
+            head: formData.get('department_head')
+        };
+
+        try {
+            const response = await fetch('http://localhost:3001/api/full-departments', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(newDepartment)
+            });
+
+            if (!response.ok) throw new Error('Failed to add department');
+            alert('Department added successfully!');
+            closeModal();
+            fetchAndRenderDepartments(); // Refresh list
+        } catch (error) {
+            console.error('Add department error:', error);
+            alert('Error adding department');
+        }
+    });
+</script>
+
+</body>
+</html>

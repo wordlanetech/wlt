@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HR Portal - Documents</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter for a clean, modern look -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <link rel="stylesheet" href="hr_styles.css">
+    <style>
+        /* Custom form element styles for a polished look */
+        .form-input,
+        .form-textarea,
+        .form-select {
+            transition: all 0.2s ease-in-out;
+            border-radius: 12px;
+            border-width: 2px;
+        }
+
+        .form-input:focus,
+        .form-textarea:focus,
+        .form-select:focus {
+            border-color: #1F446A;
+            box-shadow: 0 0 0 3px rgba(31, 68, 106, 0.3);
+        }
+        
+        .form-file-input {
+            border-width: 2px;
+            border-color: #D1D5DB;
+            background-color: #F9FAFB;
+            padding: 0.5rem;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+        }
+        
+        .form-file-input:hover {
+            background-color: #E5E7EB;
+        }
+
+        /* Table specific styles for better readability and a modern look */
+        .table-header th {
+            text-align: left;
+            font-weight: 600;
+            padding: 1rem 1.5rem;
+            color: #4B5563;
+            background-color: #F9FAFB;
+        }
+
+        .table-body td {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #E5E7EB;
+        }
+
+        .table-body tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Modal styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+            transition: all 0.3s ease-in-out;
+            z-index: 50;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            transition: all 0.3s ease-in-out;
+            transform: scale(0.95);
+            opacity: 0;
+            border-top: 4px solid #1F446A;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+        }
+
+        .modal-content.active {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        /* Modal form styling to match employee pages */
+        .modal-content input,
+        .modal-content select,
+        .modal-content textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid #E2E7ED;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .modal-content input:focus,
+        .modal-content select:focus,
+        .modal-content textarea:focus {
+            outline: none;
+            border-color: #0ea5e9;
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+        }
+
+        .modal-content label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #1F446A;
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-content button {
+            transition: all 0.3s ease;
+        }
+
+        .modal-content button:hover {
+            transform: translateY(-1px);
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 min-h-screen flex flex-col font-inter">
+
+    <!-- Header Section -->
+    <header class="header-gradient p-5 shadow-lg flex flex-col sm:flex-row items-center justify-between sticky top-0 z-10 mt-5 mr-5 ml-5 mb-5" style="border-radius: 40px;">
+        <!-- Left side: Logo and Company Name (clickable to dashboard) -->
+        <a href="hr_dashboard.html" class="flex items-center mb-4 sm:mb-0 text-gray-800 no-underline hover:opacity-80 transition duration-200">
+            <!-- Company Logo -->
+            <img src="https://placehold.co/48x48/1F446A/FFFFFF?text=WLT" alt="Wordlane Tech Logo" class="mr-3 w-12 h-12 " style="object-fit: cover; border-radius: 50px; border: 3px solid #1F446A;">
+            <h1 class="text-2xl font-bold tracking-wide" style="color: #1F446A;">WordLane Tech</h1>
+        </a>
+        <!-- Center: Navigation Links -->
+        <nav class="bg-gray-100/50 p-2 rounded-full shadow-inner mb-4 md:mb-0" style="box-shadow:inset 2px 2px 9px 2px #57525224; padding: 10px 20px ">
+            <ul class="flex flex-wrap justify-center md:flex-nowrap  list-none p-0 m-0 text-sm " style="gap: 10px;">
+                <li><a href="hr_dashboard.html" class="nav-link flex items-center px-4 py-2 rounded-full text-gray-700 hover:bg-gray-200 transition-colors"><i class="fas fa-home mr-2"></i> Dashboard</a></li>
+                <li><a href="hr_employees.html" class="nav-link flex items-center px-4 py-2 rounded-full text-gray-700 hover:bg-gray-200 transition-colors"><i class="fas fa-users mr-2"></i> Employees</a></li>
+                <li><a href="hr_departments.html" class="nav-link flex items-center px-4 py-2 rounded-full text-gray-700 hover:bg-gray-200 transition-colors"><i class="fas fa-building mr-2"></i> Departments</a></li>
+                <li><a href="hr_attendance.html" class="nav-link flex items-center px-4 py-2 rounded-full text-gray-700 hover:bg-gray-200 transition-colors"><i class="fas fa-clock mr-2"></i> Attendance</a></li>
+                <li><a href="hr_leaves.html" class="nav-link flex items-center px-4 py-2 rounded-full text-gray-700 hover:bg-gray-200 transition-colors"><i class="fas fa-calendar-alt mr-2"></i> Leaves</a></li>
+                <li><a href="hr_documents.html" class="nav-link flex items-center px-4 py-2 rounded-full text-gray-700 hover:bg-gray-200 transition-colors active"><i class="fas fa-file-alt mr-2"></i> Documents</a></li>
+                <li><a href="hr_reports.html" class="nav-link flex items-center px-4 py-2 rounded-full text-gray-700 hover:bg-gray-200 transition-colors"><i class="fas fa-chart-bar mr-2"></i> Reports</a></li>
+            </ul>
+        </nav>
+        <!-- Right side: AMAZING Profile Capsule with dropdown -->
+        <div class="relative">
+            <button id="profileButton" class="profile-container focus:outline-none" aria-label="User Profile Menu">
+                <div class="profile-picture">
+                    <img src="https://placehold.co/48x48/CCCCCC/FFFFFF?text=HR" alt="User Profile">
+                </div>
+                <div class="profile-info">
+                    <p class="profile-name">HR Manager</p>
+                </div>
+            </button>
+
+            <!-- Enhanced Profile Dropdown Menu -->
+            <div id="profileDropdown" class="profile-dropdown">
+                <a href="hr_profile.html" class="flex items-center">
+                    <i class="fas fa-user" aria-hidden="true"></i>
+                    My Profile
+                </a>
+                <a href="../login.html" class="flex items-center">
+                    <i class="fas fa-sign-out-alt" aria-hidden="true"></i>
+                    Log Out
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow p-4 sm:p-8 bg-gray-50">
+        <div class="container mx-auto max-w-7xl">
+            <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-6">Employee Documents</h2>
+
+            <!-- Documents Control Bar -->
+            <div class="flex flex-col sm:flex-row items-center justify-between mb-6 gap-4">
+                <!-- Document Type Filter -->
+                <div class="relative w-full sm:max-w-xs">
+                    <select id="documentTypeFilter" class="form-select w-full border-gray-300 focus:ring-[#1F446A]/50 rounded-full">
+                        <option value="">All Document Types</option>
+                        <option value="offer_letter">Offer Letter</option>
+                        <option value="id_proof">ID Proof</option>
+                        <option value="contract">Contract</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <!-- Upload Document Button -->
+                <button id="uploadDocumentBtn"
+                    class="w-full sm:w-auto bg-[#1F446A] text-white px-6 py-2.5 rounded-full shadow-lg hover:bg-[#1F446A]/90 transition-colors duration-200 flex items-center justify-center">
+                    <i class="fas fa-upload mr-2"></i> Upload Document
+                </button>
+            </div>
+
+            <!-- Documents Table -->
+            <div class="bg-white rounded-3xl shadow-xl border border-gray-200 overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200 text-sm font-bold mb-0">
+                                    <thead class="bg-[#f4f6fa] text-[#1F446A] uppercase text-xs tracking-wide">
+                                        <tr>
+                                            <th class="px-6 py-4 text-left">Employee Name</th>
+                                            <th class="px-6 py-4 text-left">Document Name</th>
+                                            <th class="px-6 py-4 text-left">Document Type</th>
+                                            <th class="px-6 py-4 text-left">Upload Date</th>
+                                            <th class="px-6 py-4 text-left">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="documentsTableBody">
+                                        <tr>
+                                            <td class="px-6 py-4 flex items-center gap-3">
+                                                <img src="https://placehold.co/40x40/CCCCCC/FFFFFF?text=JP" alt="John Parker" class="w-10 h-10 rounded-full object-cover">
+                                                <span class="font-semibold text-gray-800">John Parker</span>
+                                            </td>
+                                            <td class="px-6 py-4">offer_letter_john_parker.pdf</td>
+                                            <td class="px-6 py-4">Offer Letter</td>
+                                            <td class="px-6 py-4">2025-07-28</td>
+                                            <td class="px-6 py-4">
+                                                <div class="flex items-center space-x-2">
+                                                    <button class="text-blue-500 hover:text-blue-700 transition-colors" title="View"><i class="fas fa-eye"></i></button>
+                                                    <button class="text-green-500 hover:text-green-700 transition-colors" title="Download"><i class="fas fa-download"></i></button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="px-6 py-4 flex items-center gap-3">
+                                                <img src="https://placehold.co/40x40/CCCCCC/FFFFFF?text=SD" alt="Sarah Davis" class="w-10 h-10 rounded-full object-cover">
+                                                <span class="font-semibold text-gray-800">Sarah Davis</span>
+                                            </td>
+                                            <td class="px-6 py-4">id_proof_sarah_davis.jpeg</td>
+                                            <td class="px-6 py-4">ID Proof</td>
+                                            <td class="px-6 py-4">2025-07-29</td>
+                                            <td class="px-6 py-4">
+                                                <div class="flex items-center space-x-2">
+                                                    <button class="text-blue-500 hover:text-blue-700 transition-colors" title="View"><i class="fas fa-eye"></i></button>
+                                                    <button class="text-green-500 hover:text-green-700 transition-colors" title="Download"><i class="fas fa-download"></i></button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- Upload Document Modal -->
+    <div id="uploadDocumentModal" class="modal-overlay hidden opacity-0">
+        <div class="modal-content w-full max-w-lg mx-4 p-6 bg-white rounded-3xl shadow-2xl">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-2xl font-bold text-gray-800">Upload New Document</h3>
+                <button id="closeModalBtn" class="text-gray-400 hover:text-gray-600 transition-colors">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <form id="uploadDocumentForm" class="space-y-4">
+                <!-- Employee Name (could be a dropdown or pre-filled for a logged-in user) -->
+                <div>
+                    <label for="employeeName" class="block text-sm font-medium text-gray-700 mb-1">Employee Name</label>
+                    <input type="text" id="employeeName" name="employeeName" class="form-input w-full border-gray-300 focus:ring-[#1F446A]/50" required>
+                </div>
+                <!-- Document Type -->
+                <div>
+                    <label for="documentType" class="block text-sm font-medium text-gray-700 mb-1">Document Type</label>
+                    <select id="documentType" name="documentType" class="form-select w-full border-gray-300 focus:ring-[#1F446A]/50" required>
+                        <option value="">Select Document Type</option>
+                        <option value="offer_letter">Offer Letter</option>
+                        <option value="id_proof">ID Proof</option>
+                        <option value="contract">Contract</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <!-- File Input -->
+                <div>
+                    <label for="documentFile" class="block text-sm font-medium text-gray-700 mb-1">Choose File</label>
+                    <input type="file" id="documentFile" name="documentFile" class="form-file-input w-full" required>
+                </div>
+                
+                <div class="flex justify-end gap-3 pt-4">
+                    <button type="button" id="cancelBtn"
+                        class="px-6 py-2.5 rounded-full border border-gray-300 text-gray-700 hover:bg-gray-100 transition-colors">
+                        Cancel
+                    </button>
+                    <button type="submit"
+                        class="px-6 py-2.5 rounded-full bg-[#1F446A] text-white hover:bg-[#1F446A]/90 transition-colors">
+                        Upload Document
+                    </button>
+                </div>
+            </form>
+            <!-- Message Box -->
+            <div id="messageBox" class="mt-4 p-4 rounded-lg text-sm text-center hidden"></div>
+        </div>
+    </div>
+
+    <!-- Footer Section -->
+    <footer class="bg-gray-800 text-white p-4 text-center mt-auto rounded-t-lg">
+        <p class="text-sm">&copy; 2025 Wordlane Tech. All rights reserved.</p>
+    </footer>
+
+    <script src="hr_script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Live clock functionality
+            const liveClock = document.getElementById('liveClock');
+            function updateLiveClock() {
+                const now = new Date();
+                const timeString = now.toLocaleTimeString('en-US', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: true
+                });
+                liveClock.textContent = timeString;
+            }
+            setInterval(updateLiveClock, 1000);
+
+            // Modal functionality
+            const uploadDocumentBtn = document.getElementById('uploadDocumentBtn');
+            const uploadDocumentModal = document.getElementById('uploadDocumentModal');
+            const closeModalBtn = document.getElementById('closeModalBtn');
+            const cancelBtn = document.getElementById('cancelBtn');
+            const uploadDocumentForm = document.getElementById('uploadDocumentForm');
+            const messageBox = document.getElementById('messageBox');
+            const documentsTableBody = document.getElementById('documentsTableBody');
+
+            // API Endpoint (change this if your server is on a different port)
+            // const API_BASE_URL = 'http://localhost:3001/api';
+
+            function showMessage(message, type = 'error') {
+                messageBox.textContent = message;
+                messageBox.classList.remove('hidden', 'bg-red-100', 'text-red-800', 'bg-green-100', 'text-green-800');
+                if (type === 'error') {
+                    messageBox.classList.add('bg-red-100', 'text-red-800');
+                } else {
+                    messageBox.classList.add('bg-green-100', 'text-green-800');
+                }
+            }
+
+            function openModal() {
+                uploadDocumentModal.classList.remove('hidden');
+                setTimeout(() => {
+                    uploadDocumentModal.classList.add('active');
+                    uploadDocumentModal.querySelector('.modal-content').classList.add('active');
+                }, 10);
+            }
+
+            function closeModal() {
+                uploadDocumentModal.classList.remove('active');
+                uploadDocumentModal.querySelector('.modal-content').classList.remove('active');
+                setTimeout(() => {
+                    uploadDocumentModal.classList.add('hidden');
+                    uploadDocumentForm.reset();
+                    messageBox.classList.add('hidden');
+                }, 300);
+            }
+
+            uploadDocumentBtn.addEventListener('click', openModal);
+            closeModalBtn.addEventListener('click', closeModal);
+            cancelBtn.addEventListener('click', closeModal);
+
+            uploadDocumentModal.addEventListener('click', (event) => {
+                if (event.target === uploadDocumentModal) {
+                    closeModal();
+                }
+            });
+
+            // Handle form submission
+            uploadDocumentForm.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                messageBox.classList.add('hidden');
+
+                const formData = new FormData(uploadDocumentForm);
+                
+                try {
+                    // NOTE: You would need to create a new API endpoint in your server.js
+                    // file to handle this. Example: fetch(`${API_BASE_URL}/documents`, { ... })
+                    // This is a placeholder for demonstration.
+                    // This is a complex operation as it involves a file upload.
+                    
+                    const mockResponse = { ok: true, json: () => ({ message: 'Document uploaded successfully!' }) };
+                    
+                    const response = mockResponse;
+                    
+                    const result = await response.json();
+
+                    if (!response.ok) {
+                        throw new Error(result.error || 'Something went wrong');
+                    }
+
+                    showMessage(result.message, 'success');
+                    // fetchDocuments(); // Uncomment and implement this function to refresh the table
+                    setTimeout(closeModal, 2000);
+
+                } catch (error) {
+                    console.error('Submission error:', error);
+                    showMessage(error.message);
+                }
+            });
+
+            // NOTE: To make this page dynamic, you would need to create a Node.js API endpoint
+            // to fetch and manage documents from a file storage system and a MySQL database.
+            // You would also need a `fetchDocuments()` function to populate the table.
+
+        });
+    </script>
+</body>
+
+</html>

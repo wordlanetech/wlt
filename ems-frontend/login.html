@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Wordlane Tech Login Page - Securely log in to your account.">
+    <title>WordLane Tech - Login</title>
+
+    <!-- Google Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+        xintegrity="sha512-Fo3rlrZj/k7ujTnHg4CGR2D7kSs0V4LLanw2qksYuRlEzO+tcaEPQogQ0KaoGN26/zrn20ImR1DfuLWnOo7aBA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Link to external CSS file -->
+    <link rel="stylesheet" href="login.css">
+</head>
+
+<body>
+
+    <div id="splashScreen">
+        <!-- Image tag for the logo, referencing a local file -->
+        <img src="./images/logo.png" alt="Wordlane Tech Logo" class="rounded-full shadow-lg" id="splashLogo">
+    </div>
+
+    <div id="loginContent" class="flex items-center justify-center min-h-screen p-4">
+        <div class="login-card w-full max-w-md p-8 sm:p-12 rounded-3xl text-center">
+            <div class="mb-8">
+                <!-- Image tag for the logo in the login card -->
+                <img src="./images/logo.png" alt="Wordlane Tech Logo" class="mx-auto h-[70px] w-[60px] mb-4 rounded-full shadow-lg">
+                <p class="text-white text-lg font-semibold mb-2">Word Lane Tech</p>
+                <h1 class="text-3xl font-extrabold text-white tracking-tight">Welcome Back</h1>
+                <p class="text-gray-200 mt-2 text-sm">Please sign in to your account</p>
+            </div>
+
+            <div id="messageBox" class="p-3 rounded-lg text-sm font-medium"></div>
+
+            <form id="loginForm" class="space-y-6">
+                <div class="input-group relative rounded-full shadow-sm">
+                    <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
+                        <i class="fas fa-user text-gray-400 icon"></i>
+                    </div>
+                    <input type="text" id="user_id" name="user_id"
+                        class="block w-full rounded-full border border-gray-300 bg-white/80 p-3 pl-12 text-sm placeholder-gray-500 focus:border-indigo-500 focus:ring-indigo-500"
+                        placeholder="User ID" autocomplete="username" required>
+                </div>
+
+                <div class="input-group relative rounded-full shadow-sm">
+                    <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
+                        <i class="fas fa-lock text-gray-400 icon"></i>
+                    </div>
+                    <input type="password" id="password" name="password"
+                        class="block w-full rounded-full border border-gray-300 bg-white/80 p-3 pl-12 pr-12 text-sm placeholder-gray-500 focus:border-indigo-500 focus:ring-indigo-500"
+                        placeholder="Password" autocomplete="current-password" required>
+                    <button type="button" id="togglePassword"
+                        class="absolute inset-y-0 right-0 flex items-center pr-4 text-gray-400 hover:text-indigo-500">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+
+                <div>
+                    <button type="submit"
+                        class="login-btn w-full flex justify-center py-3 px-4 border border-transparent rounded-full shadow-sm text-sm font-bold text-white uppercase">
+                        <i class="fas fa-sign-in-alt mr-2"></i>
+                        Login
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Link to external JavaScript file -->
+    <script src="login.js"></script>
+</body>
+
+</html>

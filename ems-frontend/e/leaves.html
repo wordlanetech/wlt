@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Wordlane Tech Employee Leave Management - Apply for leave and view leave history.">
+    <meta name="keywords" content="Employee Leaves, HR, Leave Application, Wordlane Tech">
+    <meta name="author" content="Wordlane Tech">
+    <title>WordLane Tech - Leaves</title>
+
+    <!-- Google Fonts: Roboto for professional typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+        xintegrity="sha512-Fo3rlrZj/k7ujTnHg4CGR2D7kSs0V4LLanw2qksYuRlEzO+tcaEPQogQ0KaoGN26/zrn20ImR1DfuLWnOo7aBA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        /* Base font application */
+        body {
+            font-family: 'Roboto', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            background: #E2E7ED;
+        }
+
+        /* Custom gradient for header */
+        .header-gradient {
+            background-image: linear-gradient(to top, #ffffff 0%, #e7e6e6ce 100%);
+        }
+
+        main {
+            background: #E2E7ED;
+        }
+
+        /* Custom style for the active navigation link */
+        .nav-link.active {
+            color: #E2E7ED !important;
+            background-color: #1F446A !important;
+        }
+
+        /* AMAZING PROFILE PICTURE STYLING - CAPSULE DESIGN */
+        .profile-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.45rem 0.75rem 0.45rem 0.375rem;
+            background: #1F446A;
+            border-radius: 50px;
+            backdrop-filter: blur(10px);
+            box-shadow:
+                0 8px 32px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2),
+                0 0 0 1px rgba(255, 255, 255, 0.1);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+        }
+
+        .profile-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg,
+                    transparent,
+                    rgba(255, 255, 255, 0.2),
+                    transparent);
+            transition: left 0.6s ease-in-out;
+        }
+
+        .profile-container:hover::before {
+            left: 100%;
+        }
+
+        .profile-container:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow:
+                0 12px 40px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3),
+                0 0 0 1px rgba(255, 255, 255, 0.2),
+                0 0 20px rgba(14, 165, 233, 0.3);
+            border-color: rgba(14, 165, 233, 0.5);
+        }
+
+        .profile-picture {
+            position: relative;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            box-shadow:
+                0 4px 15px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .profile-picture::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(
+                    from 0deg,
+                    #ff6b6b,
+                    #4ecdc4,
+                    #45b7d1,
+                    #96ceb4,
+                    #feca57,
+                    #ff9ff3,
+                    #54a0ff,
+                    #5f27cd,
+                    #ff6b6b);
+            animation: rotate 3s linear infinite;
+            z-index: -1;
+        }
+
+        .profile-picture::after {
+            content: '';
+            position: absolute;
+            inset: 3px;
+            background: inherit;
+            border-radius: 50%;
+            z-index: 1;
+        }
+
+        .profile-picture img {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .profile-container:hover .profile-picture {
+            border-color: rgba(14, 165, 233, 0.8);
+            box-shadow:
+                0 8px 25px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3),
+                0 0 15px rgba(14, 165, 233, 0.5);
+        }
+
+        .profile-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .profile-name {
+            font-weight: 600;
+            font-size: 0.8rem;
+            color: #ffffff;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+            margin: 0;
+        }
+
+        .profile-role {
+            font-size: 0.65rem;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 400;
+            margin: 0;
+        }
+
+        .profile-status {
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            width: 12px;
+            height: 12px;
+            background: linear-gradient(45deg, #10b981, #34d399);
+            border: 2px solid #ffffff;
+            border-radius: 50%;
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4);
+            }
+            50% {
+                transform: scale(1.2);
+                box-shadow: 0 4px 16px rgba(16, 185, 129, 0.6);
+            }
+        }
+
+        /* Enhanced dropdown styling */
+        .profile-dropdown {
+            position: absolute;
+            top: calc(100% + 15px);
+            right: -25px;
+            background: linear-gradient(135deg,
+                    rgba(255, 255, 255, 0.95) 0%,
+                    rgba(255, 255, 255, 0.9) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 1rem;
+            backdrop-filter: blur(15px);
+            box-shadow:
+                0 10px 25px rgba(0, 0, 0, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            z-index: 20;
+            min-width: 180px;
+            overflow: hidden;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px) scale(0.95);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .profile-dropdown.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0) scale(1);
+        }
+
+        .profile-dropdown a {
+            display: flex;
+            align-items: center;
+            padding: 0.875rem 1.25rem;
+            color: #374151;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .profile-dropdown a:last-child {
+            border-bottom: none;
+        }
+
+        .profile-dropdown a:hover {
+            background: linear-gradient(135deg,
+                    rgba(14, 165, 233, 0.1) 0%,
+                    rgba(14, 165, 233, 0.05) 100%);
+            color: #0ea5e9;
+            transform: translate(-5px);
+        }
+
+        .profile-dropdown a i {
+            margin-right: 0.75rem;
+            font-size: 1.125rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Responsive adjustments for smaller screens */
+        @media (max-width: 768px) {
+            .header-gradient {
+                padding: 1rem;
+                /* Adjust padding for smaller screens */
+            }
+
+            .header-gradient h1 {
+                font-size: 1.75rem;
+                /* Smaller font for company name */
+            }
+
+            .header-gradient img {
+                width: 35px;
+                height: 35px;
+            }
+
+            .nav-list {
+                flex-direction: column;
+                /* Stack nav items vertically */
+                align-items: center;
+                gap: 0.25rem;
+                padding: 0.5rem 0;
+            }
+
+            .nav-item {
+                width: 100%;
+            }
+
+            .nav-link {
+                justify-content: center;
+                padding: 0.75rem 1rem;
+                border-radius: 0.375rem;
+            }
+
+            .page-title {
+                font-size: 2.5rem;
+                /* Adjust title size */
+            }
+
+            .profile-dropdown {
+                right: 1rem;
+                /* Adjust position for mobile */
+                min-width: unset;
+                /* Allow width to adjust */
+                width: calc(100% - 2rem);
+                /* Take full width minus padding */
+            }
+
+            .profile-container {
+                padding: 0.5rem 1rem;
+                gap: 0.75rem;
+            }
+
+            .profile-picture {
+                width: 40px;
+                height: 40px;
+            }
+
+            .profile-name {
+                font-size: 0.85rem;
+            }
+
+            .profile-role {
+                font-size: 0.7rem;
+            }
+        }
+
+        /* --- Leave Page Styling --- */
+        .content-card {
+            background: #ffffff;
+            border-radius: 1.5rem;
+            border: 1px solid #e2e7ed;
+            box-shadow: 0 2px 8px 0 rgba(31, 68, 106, 0.06);
+            transition: all 0.3s ease;
+        }
+
+        .content-card:hover {
+            box-shadow: 0 8px 24px 0 rgba(31, 68, 106, 0.12);
+            transform: translateY(-2px);
+            border-color: #b6cbe1;
+        }
+
+        .status-badge {
+            font-weight: 600;
+            border-radius: 9999px;
+            padding: 0.25rem 1rem;
+            font-size: 0.85rem;
+            display: inline-block;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .status-badge-approved {
+            background-color: #D1FAE5; /* green-200 */
+            color: #065F46; /* green-800 */
+        }
+        
+        .status-badge-rejected {
+            background-color: #FEE2E2; /* red-200 */
+            color: #991B1B; /* red-800 */
+        }
+
+        .status-badge-pending {
+            background-color: #BFDBFE; /* blue-200 */
+            color: #1E40AF; /* blue-800 */
+        }
+
+        /* Modal specific styling */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            /* Apply blur and a subtle semi-transparent background to the overlay */
+            background-color: rgba(31, 68, 106, 0.7);
+            backdrop-filter: blur(8px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 50;
+        }
+
+        /* The modal content is now a solid white card with a clean shadow */
+        .modal-content {
+            background: #ffffff;
+            border-radius: 1.5rem;
+            padding: 2rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+            transform: scale(0.95);
+            opacity: 0;
+            transition: all 0.3s ease-in-out;
+            z-index: 51;
+        }
+        .modal.show .modal-content {
+            transform: scale(1);
+            opacity: 1;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 min-h-screen flex flex-col">
+
+    <!-- Header Section -->
+    <header
+        class="header-gradient p-5 shadow-lg flex flex-col sm:flex-row items-center justify-between sticky top-0 z-10 mt-5 mr-5 ml-5 mb-5"
+        style="border-radius: 40px; height: 12vh;">
+        <!-- Left side: Logo and Company Name (clickable to dashboard) -->
+        <a href="#" class="flex items-center mb-4 sm:mb-0 text-gray-800 no-underline hover:opacity-80 transition duration-200">
+            <!-- Company Logo -->
+            <img src="../images/WLT_LOGO2.jpg" alt="Wordlane Tech Logo" class="mr-3 w-12 h-12"
+                style="object-fit: cover; border-radius: 50px; border: 3px solid #1F446A;">
+            <h1 class="text-2xl font-bold tracking-wide" style="color: #1F446A;">WordLane Tech</h1>
+        </a>
+        <!-- Center: Navigation Links -->
+        <nav class="bg-gray-100/50 p-2 rounded-full shadow-inner mb-4 md:mb-0"
+            style="box-shadow:inset 2px 2px 9px 2px #57525224; padding: 10px 20px">
+            <ul class="flex flex-wrap justify-center md:flex-nowrap list-none p-0 m-0 text-sm " style="gap: 10px;">
+                <li><a href="../e/dashboard.html" class="nav-link flex items-center px-4 py-2 rounded-full text-gray-700 hover:bg-gray-200 transition-colors"><i class="fas fa-home mr-2"></i> Dashboard</a></li>
+                <li><a href="../e/project.html" class="nav-link flex items-center px-4 py-2 rounded-full text-gray-700 hover:bg-gray-200 transition-colors"><i class="fas fa-project-diagram mr-2"></i> Projects</a></li>
+                <li><a href="../e/task.html" class="nav-link flex items-center px-4 py-2 rounded-full text-gray-700 hover:bg-gray-200 transition-colors"><i class="fas fa-tasks mr-2"></i> Tasks</a></li>
+                <li><a href="../e/leaves.html" class="nav-link flex items-center px-4 py-2 rounded-full text-gray-700 hover:bg-gray-200 transition-colors active"><i class="fas fa-calendar-alt mr-2"></i> Leaves</a></li>
+                <li><a href="../e/documents.html" class="nav-link flex items-center px-4 py-2 rounded-full text-gray-700 hover:bg-gray-200 transition-colors"><i class="fas fa-file-alt mr-2"></i> Documents</a></li>
+                <li><a href="../e/teams.html" class="nav-link flex items-center px-4 py-2 rounded-full text-gray-700 hover:bg-gray-200 transition-colors"><i class="fas fa-users mr-2"></i> Teams</a></li>
+                <li><a href="../e/attendance.html" class="nav-link flex items-center px-4 py-2 rounded-full text-gray-700 hover:bg-gray-200 transition-colors"><i class="fas fa-clock mr-2"></i> Attendance</a></li>
+            </ul>
+        </nav>
+        <!-- Right side: AMAZING Profile Capsule with dropdown -->
+        <div class="relative">
+            <button id="profileButton" class="profile-container focus:outline-none" aria-label="User Profile Menu">
+                <div class="profile-picture">
+                    <img src="https://placehold.co/48x48/CCCCCC/FFFFFF?text=JP" alt="User Profile">
+                </div>
+                <div class="profile-info">
+                    <p class="profile-name">John Parker</p>
+                    <p class="profile-role">Software Developer</p>
+                </div>
+                <div class="profile-status"></div>
+            </button>
+
+            <!-- Enhanced Profile Dropdown Menu -->
+            <div id="profileDropdown" class="profile-dropdown">
+                <a href="./my_profile.html" class="flex items-center">
+                    <i class="fas fa-user" aria-hidden="true"></i>
+                    My Profile
+                </a>
+                <a href="../login.html" class="flex items-center">
+                    <i class="fas fa-sign-out-alt" aria-hidden="true"></i>
+                    Log Out
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area - Leaves Management -->
+    <main class="flex-grow p-8 bg-gray-50">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8">
+                <h2 class="text-3xl font-extrabold text-gray-900 mb-2">Leave Management</h2>
+                <!-- New "Apply for Leave" button -->
+                <button id="applyLeaveBtn"
+                    class="bg-[#1F446A] text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-[#153452] focus:outline-none focus:ring-2 focus:ring-[#0ea5e9] focus:ring-offset-2 transition-all duration-200">
+                    <i class="fas fa-plus mr-2"></i> Apply for Leave
+                </button>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <!-- Leave Balance Card -->
+                <div class="content-card p-6 flex flex-col justify-between items-center text-center">
+                    <h3 class="text-xl font-bold text-gray-700 mb-2">Available Sick Leave</h3>
+                    <div class="flex items-center gap-2">
+                        <span class="text-6xl font-extrabold text-[#1F446A]">8</span>
+                        <span class="text-2xl font-semibold text-gray-500">days</span>
+                    </div>
+                </div>
+
+                <!-- Leave Balance Card -->
+                <div class="content-card p-6 flex flex-col justify-between items-center text-center">
+                    <h3 class="text-xl font-bold text-gray-700 mb-2">Available Vacation Leave</h3>
+                    <div class="flex items-center gap-2">
+                        <span class="text-6xl font-extrabold text-[#1F446A]">12</span>
+                        <span class="text-2xl font-semibold text-gray-500">days</span>
+                    </div>
+                </div>
+
+                <!-- Leave Balance Card -->
+                <div class="content-card p-6 flex flex-col justify-between items-center text-center">
+                    <h3 class="text-xl font-bold text-gray-700 mb-2">Pending Applications</h3>
+                    <div class="flex items-center gap-2">
+                        <span class="text-6xl font-extrabold text-[#1F446A]">2</span>
+                        <span class="text-2xl font-semibold text-gray-500">requests</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Leave History Table -->
+            <div class="content-card p-8">
+                <h3 class="text-2xl font-bold text-gray-900 mb-6">Leave History</h3>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Leave Type</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Start Date</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">End Date</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Reason</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leave-history-table" class="bg-white divide-y divide-gray-200">
+                            <!-- Leave history rows will be dynamically inserted here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal for Leave Application Form -->
+    <div id="leaveModal" class="modal">
+        <div class="modal-content">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold text-gray-900">Apply for Leave</h3>
+                <button id="closeModalBtn" class="text-gray-400 hover:text-gray-600 transition-colors">
+                    <i class="fas fa-times text-2xl"></i>
+                </button>
+            </div>
+            <form id="leave-form" class="space-y-4">
+                <div>
+                    <label for="leave-type" class="block text-sm font-medium text-gray-700 mb-1">Leave Type</label>
+                    <select id="leave-type" name="leaveType" required
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#0ea5e9] focus:border-[#0ea5e9] transition-colors">
+                        <option value="" disabled selected>Select leave type</option>
+                        <option value="Vacation">Vacation Leave</option>
+                        <option value="Sick">Sick Leave</option>
+                        <option value="Personal">Personal Leave</option>
+                    </select>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label for="start-date" class="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
+                        <input type="date" id="start-date" name="startDate" required
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#0ea5e9] focus:border-[#0ea5e9] transition-colors">
+                    </div>
+                    <div>
+                        <label for="end-date" class="block text-sm font-medium text-gray-700 mb-1">End Date</label>
+                        <input type="date" id="end-date" name="endDate" required
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#0ea5e9] focus:border-[#0ea5e9] transition-colors">
+                    </div>
+                </div>
+                <div>
+                    <label for="reason" class="block text-sm font-medium text-gray-700 mb-1">Reason</label>
+                    <textarea id="reason" name="reason" rows="4" required
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#0ea5e9] focus:border-[#0ea5e9] transition-colors resize-none"
+                        placeholder="e.g., Vacation trip to the mountains..."></textarea>
+                </div>
+                <button type="submit"
+                    class="w-full bg-[#1F446A] text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-[#153452] focus:outline-none focus:ring-2 focus:ring-[#0ea5e9] focus:ring-offset-2 transition-all duration-200">
+                    Submit Application
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer Section -->
+    <footer class="bg-gray-800 text-white p-4 text-center mt-auto rounded-t-lg">
+        <p class="text-sm">&copy; 2025 Wordlane Tech. All rights reserved.</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Mock data for leave applications
+            const leaveHistoryData = [
+                { id: 'leave-001', leaveType: 'Vacation', startDate: '2025-09-01', endDate: '2025-09-05', reason: 'Family trip', status: 'Approved' },
+                { id: 'leave-002', leaveType: 'Sick', startDate: '2025-08-20', endDate: '2025-08-21', reason: 'Flu symptoms', status: 'Approved' },
+                { id: 'leave-003', leaveType: 'Personal', startDate: '2025-10-15', endDate: '2025-10-15', reason: 'Attending a workshop', status: 'Pending' },
+                { id: 'leave-004', leaveType: 'Vacation', startDate: '2025-12-24', endDate: '2025-12-31', reason: 'Holiday vacation', status: 'Pending' },
+                { id: 'leave-005', leaveType: 'Sick', startDate: '2025-07-01', endDate: '2025-07-02', reason: 'Doctor\'s appointment', status: 'Rejected' },
+            ];
+
+            // Function to handle the profile dropdown toggle
+            function setupProfileDropdown() {
+                const profileButton = document.getElementById('profileButton');
+                const profileDropdown = document.getElementById('profileDropdown');
+
+                profileButton.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    profileDropdown.classList.toggle('show');
+                });
+
+                document.addEventListener('click', () => {
+                    if (profileDropdown.classList.contains('show')) {
+                        profileDropdown.classList.remove('show');
+                    }
+                });
+            }
+            
+            // Function to render a single leave history row
+            function createLeaveRow(leave) {
+                let statusClass;
+                let statusText;
+
+                if (leave.status === 'Approved') {
+                    statusClass = 'status-badge-approved';
+                    statusText = 'Approved';
+                } else if (leave.status === 'Rejected') {
+                    statusClass = 'status-badge-rejected';
+                    statusText = 'Rejected';
+                } else {
+                    statusClass = 'status-badge-pending';
+                    statusText = 'Pending';
+                }
+
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-gray-100 transition-colors';
+
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${leave.leaveType}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${leave.startDate}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${leave.endDate}</td>
+                    <td class="px-6 py-4 text-sm text-gray-500 max-w-xs truncate">${leave.reason}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <span class="status-badge ${statusClass}">${statusText}</span>
+                    </td>
+                `;
+
+                return row;
+            }
+
+            // Function to populate the leave history table
+            function populateLeaveHistory() {
+                const tableBody = document.getElementById('leave-history-table');
+                tableBody.innerHTML = ''; // Clear existing content
+                
+                if (leaveHistoryData.length === 0) {
+                     const emptyRow = document.createElement('tr');
+                     emptyRow.innerHTML = '<td colspan="5" class="px-6 py-4 text-center text-gray-500 text-lg">No leave applications found.</td>';
+                     tableBody.appendChild(emptyRow);
+                } else {
+                     leaveHistoryData.forEach(leave => {
+                        const row = createLeaveRow(leave);
+                        tableBody.appendChild(row);
+                    });
+                }
+            }
+
+            // --- Modal and Form Logic ---
+            const applyLeaveBtn = document.getElementById('applyLeaveBtn');
+            const leaveModal = document.getElementById('leaveModal');
+            const closeModalBtn = document.getElementById('closeModalBtn');
+            const leaveForm = document.getElementById('leave-form');
+
+            // Open the modal when the "Apply for Leave" button is clicked
+            applyLeaveBtn.addEventListener('click', () => {
+                leaveModal.style.display = 'flex';
+                // Add a small delay to allow for the display property to be applied before the transition starts
+                setTimeout(() => {
+                    leaveModal.classList.add('show');
+                }, 10);
+            });
+
+            // Close the modal when the close button is clicked
+            closeModalBtn.addEventListener('click', () => {
+                leaveModal.classList.remove('show');
+                setTimeout(() => {
+                    leaveModal.style.display = 'none';
+                }, 300); // Match this delay with the transition duration
+            });
+
+            // Close the modal if the user clicks outside of the modal content
+            window.addEventListener('click', (e) => {
+                if (e.target === leaveModal) {
+                    leaveModal.classList.remove('show');
+                    setTimeout(() => {
+                        leaveModal.style.display = 'none';
+                    }, 300); // Match this delay with the transition duration
+                }
+            });
+            
+            // Handle form submission
+            leaveForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                
+                const formData = new FormData(leaveForm);
+                const leaveData = Object.fromEntries(formData.entries());
+
+                console.log('New Leave Application:', leaveData);
+                
+                // Close the modal after submission
+                leaveModal.classList.remove('show');
+                setTimeout(() => {
+                    leaveModal.style.display = 'none';
+                }, 300); // Match this delay with the transition duration
+                
+                // Show a custom message box instead of alert()
+                const messageBox = document.createElement('div');
+                messageBox.className = "fixed bottom-5 right-5 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg flex items-center transition-all duration-300 transform translate-x-full";
+                messageBox.innerHTML = `<i class="fas fa-check-circle mr-2"></i> Leave application submitted successfully!`;
+                document.body.appendChild(messageBox);
+                
+                // Animate message box in
+                setTimeout(() => {
+                    messageBox.style.transform = 'translateX(0)';
+                }, 50);
+                
+                // Animate message box out and remove it
+                setTimeout(() => {
+                    messageBox.style.transform = 'translateX(150%)';
+                    messageBox.addEventListener('transitionend', () => messageBox.remove());
+                }, 4000);
+
+                leaveForm.reset();
+            });
+
+            // Run the setup functions
+            setupProfileDropdown();
+            populateLeaveHistory();
+        });
+    </script>
+</body>
+</html>

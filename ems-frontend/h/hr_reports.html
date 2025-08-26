@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HR Portal - Reports</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter for a clean, modern look -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <link rel="stylesheet" href="hr_styles.css">
+    <style>
+        /* Additional styles for reports page if needed */
+    </style>
+</head>
+
+<body class="bg-gray-50 min-h-screen flex flex-col font-inter">
+
+    <!-- Header Section -->
+    <header class="header-gradient p-5 shadow-lg flex flex-col sm:flex-row items-center justify-between sticky top-0 z-10 mt-5 mr-5 ml-5 mb-5" style="border-radius: 40px;">
+        <!-- Left side: Logo and Company Name (clickable to dashboard) -->
+        <a href="hr_dashboard.html" class="flex items-center mb-4 sm:mb-0 text-gray-800 no-underline hover:opacity-80 transition duration-200">
+            <!-- Company Logo -->
+            <img src="https://placehold.co/48x48/1F446A/FFFFFF?text=WLT" alt="Wordlane Tech Logo" class="mr-3 w-12 h-12 " style="object-fit: cover; border-radius: 50px; border: 3px solid #1F446A;">
+            <h1 class="text-2xl font-bold tracking-wide" style="color: #1F446A;">WordLane Tech</h1>
+        </a>
+        <!-- Center: Navigation Links -->
+        <nav class="bg-gray-100/50 p-2 rounded-full shadow-inner mb-4 md:mb-0" style="box-shadow:inset 2px 2px 9px 2px #57525224; padding: 10px 20px ">
+            <ul class="flex flex-wrap justify-center md:flex-nowrap  list-none p-0 m-0 text-sm " style="gap: 10px;">
+                <li><a href="hr_dashboard.html" class="nav-link flex items-center px-4 py-2 rounded-full text-gray-700 hover:bg-gray-200 transition-colors"><i class="fas fa-home mr-2"></i> Dashboard</a></li>
+                <li><a href="hr_employees.html" class="nav-link flex items-center px-4 py-2 rounded-full text-gray-700 hover:bg-gray-200 transition-colors"><i class="fas fa-users mr-2"></i> Employees</a></li>
+                <li><a href="hr_departments.html" class="nav-link flex items-center px-4 py-2 rounded-full text-gray-700 hover:bg-gray-200 transition-colors"><i class="fas fa-building mr-2"></i> Departments</a></li>
+                <li><a href="hr_attendance.html" class="nav-link flex items-center px-4 py-2 rounded-full text-gray-700 hover:bg-gray-200 transition-colors"><i class="fas fa-clock mr-2"></i> Attendance</a></li>
+                <li><a href="hr_leaves.html" class="nav-link flex items-center px-4 py-2 rounded-full text-gray-700 hover:bg-gray-200 transition-colors"><i class="fas fa-calendar-alt mr-2"></i> Leaves</a></li>
+                <li><a href="hr_documents.html" class="nav-link flex items-center px-4 py-2 rounded-full text-gray-700 hover:bg-gray-200 transition-colors"><i class="fas fa-file-alt mr-2"></i> Documents</a></li>
+                <li><a href="hr_reports.html" class="nav-link flex items-center px-4 py-2 rounded-full text-gray-700 hover:bg-gray-200 transition-colors active"><i class="fas fa-chart-bar mr-2"></i> Reports</a></li>
+            </ul>
+        </nav>
+        <!-- Right side: AMAZING Profile Capsule with dropdown -->
+        <div class="relative">
+            <button id="profileButton" class="profile-container focus:outline-none" aria-label="User Profile Menu">
+                <div class="profile-picture">
+                    <img src="https://placehold.co/48x48/CCCCCC/FFFFFF?text=HR" alt="User Profile">
+                </div>
+                <div class="profile-info">
+                    <p class="profile-name">HR Manager</p>
+                </div>
+            </button>
+
+            <!-- Enhanced Profile Dropdown Menu -->
+            <div id="profileDropdown" class="profile-dropdown">
+                <a href="hr_profile.html" class="flex items-center">
+                    <i class="fas fa-user" aria-hidden="true"></i>
+                    My Profile
+                </a>
+                <a href="../login.html" class="flex items-center">
+                    <i class="fas fa-sign-out-alt" aria-hidden="true"></i>
+                    Log Out
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow p-4 sm:p-8 bg-gray-50">
+                <div class="max-w-5xl mx-auto">
+                    <h2 class="text-3xl font-extrabold text-gray-900 mb-8">Reports</h2>
+                    <div class="mb-4 text-gray-700 font-semibold">
+                        Select a report to generate and download.
+                    </div>
+                    <div class="grid gap-6 md:grid-cols-3 sm:grid-cols-2 grid-cols-1">
+                        <button class="report-btn flex items-center gap-3 justify-center px-6 py-6 rounded-2xl shadow bg-white border border-gray-200 hover:shadow-md hover:bg-[#f0f4fa] transition text-lg font-semibold"
+                            id="generateMonthlyAttendance">
+                            <i class="fas fa-calendar-check fa-lg text-[#1F446A]"></i>
+                            Generate Monthly Attendance Report
+                        </button>
+                        <button class="report-btn flex items-center gap-3 justify-center px-6 py-6 rounded-2xl shadow bg-white border border-gray-200 hover:shadow-md hover:bg-[#f0f4fa] transition text-lg font-semibold"
+                            id="generateTurnoverReport">
+                            <i class="fas fa-user-slash fa-lg text-[#1F446A]"></i>
+                            Generate Employee Turnover Report
+                        </button>
+                        <button class="report-btn flex items-center gap-3 justify-center px-6 py-6 rounded-2xl shadow bg-white border border-gray-200 hover:shadow-md hover:bg-[#f0f4fa] transition text-lg font-semibold"
+                            id="generateDeptHeadcount">
+                            <i class="fas fa-users fa-lg text-[#1F446A]"></i>
+                            Generate Department Headcount Report
+                        </button>
+                    </div>
+                    <div id="reportMessage" class="mt-8 hidden text-green-700 text-center text-lg font-bold"></div>
+                </div>
+    </main>
+
+    <!-- Footer Section -->
+    <footer class="bg-gray-800 text-white p-4 text-center mt-auto rounded-t-lg">
+        <p class="text-sm">&copy; 2025 Wordlane Tech. All rights reserved.</p>
+    </footer>
+
+    <!-- JavaScript for Clock and Dropdown -->
+    <script src="hr_script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const liveClock = document.getElementById('liveClock');
+            function updateLiveClock() {
+                const now = new Date();
+                const timeString = now.toLocaleTimeString('en-US', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: true
+                });
+                liveClock.textContent = timeString;
+            }
+            setInterval(updateLiveClock, 1000);
+        });
+    </script>
+</body>
+</html>

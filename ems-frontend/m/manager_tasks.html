@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Wordlane Tech Employee Tasks - View assigned tasks and their details.">
+    <meta name="keywords" content="Employee Tasks, HR, Tasks, Wordlane Tech">
+    <meta name="author" content="Wordlane Tech">
+    <title>Wordlane Tech - My Tasks</title>
+
+    <!-- Google Fonts: Roboto for professional typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" xintegrity="sha512-Fo3rlrZj/k7ujTnHg4CGR2D7kSs0V4LLanw2qksYuRlEzO+tcaEPQogQ0KaoGN26/zrn20ImR1DfuLWnOo7aBA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/manager_tasks.css">
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+
+    <!-- Header Section -->
+    <header class="header-gradient p-5 shadow-lg  flex flex-col sm:flex-row items-center justify-between sticky top-0 z-10 mt-5 mr-5 ml-5 mb-5" style="border-radius: 40px;">
+        <!-- Left side: Logo and Company Name (clickable to dashboard) -->
+        <a href="manager_tasks.html" class="flex items-center mb-4 sm:mb-0 text-gray-800 no-underline hover:opacity-80 transition duration-200">
+            <!-- Company Logo -->
+            <img src="images/WLT_LOGO2.jpg" alt="Wordlane Tech Logo" class="mr-3 w-12 h-12 " style="object-fit: cover; border-radius: 50px; border: 3px solid #1F446A;">
+            <h1 class="text-2xl font-bold tracking-wide" style="color: #1F446A;">WordLane Tech</h1>
+        </a>
+        <!-- Center: Navigation Links -->
+         <nav class="navbar">
+            <div class="navbar-container">
+                <ul class="nav-list">
+                    <li class="nav-item"><a href="manager_dashboard.html" class="nav-link"><i class="fas fa-home nav-icon"></i> Dashboard</a></li>
+                    <li class="nav-item"><a href="manager_projects.html" class="nav-link"><i class="fas fa-users nav-icon"></i> Projects</a></li>
+                    <li class="nav-item"><a href="manager_tasks.html" class="nav-link active" aria-current="page"><i class="fas fa-project-diagram nav-icon"></i> Tasks</a></li>
+                    <li class="nav-item"><a href="manager_leaves.html" class="nav-link"><i class="fas fa-calendar-alt nav-icon"></i> Leaves</a></li>
+                    <li class="nav-item"><a href="manager_documents.html" class="nav-link"><i class="fas fa-clock nav-icon"></i> Documents</a></li>
+                    <li class="nav-item"><a href="manager_teams.html" class="nav-link"><i class="fas fa-chart-line nav-icon"></i> Teams</a></li>
+                    <li class="nav-item"><a href="manager_apply_leave.html" class="nav-link"><i class="fas fa-clock nav-icon"></i> Request</a></li>
+                    
+            </div>
+        </nav>
+        <!-- Right side: AMAZING Profile Capsule with dropdown -->
+        <div class="relative">
+            <button id="profileButton" class="profile-container focus:outline-none" aria-label="User Profile Menu">
+                <div class="profile-picture">
+                    <img src="https://placehold.co/48x48/CCCCCC/FFFFFF?text=JP" alt="User Profile">
+                </div>
+                <div class="profile-info">
+                    <p class="profile-name">John Parker</p>
+                    <!-- <p class="profile-role">Software Developer</p> -->
+                </div>
+                <!-- <div class="profile-status"></div> -->
+            </button>
+
+            <!-- Enhanced Profile Dropdown Menu -->
+            <div id="profileDropdown" class="profile-dropdown">
+                <a href="employee_profile.html" class="flex items-center">
+                    <i class="fas fa-user" aria-hidden="true"></i>
+                    My Profile
+                </a>
+                <a href="../login.html" class="flex items-center">
+                    <i class="fas fa-sign-out-alt" aria-hidden="true"></i>
+                    Log Out
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation Bar for Employee Dashboard -->
+    
+
+    <!-- Main Content Area - Employee Tasks List (Cards) -->
+    <main class="flex-grow p-8 bg-gray-50">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-3xl font-extrabold text-gray-900 page-title">My Tasks</h2>
+                <button id="addNewTaskBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105">
+                    <i class="fas fa-plus mr-2"></i>Add New Task
+                </button>
+            </div>
+
+            <!-- Loading State -->
+            <div id="loadingState" class="text-center py-10 hidden">
+                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto"></div>
+                <p class="mt-4 text-gray-600">Loading tasks...</p>
+            </div>
+
+            <!-- Error State -->
+            <div id="errorState" class="hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                <strong class="font-bold">Error!</strong>
+                <span class="block sm:inline"> Unable to load tasks. Please try refreshing the page.</span>
+            </div>
+
+            <!-- Task Cards Grid -->
+            <div id="tasksGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Task cards will be dynamically inserted here -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer Section -->
+    <footer class="bg-gray-800 text-white p-4 text-center mt-auto rounded-t-lg">
+        <p class="text-sm">&copy; 2025 Wordlane Tech. All rights reserved.</p>
+    </footer>
+
+    <script src="js/manager_tasks.js"></script>
+</body>
+</html>

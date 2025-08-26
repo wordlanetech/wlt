@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Wordlane Tech Manager Leave Management - Approve and manage team leave requests.">
+    <meta name="keywords" content="Manager Leave Management, Leave Approval, Team Management, Wordlane Tech">
+    <meta name="author" content="Wordlane Tech">
+    <title>Wordlane Tech - Manager Leaves</title>
+
+    <!-- Google Fonts: Roboto for professional typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="./css/manager_leaves.css">
+   
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+
+    <!-- Header Section -->
+    <header class="header-gradient p-5 shadow-lg flex flex-col sm:flex-row items-center justify-between sticky top-0 z-10 mt-5 mr-5 ml-5 mb-5" style="border-radius: 40px;">
+        <!-- Left side: Logo and Company Name (clickable to dashboard) -->
+        <a href="manager_dashboard.html" class="flex items-center mb-4 sm:mb-0 text-gray-800 no-underline hover:opacity-80 transition duration-200">
+            <!-- Company Logo -->
+            <img src="/images/WLT_LOGO2.jpg" alt="Wordlane Tech Logo" class="mr-3 w-12 h-12 " style="object-fit: cover; border-radius: 50px; border: 3px solid #1F446A;">
+            <h1 class="text-2xl font-bold tracking-wide" style="color: #1F446A;">WordLane Tech</h1>
+        </a>
+        <!-- Center: Navigation Links -->
+         <nav class="navbar">
+            <div class="navbar-container">
+                <ul class="nav-list">
+                    <li class="nav-item"><a href="manager_dashboard.html" class="nav-link"><i class="fas fa-home nav-icon"></i> Dashboard</a></li>
+                    <li class="nav-item"><a href="manager_projects.html" class="nav-link"><i class="fas fa-calendar-alt nav-icon"></i> Projects</a></li>
+                    <li class="nav-item"><a href="manager_tasks.html" class="nav-link"><i class="fas fa-users nav-icon"></i> Tasks</a></li>
+                    <li class="nav-item"><a href="manager_leaves.html" class="nav-link active" aria-current="page"><i class="fas fa-project-diagram nav-icon"></i> Leave</a></li>
+                    <li class="nav-item"><a href="manager_documents.html" class="nav-link"><i class="fas fa-clock nav-icon"></i> Documents</a></li>
+                    <li class="nav-item"><a href="manager_teams.html" class="nav-link"><i class="fas fa-chart-line nav-icon"></i> Teams</a></li>
+                    <li class="nav-item"><a href="manager_apply_leave.html" class="nav-link"><i class="fas fa-clock nav-icon"></i>Apply Leave</a></li>
+                    
+                </ul>
+            </div>
+        </nav>
+        <!-- Right side: AMAZING Profile Capsule with dropdown -->
+        <div class="relative">
+            <button id="profileButton" class="profile-container focus:outline-none" aria-label="User Profile Menu">
+                <div class="profile-picture">
+                    <img src="https://placehold.co/48x48/CCCCCC/FFFFFF?text=MG" alt="Manager Profile">
+                </div>
+                <div class="profile-info">
+                    <p class="profile-name">Manager</p>
+                </div>
+            </button>
+
+            <!-- Enhanced Profile Dropdown Menu -->
+            <div id="profileDropdown" class="profile-dropdown">
+                <a href="manager_profile.html" class="flex items-center">
+                    <i class="fas fa-user" aria-hidden="true"></i>
+                    My Profile
+                </a>
+                <a href="../../login.html" class="flex items-center">
+                    <i class="fas fa-sign-out-alt" aria-hidden="true"></i>
+                    Log Out
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area - Manager Leaves -->
+    <main class="flex-grow p-8 bg-gray-50">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-3xl font-extrabold text-gray-900 page-title">Team Leave Management</h2>
+            </div>
+
+            <!-- Leave Overview Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="leave-overview-card">
+                    <div class="overview-icon pending">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="overview-content">
+                        <h3>Pending Requests</h3>
+                        <p class="overview-number" id="pendingCount">0</p>
+                    </div>
+                </div>
+                <div class="leave-overview-card">
+                    <div class="overview-icon approved">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="overview-content">
+                        <h3>Approved This Month</h3>
+                        <p class="overview-number" id="approvedCount">0</p>
+                    </div>
+                </div>
+                <div class="leave-overview-card">
+                    <div class="overview-icon on-leave-today">
+                        <i class="fas fa-user-minus"></i>
+                    </div>
+                    <div class="overview-content">
+                        <h3>On Leave Today</h3>
+                        <p class="overview-number" id="onLeaveCount">0</p>
+                    </div>
+                </div>
+                <div class="leave-overview-card">
+                    <div class="overview-icon upcoming">
+                        <i class="fas fa-calendar-plus"></i>
+                    </div>
+                    <div class="overview-content">
+                        <h3>Upcoming Leaves</h3>
+                        <p class="overview-number" id="upcomingCount">0</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <div class="flex flex-wrap justify-between items-center gap-4">
+                    <div class="flex flex-wrap gap-4">
+                        <div>
+                            <label for="statusFilter" class="filter-label">Status</label>
+                            <select id="statusFilter" class="filter-select">
+                                <option value="all">All Status</option>
+                                <option value="pending">Pending</option>
+                                <option value="approved">Approved</option>
+                                <option value="rejected">Rejected</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="typeFilter" class="filter-label">Leave Type</label>
+                            <select id="typeFilter" class="filter-select">
+                                <option value="all">All Types</option>
+                                <option value="casual">Casual Leave</option>
+                                <option value="sick">Sick Leave</option>
+                                <option value="annual">Annual Leave</option>
+                                <option value="emergency">Emergency Leave</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="departmentFilter" class="filter-label">Department</label>
+                            <select id="departmentFilter" class="filter-select">
+                                <option value="all">All Departments</option>
+                                <option value="engineering">Engineering</option>
+                                <option value="hr">Human Resources</option>
+                                <option value="marketing">Marketing</option>
+                                <option value="sales">Sales</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Loading State -->
+            <div id="loadingState" class="text-center py-10 hidden">
+                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto"></div>
+                <p class="mt-4 text-gray-600">Loading leave requests...</p>
+            </div>
+
+            <!-- Error State -->
+            <div id="errorState" class="hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                <strong class="font-bold">Error!</strong>
+                <span class="block sm:inline"> Unable to load leave data. Please try refreshing the page.</span>
+            </div>
+
+            <!-- Leave Requests Grid -->
+            <div id="leavesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Leave request cards will be dynamically inserted here -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Leave Action Modal -->
+    <div id="leaveActionModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="bg-white p-6 rounded-lg shadow-xl max-w-md w-full mx-4">
+            <h3 id="modalTitle" class="text-lg font-semibold text-gray-800 mb-4"></h3>
+            <textarea id="modalComment" rows="3" placeholder="Add a comment (optional)" class="w-full p-3 border border-gray-300 rounded-lg mb-4"></textarea>
+            <div class="flex justify-end space-x-3">
+                <button id="modalCancelBtn" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-lg">Cancel</button>
+                <button id="modalConfirmBtn" class="font-bold py-2 px-4 rounded-lg text-white"></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer Section -->
+    <footer class="bg-gray-800 text-white p-4 text-center mt-auto rounded-t-lg">
+        <p class="text-sm">&copy; 2025 Wordlane Tech. All rights reserved.</p>
+    </footer>
+
+    <script src="../js/manager_leaves.js"></script>
+</body>
+</html>
