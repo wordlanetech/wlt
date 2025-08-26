@@ -3,7 +3,7 @@ name: Deploy to EC2
 on:
   push:
     branches:
-      - master
+      - main
 
 jobs:
   deploy:
@@ -23,10 +23,10 @@ jobs:
           script: |
             # Backend deploy
             cd /home/ubuntu/wlt/ems-backend
-            git pull origin master
+            git pull origin main
             npm install
             pm2 restart ems-backend
 
             # Frontend deploy (HTML/CSS only, no npm)
             cd /home/ubuntu/wlt/ems-frontend
-            git pull origin master
+            git pull origin main
