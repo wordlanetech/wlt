@@ -28,6 +28,7 @@ const profileRoutes = require('./routes/profile');
 const projectRoutes = require('./routes/projectRoutes');
 const authMiddleware = require('./middleware/auth.middleware');
 
+
 // Protect project routes
 app.use('/api/projects', authMiddleware, projectRoutes);
 

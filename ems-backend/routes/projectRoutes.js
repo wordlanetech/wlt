@@ -1,10 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const projectController = require('../controllers/projectController');
-const authMiddleware = require('../middleware/auth.middleware');
+const profileController = require('../controllers/profileController');
 
-// Protected routes
-router.get('/', authMiddleware, projectController.getProjects);
-router.post('/', authMiddleware, projectController.createProject);
+// GET profile by employee ID
+router.get('/:userId', profileController.getProfileByUserId);
 
 module.exports = router;
