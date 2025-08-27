@@ -28,12 +28,8 @@ const profileRoutes = require('./routes/profile');
 const projectRoutes = require('./routes/projectRoutes');
 const authMiddleware = require('./middleware/auth.middleware');
 
-
 // Protect project routes
 app.use('/api/projects', authMiddleware, projectRoutes);
-
-
-
 
 // Route mounts
 app.use('/api/auth', authRoutes);
@@ -51,12 +47,10 @@ app.use('/api/teams', teamRoutes);
 app.use('/api/leaves', leaveRoutes);
 app.use('/api', profileRoutes);
 
-
 // Health check route
 app.get('/', (req, res) => {
     res.send('EMS Backend is running.');
 });
-
 
 // Global error handler for JSON parse issues
 app.use((err, req, res, next) => {
@@ -66,6 +60,7 @@ app.use((err, req, res, next) => {
     next();
 });
 
+// Start server
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });
