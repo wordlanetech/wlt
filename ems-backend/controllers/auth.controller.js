@@ -37,7 +37,7 @@ exports.login = async (req, res) => {
         // ✅ Absolute URL paths for frontend
         const rolePages = {
             1: '/ems-frontend/a/admin_dashboard.html',
-            2: '/h/hr_dashboard.html',
+            2: 'h/hr_dashboard.html',
             3: '/ems-frontend/m/manager_dashboard.html',
             4: '/ems-frontend/e/dashboard.html',
         };
