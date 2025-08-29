@@ -94,10 +94,15 @@
         </div>
     </header>
     <main class="flex-grow p-8 bg-gray-50">
+        
         <div class="max-w-7xl mx-auto">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8">
                 <h2 class="text-3xl font-extrabold text-gray-900 page-title mb-4 sm:mb-0">All Projects</h2>
+                <button id="addDepartmentBtn" style="background: linear-gradient(0ea5e9, );" class="bg-gradient-to-r from-[#1F446A] to-[#0ea5e9] text-white font-bold py-2 px-4 rounded-lg shadow-md transition-all duration-500 ease-in-out flex items-center hover:shadow-lg hover:scale-105">
+                    <i class="fas fa-plus mr-2"></i> Add New Project
+                </button>
             </div>
+            
             <div id="projectsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <!-- Project cards will be dynamically inserted here -->
             </div>
