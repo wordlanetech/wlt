@@ -170,6 +170,36 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const token = localStorage.getItem("token");
 
+        // Modal functionality
+    const addDepartmentBtn = document.getElementById('addDepartmentBtn');
+    const addDepartmentModal = document.getElementById('addDepartmentModal');
+    const closeAddDepartmentModal = document.getElementById('closeAddDepartmentModal');
+    const cancelAddDepartment = document.getElementById('cancelAddDepartment');
+    const addDepartmentForm = document.getElementById('addDepartmentForm');
+
+    // Open modal
+    addDepartmentBtn.addEventListener('click', () => {
+        addDepartmentModal.classList.add('active');
+        addDepartmentModal.querySelector('.modal-content').classList.add('active');
+        document.body.style.overflow = 'hidden';
+    });
+
+    // Close modal functions
+    function closeModal() {
+        addDepartmentModal.classList.remove('active');
+        addDepartmentModal.querySelector('.modal-content').classList.remove('active');
+        document.body.style.overflow = 'auto';
+        addDepartmentForm.reset();
+    }
+
+    closeAddDepartmentModal.addEventListener('click', closeModal);
+    cancelAddDepartment.addEventListener('click', closeModal);
+
+    addDepartmentModal.addEventListener('click', function (e) {
+        if (e.target === addDepartmentModal) {
+            closeModal();
+        }
+    });
     // -----------------------
     // Fetch & Set Profile Name
     // -----------------------
