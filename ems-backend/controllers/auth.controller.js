@@ -5,13 +5,14 @@ const jwt = require('jsonwebtoken');
 const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret_key';
 
 exports.login = async (req, res) => {
-    const { user_id, password_hash } = req.body;
+    const { user_id, password } = req.body; // Expect plain password
 
-    if (!user_id || !password_hash) {
+    if (!user_id || !password) {
         return res.status(400).json({ message: 'Missing credentials' });
     }
 
     try {
+        // Fetch user from DB
         const [rows] = await db.execute(
             'SELECT user_id, password_hash, role_id FROM emp_employees WHERE user_id = ?',
             [user_id]
@@ -22,19 +23,22 @@ exports.login = async (req, res) => {
         }
 
         const user = rows[0];
-        const passwordMatch = await bcrypt.compare(password_hash, user.password_hash);
+
+        // Compare plain password with hashed password
+        const passwordMatch = await bcrypt.compare(password, user.password_hash);
 
         if (!passwordMatch) {
             return res.status(401).json({ message: 'Invalid User ID or Password' });
         }
 
+        // Generate JWT token
         const token = jwt.sign(
             { user_id: user.user_id, role_id: user.role_id },
             JWT_SECRET,
             { expiresIn: '2h' }
         );
 
-        // ✅ Absolute URL paths for frontend
+        // Map role to frontend pages
         const rolePages = {
             1: '/ems-frontend/a/admin_dashboard.html',
             2: '/ems-frontend/h/hr_dashboard.html',
