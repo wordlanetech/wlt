@@ -379,7 +379,7 @@
     // Fetch from backend and render
     async function fetchAndRenderDepartments() {
         try {
-            const response = await fetch('/api/full-departments');
+            const response = await fetch('http://localhost:3000/api/full-departments');
             if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
             const departments = await response.json();
             renderDepartments(departments);

@@ -597,12 +597,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Fetch profile from backend API ---
     async function loadUserProfile() {
         try {
-            const response = await fetch('/api/profile'); // Ensure backend route exists
+            const response = await fetch('http://localhost:3000/api/profile'); // Ensure backend route exists
             if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
             const profile = await response.json();
             populateProfileData(profile);
         } catch (error) {
-            showNotification('Error loading profile data', true);
+            showNotification('Error loading profile data', true);   
             console.error('Profile fetch error:', error);
         }
     }

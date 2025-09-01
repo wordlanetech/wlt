@@ -17,7 +17,7 @@ document.addEventListener('click', (event) => {
     }
 });
 
-    const API_URL = `/api/manager/projects/list?user_id=${user_id}`;
+    const API_URL = `http://localhost:3000/api/manager/projects/list?user_id=${user_id}`;
     const projectsGrid = document.getElementById('projectsGrid');
     const loadingState = document.getElementById('loadingState');
     const errorState = document.getElementById('errorState');

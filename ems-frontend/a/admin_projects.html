@@ -128,7 +128,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     if (!storedName && token) {
         try {
-            const res = await fetch("http://localhost:3001/api/profile", {
+            const res = await fetch("http://localhost:3000/api/profile", {
                 headers: { "Authorization": `Bearer ${token}` }
             });
             if (res.ok) {
@@ -206,7 +206,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 return;
             }
 
-            const response = await fetch('/api/projects', {
+            const response = await fetch('http://localhost:3000/api/projects', {
                 method: 'GET',
                 headers: { 
                     'Authorization': `Bearer ${token}`,

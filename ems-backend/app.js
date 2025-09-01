@@ -24,7 +24,7 @@ const taskRoutes = require('./routes/taskRoutes');
 const a_dashboard = require('./routes/a_dashboard.routes');
 const teamRoutes = require('./routes/team.routes');
 const leaveRoutes = require('./routes/leave.route');
-const profileRoutes = require('./routes/profile');
+const profileRoutes = require('./routes/employeesCard.routes');
 const projectRoutes = require('./routes/projectRoutes');
 const authMiddleware = require('./middleware/auth.middleware');
 
@@ -32,7 +32,7 @@ const authMiddleware = require('./middleware/auth.middleware');
 app.use('/api/projects', authMiddleware, projectRoutes);
 
 // Route mounts
-app.use('/api', authRoutes);
+app.use('/api/auth', authRoutes);
 app.use('/api/hr/dashboard', dashboardRoutes);
 app.use('/api/employee', employeeRoutes);
 app.use('/api/employees', employeeRoutes);
@@ -45,7 +45,7 @@ app.use('/api/tasks', taskRoutes);
 app.use('/api/', a_dashboard);
 app.use('/api/teams', teamRoutes);
 app.use('/api/leaves', leaveRoutes);
-app.use('/api', profileRoutes);
+app.use('/api/Profile', profileRoutes);
 
 // Health check route
 app.get('/', (req, res) => {
@@ -64,4 +64,3 @@ app.use((err, req, res, next) => {
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });
-module.exports = app;

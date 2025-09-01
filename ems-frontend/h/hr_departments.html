@@ -377,7 +377,7 @@
     // Fetch from backend and render
     async function fetchAndRenderDepartments() {
         try {
-            const response = await fetch('/api/full-departments');
+            const response = await fetch('http://localhost:3000/api/full-departments');
             if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
             const departments = await response.json();
             renderDepartments(departments);
@@ -396,8 +396,6 @@
             const deptCard = `
                 <div class="department-card">
                     <h3>${dept.name}</h3>
-                    <p class="department-id">#${dept.id}</p>
-                    <p>${dept.description || 'No description provided.'}</p>
                     <div class="department-info">
                         <div class="info-item">
                             <span class="info-label">Head</span>
@@ -466,7 +464,7 @@
         };
 
         try {
-            const response = await fetch('http://localhost:3001/api/full-departments', {
+            const response = await fetch('http://localhost:3000/api/full-departments', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(newDepartment)

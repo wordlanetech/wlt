@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const API_BASE_URL = '/api';
+    const API_BASE_URL = 'http://localhost:3000/api';
 
     const addEmployeeBtn = document.getElementById('addEmployeeBtn');
     const addEmployeeModal = document.getElementById('addEmployeeModal');
