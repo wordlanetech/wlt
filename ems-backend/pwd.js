@@ -1,6 +1,12 @@
+// Install bcrypt if not already:
+// npm install bcrypt
+
 const bcrypt = require('bcrypt');
 
-(async () => {
-    const hash = await bcrypt.hash('password', 12);
-    console.log(hash); // Copy the **full hash** (60 chars)
-})();
+const password = 'password'; // raw password
+const saltRounds = 12;
+
+bcrypt.hash(password, saltRounds, (err, hash) => {
+  if (err) throw err;
+  console.log('Hashed password:', hash);
+});
