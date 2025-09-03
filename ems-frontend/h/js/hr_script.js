@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    fetch('http://localhost:3000/api/hr/dashboard/summary')
+    fetch('https://dashboard.wordlanetech.com/api/hr/dashboard/summary')
         .then(res => res.json())
         .then(data => {
             document.querySelectorAll('.dashboard-card')[0].querySelector('.number').textContent = data.totalEmployees;
@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
             document.querySelectorAll('.dashboard-card')[3].querySelector('.number').textContent = data.activeProjects;
         });
 
-    fetch('http://localhost:3000/api/hr/dashboard/activities')
+    fetch('https://dashboard.wordlanetech.com/api/hr/dashboard/activities')
         .then(res => res.json())
         .then(activities => {
             const activityContainer = document.querySelector('.activity-card .space-y-2');

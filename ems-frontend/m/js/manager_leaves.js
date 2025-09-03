@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
   async function fetchLeaves() {
     try {
       loadingState.classList.remove('hidden');
-      const res = await fetch('http://localhost:3000/api/leaves'); // Adjust path if needed
+      const res = await fetch('https://dashboard.wordlanetech.com/api/leaves'); // Adjust path if needed
       if (!res.ok) throw new Error('Failed to fetch leaves');
 
       const leaves = await res.json();
@@ -148,7 +148,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!selectedLeaveId || !selectedAction) return;
 
     try {
-      const res = await fetch(`http://localhost:3000/api/leaves/${selectedLeaveId}`, {
+      const res = await fetch(`https://dashboard.wordlanetech.com/api/leaves/${selectedLeaveId}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json'

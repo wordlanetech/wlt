@@ -38,7 +38,7 @@ document.addEventListener("DOMContentLoaded", function () {
 // 📦 Fetch and inject real-time dashboard data
 async function fetchDashboardData() {
   try {
-    const response = await fetch("http://localhost:3000/api/dashboard-stats");
+    const response = await fetch("https://dashboard.wordlanetech.com/api/dashboard-stats");
     const data = await response.json();
 
     // Update dashboard numbers

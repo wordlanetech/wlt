@@ -377,7 +377,7 @@
     // Fetch from backend and render
     async function fetchAndRenderDepartments() {
         try {
-            const response = await fetch('http://localhost:3000/api/full-departments');
+            const response = await fetch('https://dashboard.wordlanetech.com/api/full-departments');
             if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
             const departments = await response.json();
             renderDepartments(departments);
@@ -464,7 +464,7 @@
         };
 
         try {
-            const response = await fetch('http://localhost:3000/api/full-departments', {
+            const response = await fetch('https://dashboard.wordlanetech.com/api/full-departments', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(newDepartment)

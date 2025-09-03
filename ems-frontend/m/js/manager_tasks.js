@@ -78,7 +78,7 @@ async function markTaskComplete(taskId) {
     if (!confirm(`Mark task ${taskId} as complete?`)) return;
 
     try {
-        const response = await fetch(`http://localhost:3000/api/tasks/${taskId}/complete`, {
+        const response = await fetch(`https://dashboard.wordlanetech.com/api/tasks/${taskId}/complete`, {
             method: 'PATCH'
         });
 
@@ -101,7 +101,7 @@ async function fetchEmployeeTasksData() {
         errorState.classList.add('hidden');
         tasksGrid.innerHTML = '';
 
-        const response = await fetch('http://localhost:3000/api/tasks');
+        const response = await fetch('https://dashboard.wordlanetech.com/api/tasks');
         const tasks = await response.json();
 
         loadingState.classList.add('hidden');

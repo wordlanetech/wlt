@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
     }
 
-    const API_BASE = 'http://localhost:3000/api/manager';
+    const API_BASE = 'https://dashboard.wordlanetech.com/api/manager';
 
     const formatDate = (dateStr) => {
     const date = new Date(dateStr);
