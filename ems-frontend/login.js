@@ -55,6 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 body: JSON.stringify({ user_id, password_hash })
             });
 
+
             const data = await response.json();
 
             if (response.ok) {
