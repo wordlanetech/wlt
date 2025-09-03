@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             // ✅ Correct API endpoint
-            const response = await fetch("http://dashboard.wordlanetech.com/api/auth/login", {
+            const response = await fetch("https://dashboard.wordlanetech.com/api/auth/login", {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ user_id, password_hash })
