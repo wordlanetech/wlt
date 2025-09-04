@@ -483,7 +483,7 @@
     <!-- JavaScript for Clock and Dropdown -->
     <script src="../h/js/hr_script.js"></script>
     <script src="../h/hr_script.js"></script>
-    <script src="../security.js"></script>
+    <!-- <script src="../security.js"></script> -->
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -523,5 +523,34 @@ document.addEventListener('click', function(e) {
         });
     }
 });
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+  const token = localStorage.getItem("authToken");
+  console.log("AuthCheck - Token:", token);
+
+  if (!token) {
+    console.log("No token found, redirecting...");
+    window.location.href = "/a/login.html";
+    return;
+  }
+
+  try {
+    const payload = JSON.parse(atob(token.split(".")[1]));
+    console.log("AuthCheck - Payload:", payload);
+
+    if (payload.exp * 1000 < Date.now()) {
+      console.log("Token expired, redirecting...");
+      localStorage.removeItem("authToken");
+      window.location.href = "/a/login.html";
+      return;
+    }
+  } catch (e) {
+    console.log("Invalid token, redirecting...", e);
+    localStorage.removeItem("authToken");
+    window.location.href = "/a/login.html";
+  }
+});
+
 </script>
 </html>
