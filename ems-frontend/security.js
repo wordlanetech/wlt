@@ -1,8 +1,8 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const token = localStorage.getItem("authToken"); // ✅ matches login.js
+  const token = localStorage.getItem("token"); // ✅ matches login.js
 
   if (!token) {
-    window.location.href = "/a/login.html";
+    window.location.href = "./login.html";
     return;
   }
 
@@ -11,11 +11,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (payload.exp * 1000 < Date.now()) {
       localStorage.clear(); // remove all user data
-      window.location.href = "/a/login.html";
+      window.location.href = "./login.html";
       return;
     }
   } catch (err) {
     localStorage.clear();
-    window.location.href = "/a/login.html";
+    window.location.href = "./login.html";
   }
 });
