@@ -182,7 +182,7 @@
                 </div>
                 <div class="profile-info">
                     <p class="profile-name">HR Manager</p>
-                    <p id="userIdDisplay" class="profile-role">User ID: N/A</p>
+                    <p id="userIdDisplay" class="profile-role">Employee ID: 12345</p>
                 </div>
             </button>
 
@@ -263,47 +263,7 @@
         <p class="text-sm">&copy; 2025 Wordlane Tech. All rights reserved.</p>
     </footer>
 
-    <!-- Firebase SDKs -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInWithCustomToken, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-        // Firebase global variables
-        let app, db, auth;
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        const firebaseConfig = JSON.parse(__firebase_config);
-        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
-        
-        // UI elements
-        const userIdDisplay = document.getElementById('userIdDisplay');
-        const logoutBtn = document.getElementById('logoutBtn');
-
-        // Initialize Firebase and set up listener
-        document.addEventListener('DOMContentLoaded', () => {
-            app = initializeApp(firebaseConfig);
-            db = getFirestore(app);
-            auth = getAuth(app);
-            
-            // Initial auth state check
-            if (initialAuthToken) {
-                signInWithCustomToken(auth, initialAuthToken).then(async (userCredential) => {
-                    const userId = userCredential.user.uid;
-                    userIdDisplay.textContent = `User ID: ${userId}`;
-                }).catch(async (error) => {
-                    console.error("Custom token sign-in failed:", error);
-                    await signInAnonymously(auth);
-                });
-            } else {
-                signInAnonymously(auth).then(async (userCredential) => {
-                    const userId = userCredential.user.uid;
-                    userIdDisplay.textContent = `User ID: ${userId}`;
-                }).catch((error) => {
-                    console.error("Anonymous sign-in failed:", error);
-                });
-            }
-        });
-
+    <script>
         // Event listeners for profile dropdown and logout
         const profileButton = document.getElementById('profileButton');
         const profileDropdown = document.getElementById('profileDropdown');
@@ -316,15 +276,6 @@
             if (!profileButton.contains(e.target) && !profileDropdown.contains(e.target)) {
                 profileDropdown.classList.remove('show');
             }
-        });
-
-        logoutBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            auth.signOut().then(() => {
-                window.location.href = '/ems-frontend/login.html';
-            }).catch((error) => {
-                console.error("Sign out error:", error);
-            });
         });
     </script>
 </body>
