@@ -526,7 +526,7 @@ document.addEventListener('click', function(e) {
 </script>
 <script>
     document.addEventListener("DOMContentLoaded", () => {
-  const token = localStorage.getItem("authToken");
+  const token = localStorage.getItem("token");
   console.log("AuthCheck - Token:", token);
 
   if (!token) {
@@ -541,13 +541,13 @@ document.addEventListener('click', function(e) {
 
     if (payload.exp * 1000 < Date.now()) {
       console.log("Token expired, redirecting...");
-      localStorage.removeItem("authToken");
+      localStorage.removeItem("token");
       window.location.href = "/a/login.html";
       return;
     }
   } catch (e) {
     console.log("Invalid token, redirecting...", e);
-    localStorage.removeItem("authToken");
+    localStorage.removeItem("token");
     window.location.href = "/a/login.html";
   }
 });
