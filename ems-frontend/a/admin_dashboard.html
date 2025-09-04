@@ -525,6 +525,10 @@ document.addEventListener('click', function(e) {
 });
 </script>
 <script> 
-    localStorage.setItem('token', data.token);
+document.addEventListener("DOMContentLoaded", () => {
+    const token = localStorage.getItem("token");
+    const userId = localStorage.getItem("user_id");
+    const roleId = localStorage.getItem("role_id");
+});
 </script>
 </html>
