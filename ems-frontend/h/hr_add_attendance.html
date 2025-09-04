@@ -226,7 +226,7 @@
             margin-right: 0.75rem;
             color: #9CA3AF;
         }
-        
+
         .nav-link.active {
             background-color: white;
             color: #1F446A;
@@ -249,7 +249,7 @@
         </a>
         <!-- Center: Navigation Links -->
         <nav class="bg-gray-100/50 p-2 rounded-full shadow-inner mb-4 md:mb-0" style="box-shadow:inset 2px 2px 9px 2px #57525224; padding: 10px 20px ">
-            <ul class="flex flex-wrap justify-center md:flex-nowrap  list-none p-0 m-0 text-sm " style="gap: 10px;">
+            <ul class="flex flex-wrap justify-center md:flex-nowrap list-none p-0 m-0 text-sm " style="gap: 10px;">
                 <li><a href="hr_dashboard.html" class="nav-link flex items-center px-4 py-2 rounded-full text-gray-700 hover:bg-gray-200 transition-colors"><i class="fas fa-home mr-2"></i> Dashboard</a></li>
                 <li><a href="hr_employees.html" class="nav-link flex items-center px-4 py-2 rounded-full text-gray-700 hover:bg-gray-200 transition-colors"><i class="fas fa-users mr-2"></i> Employees</a></li>
                 <li><a href="hr_departments.html" class="nav-link flex items-center px-4 py-2 rounded-full text-gray-700 hover:bg-gray-200 transition-colors"><i class="fas fa-building mr-2"></i> Departments</a></li>
@@ -267,6 +267,7 @@
                 </div>
                 <div class="profile-info">
                     <p class="profile-name">HR Manager</p>
+                    <p id="userIdDisplay" class="profile-role">User ID: N/A</p>
                 </div>
             </button>
 
@@ -276,7 +277,7 @@
                     <i class="fas fa-user" aria-hidden="true"></i>
                     My Profile
                 </a>
-                <a href="/ems-frontend/login.html" class="flex items-center">
+                <a href="#" id="logoutBtn" class="flex items-center">
                     <i class="fas fa-sign-out-alt" aria-hidden="true"></i>
                     Log Out
                 </a>
@@ -312,7 +313,7 @@
                         <p class="text-sm font-medium text-gray-500 mb-1">Today's Status</p>
                         <div class="flex items-center justify-center">
                             <span id="attendance-status-dot" class="w-3 h-3 rounded-full mr-2"></span>
-                            <p id="attendance-status-text" class="text-2xl font-bold text-gray-800">Select Employee</p>
+                            <p id="attendance-status-text" class="text-2xl font-bold text-gray-800">Loading...</p>
                         </div>
                     </div>
                     
@@ -324,9 +325,9 @@
                     </div>
 
                     <div class="w-full text-center clock-btn-container">
-                        <button id="clock-button" class="clock-button w-full px-8 py-4 text-xl font-bold text-white rounded-full shadow-md transition-all duration-300 ease-in-out">
+                        <button id="clock-button" class="clock-button w-full px-8 py-4 text-xl font-bold text-white rounded-full shadow-md transition-all duration-300 ease-in-out" disabled>
                             <i id="clock-icon" class="fas fa-play mr-2"></i>
-                            <span id="clock-button-text">Clock In</span>
+                            <span id="clock-button-text">Loading...</span>
                         </button>
                     </div>
                 </div>
@@ -355,206 +356,41 @@
         <p class="text-sm">&copy; 2025 Wordlane Tech. All rights reserved.</p>
     </footer>
 
-    <!-- JavaScript for Form Functionality -->
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            setupEventListeners();
-            const isClockedIn = localStorage.getItem('isClockedIn') === 'true';
-            updateUI(isClockedIn);
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInWithCustomToken, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, onSnapshot, setDoc, query, collection, getDocs, where, limit, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-            const profileButton = document.getElementById('profileButton');
-            const profileDropdown = document.getElementById('profileDropdown');
-            profileButton.addEventListener('click', () => {
-                profileDropdown.classList.toggle('show');
-            });
-            window.addEventListener('click', (e) => {
-                if (!profileButton.contains(e.target) && !profileDropdown.contains(e.target)) {
-                    profileDropdown.classList.remove('show');
-                }
-            });
-        });
-
+        // Firebase global variables
+        let app, db, auth;
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = JSON.parse(__firebase_config);
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+        
+        // UI elements
         const clockButton = document.getElementById('clock-button');
         const clockButtonText = document.getElementById('clock-button-text');
+        const clockIcon = document.getElementById('clock-icon');
         const attendanceStatusDot = document.getElementById('attendance-status-dot');
         const attendanceStatusText = document.getElementById('attendance-status-text');
         const elapsedTimeDisplay = document.getElementById('elapsed-time');
         const finishTimeDisplay = document.getElementById('finish-time');
         const timerSection = document.getElementById('timer-section');
-
-        // Modal elements
+        const userIdDisplay = document.getElementById('userIdDisplay');
+        const logoutBtn = document.getElementById('logoutBtn');
         const confirmationModal = document.getElementById('confirmationModal');
         const confirmClockOutBtn = document.getElementById('confirmClockOutBtn');
         const cancelClockOutBtn = document.getElementById('cancelClockOutBtn');
 
         let timerInterval = null;
-        
-        const API_BASE = 'http://localhost:3001/api/'; // Change if needed
+        let userId = null;
+        let todayDocRef = null;
 
-        function setupEventListeners() {
-            clockButton.addEventListener('click', () => {
-                const isCurrentlyClockedIn = localStorage.getItem('isClockedIn') === 'true';
-                if (!isCurrentlyClockedIn) {
-                    handleClockIn();
-                } else {
-                    showConfirmationModal();
-                }
-            });
-
-            // Modal button event listeners
-            confirmClockOutBtn.addEventListener('click', () => {
-                hideConfirmationModal();
-                handleClockOut();
-            });
-
-            cancelClockOutBtn.addEventListener('click', () => {
-                hideConfirmationModal();
-            });
-        }
-        
-        function showConfirmationModal() {
-            confirmationModal.classList.remove('hidden');
-            // Animate in
-            setTimeout(() => {
-                confirmationModal.querySelector('div').classList.remove('scale-95', 'opacity-0');
-                confirmationModal.querySelector('div').classList.add('scale-100', 'opacity-100');
-            }, 10);
-        }
-
-        function hideConfirmationModal() {
-            // Animate out
-            confirmationModal.querySelector('div').classList.remove('scale-100', 'opacity-100');
-            confirmationModal.querySelector('div').classList.add('scale-95', 'opacity-0');
-            setTimeout(() => {
-                confirmationModal.classList.add('hidden');
-            }, 300);
-        }
-
-        async function handleClockIn() {
-            const now = new Date();
-            localStorage.setItem('isClockedIn', 'true');
-            localStorage.setItem('clockInTime', now.getTime());
-            
-            try {
-                await fetch(`${API_BASE}/addOrUpdate`, {
-                    method: 'POST',
-                    headers: { 
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Bearer ' + localStorage.getItem('token') // JWT stored on login
-                    },
-                    body: JSON.stringify({
-                        attendance_date: now.toISOString().split('T')[0],
-                        punch_in_time: now.toISOString(),
-                        punch_out_time: null
-                    })
-                });
-
-                showMessage("Clock-in recorded successfully!", "success");
-            } catch (err) {
-                console.error("Clock-in API error:", err);
-                showMessage("Failed to record clock-in!", "error");
-            }
-
-            updateUI(true);
-        }
-
-        async function handleClockOut() {
-            stopTimer(); // Stop the timer when clocking out
-            const now = new Date();
-            localStorage.setItem('isClockedIn', 'false');
-            localStorage.removeItem('clockInTime');
-
-            try {
-                await fetch(`${API_BASE}/addOrUpdate`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Bearer ' + localStorage.getItem('token') // store token after login
-                    },
-                    body: JSON.stringify({
-                        attendance_date: now.toISOString().split('T')[0],
-                        punch_in_time: now.toISOString(),
-                        punch_out_time: now.toISOString()
-                    })
-                });
-
-                showMessage("Clock-out recorded successfully!", "success");
-            } catch (err) {
-                console.error("Clock-out API error:", err);
-                showMessage("Failed to record clock-out!", "error");
-            }
-
-            updateUI(false);
-        }
-
-        function updateUI(isClockedIn) {
-            const clockIcon = document.getElementById('clock-icon');
-            const buttonClasses = ['shadow-md', 'shadow-lg', 'bg-green-500', 'hover:bg-green-600', 'bg-gradient-to-r', 'from-green-500', 'to-green-600', 'border-none', 'bg-orange-500', 'hover:bg-orange-600', 'border', 'border-orange-600'];
-
-            if (isClockedIn) {
-                // Clocked In (ready to clock out) state
-                clockButton.classList.remove(...buttonClasses);
-                clockButton.classList.add('bg-orange-500', 'hover:bg-orange-600', 'shadow-lg', 'border', 'border-orange-600');
-                clockButtonText.textContent = 'End My Day';
-                clockIcon.className = 'fas fa-stop mr-2';
-                attendanceStatusDot.className = 'w-3 h-3 rounded-full mr-2 bg-green-500';
-                attendanceStatusText.textContent = 'Clocked In';
-                attendanceStatusText.classList.replace('text-gray-800', 'text-green-600');
-                timerSection.classList.remove('hidden');
-                startTimer(); // Start the timer
-            } else {
-                // Clocked Out (ready to clock in) state
-                clockButton.classList.remove(...buttonClasses);
-                clockButton.classList.add('bg-gradient-to-r', 'from-green-500', 'to-green-600', 'shadow-md', 'border-none');
-                clockButtonText.textContent = 'Start My Day';
-                clockIcon.className = 'fas fa-play mr-2';
-                attendanceStatusDot.className = 'w-3 h-3 rounded-full mr-2 bg-gray-400';
-                attendanceStatusText.textContent = 'Clocked Out';
-                attendanceStatusText.classList.replace('text-green-600', 'text-gray-800');
-                timerSection.classList.add('hidden');
-            }
-        }
-
-        function startTimer() {
-            // Clear any existing timer to prevent duplicates
-            stopTimer();
-
-            const clockInTime = parseInt(localStorage.getItem('clockInTime'));
-            if (!clockInTime) return;
-
-            // Update the timer every second
-            timerInterval = setInterval(() => {
-                const now = Date.now();
-                const elapsedMilliseconds = now - clockInTime;
-
-                // Calculate hours, minutes, and seconds
-                const totalSeconds = Math.floor(elapsedMilliseconds / 1000);
-                const hours = Math.floor(totalSeconds / 3600);
-                const minutes = Math.floor((totalSeconds % 3600) / 60);
-                const seconds = totalSeconds % 60;
-
-                // Format the elapsed time
-                const formattedTime = `${String(hours).padStart(2, '0')}h ${String(minutes).padStart(2, '0')}m ${String(seconds).padStart(2, '0')}s`;
-                elapsedTimeDisplay.textContent = formattedTime;
-
-                // Calculate estimated finish time (8 hours from punch in)
-                const eightHours = 8 * 60 * 60 * 1000;
-                const finishTime = new Date(clockInTime + eightHours);
-                const formattedFinishTime = `${String(finishTime.getHours()).padStart(2, '0')}:${String(finishTime.getMinutes()).padStart(2, '0')}`;
-                finishTimeDisplay.textContent = `Estimated finish time: ${formattedFinishTime}`;
-
-            }, 1000);
-        }
-
-        function stopTimer() {
-            clearInterval(timerInterval);
-            timerInterval = null;
-        }
-
+        // Message function
         function showMessage(message, type) {
             const successEl = document.getElementById('successMessage');
             const errorEl = document.getElementById('errorMessage');
-
             successEl.style.display = 'none';
             errorEl.style.display = 'none';
 
@@ -566,6 +402,216 @@
                 errorEl.style.display = 'block';
             }
         }
+
+        // Timer functions
+        function startTimer(clockInTime) {
+            stopTimer(); // Clear any existing timer
+
+            timerInterval = setInterval(() => {
+                const now = Date.now();
+                const elapsedMilliseconds = now - clockInTime;
+
+                const totalSeconds = Math.floor(elapsedMilliseconds / 1000);
+                const hours = Math.floor(totalSeconds / 3600);
+                const minutes = Math.floor((totalSeconds % 3600) / 60);
+                const seconds = totalSeconds % 60;
+
+                const formattedTime = `${String(hours).padStart(2, '0')}h ${String(minutes).padStart(2, '0')}m ${String(seconds).padStart(2, '0')}s`;
+                elapsedTimeDisplay.textContent = formattedTime;
+
+                const eightHours = 8 * 60 * 60 * 1000;
+                const finishTime = new Date(clockInTime + eightHours);
+                const formattedFinishTime = `${String(finishTime.getHours()).padStart(2, '0')}:${String(finishTime.getMinutes()).padStart(2, '0')}`;
+                finishTimeDisplay.textContent = `Estimated finish time: ${formattedFinishTime}`;
+            }, 1000);
+        }
+
+        function stopTimer() {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+        }
+
+        // UI update function
+        function updateUI(isClockedIn) {
+            clockButton.disabled = false;
+            clockButton.classList.remove('bg-gradient-to-r', 'from-green-500', 'to-green-600', 'bg-orange-500', 'hover:bg-orange-600', 'shadow-md', 'shadow-lg');
+
+            if (isClockedIn) {
+                clockButton.classList.add('bg-orange-500', 'hover:bg-orange-600', 'shadow-lg');
+                clockButtonText.textContent = 'End My Day';
+                clockIcon.className = 'fas fa-stop mr-2';
+                attendanceStatusDot.className = 'w-3 h-3 rounded-full mr-2 bg-green-500';
+                attendanceStatusText.textContent = 'Clocked In';
+                attendanceStatusText.classList.replace('text-gray-800', 'text-green-600');
+                timerSection.classList.remove('hidden');
+            } else {
+                clockButton.classList.add('bg-gradient-to-r', 'from-green-500', 'to-green-600', 'shadow-md');
+                clockButtonText.textContent = 'Start My Day';
+                clockIcon.className = 'fas fa-play mr-2';
+                attendanceStatusDot.className = 'w-3 h-3 rounded-full mr-2 bg-gray-400';
+                attendanceStatusText.textContent = 'Clocked Out';
+                attendanceStatusText.classList.replace('text-green-600', 'text-gray-800');
+                timerSection.classList.add('hidden');
+            }
+        }
+
+        // Firebase functions
+        async function fetchAttendance() {
+            if (!userId) return;
+            const today = new Date().toISOString().split('T')[0];
+            const attendanceCollectionRef = collection(db, `artifacts/${appId}/users/${userId}/attendance`);
+            const q = query(attendanceCollectionRef, where("attendance_date", "==", today), limit(1));
+            const querySnapshot = await getDocs(q);
+
+            if (!querySnapshot.empty) {
+                todayDocRef = querySnapshot.docs[0].ref;
+                const docData = querySnapshot.docs[0].data();
+                if (docData.punch_out_time) {
+                    updateUI(false);
+                    showMessage("You have already clocked out for today.", "success");
+                } else {
+                    updateUI(true);
+                    startTimer(new Date(docData.punch_in_time).getTime());
+                }
+            } else {
+                updateUI(false);
+            }
+        }
+
+        async function handleClockIn() {
+            if (!userId) return;
+            const now = new Date();
+            const today = now.toISOString().split('T')[0];
+            const data = {
+                punch_in_time: now.toISOString(),
+                attendance_date: today,
+                punch_out_time: null
+            };
+            try {
+                const newDocRef = doc(collection(db, `artifacts/${appId}/users/${userId}/attendance`));
+                await setDoc(newDocRef, data);
+                todayDocRef = newDocRef;
+                updateUI(true);
+                startTimer(now.getTime());
+                showMessage("Clock-in recorded successfully!", "success");
+            } catch (err) {
+                console.error("Failed to record clock-in:", err);
+                showMessage("Failed to record clock-in!", "error");
+            }
+        }
+
+        async function handleClockOut() {
+            if (!todayDocRef) {
+                showMessage("You are not currently clocked in.", "error");
+                updateUI(false);
+                return;
+            }
+            const now = new Date();
+            const data = {
+                punch_out_time: now.toISOString()
+            };
+            try {
+                await updateDoc(todayDocRef, data);
+                stopTimer();
+                updateUI(false);
+                showMessage("Clock-out recorded successfully!", "success");
+            } catch (err) {
+                console.error("Failed to record clock-out:", err);
+                showMessage("Failed to record clock-out!", "error");
+            }
+        }
+
+        // Event listeners
+        function setupEventListeners() {
+            clockButton.addEventListener('click', () => {
+                const isCurrentlyClockedIn = clockButtonText.textContent === 'End My Day';
+                if (!isCurrentlyClockedIn) {
+                    handleClockIn();
+                } else {
+                    showConfirmationModal();
+                }
+            });
+
+            confirmClockOutBtn.addEventListener('click', () => {
+                hideConfirmationModal();
+                handleClockOut();
+            });
+
+            cancelClockOutBtn.addEventListener('click', () => {
+                hideConfirmationModal();
+            });
+
+            logoutBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                auth.signOut().then(() => {
+                    window.location.href = '/ems-frontend/login.html';
+                }).catch((error) => {
+                    console.error("Sign out error:", error);
+                    showMessage("Failed to log out. Please try again.", "error");
+                });
+            });
+
+            const profileButton = document.getElementById('profileButton');
+            const profileDropdown = document.getElementById('profileDropdown');
+            profileButton.addEventListener('click', () => {
+                profileDropdown.classList.toggle('show');
+            });
+
+            window.addEventListener('click', (e) => {
+                if (!profileButton.contains(e.target) && !profileDropdown.contains(e.target)) {
+                    profileDropdown.classList.remove('show');
+                }
+            });
+        }
+        
+        function showConfirmationModal() {
+            confirmationModal.classList.remove('hidden');
+            setTimeout(() => {
+                confirmationModal.querySelector('div').classList.remove('scale-95', 'opacity-0');
+                confirmationModal.querySelector('div').classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+
+        function hideConfirmationModal() {
+            confirmationModal.querySelector('div').classList.remove('scale-100', 'opacity-100');
+            confirmationModal.querySelector('div').classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                confirmationModal.classList.add('hidden');
+            }, 300);
+        }
+
+        // Initialize Firebase and set up listener
+        document.addEventListener('DOMContentLoaded', () => {
+            app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            auth = getAuth(app);
+            
+            // Initial auth state check
+            if (initialAuthToken) {
+                signInWithCustomToken(auth, initialAuthToken).then(async (userCredential) => {
+                    userId = userCredential.user.uid;
+                    userIdDisplay.textContent = `User ID: ${userId}`;
+                    await fetchAttendance();
+                    setupEventListeners();
+                }).catch(async (error) => {
+                    console.error("Custom token sign-in failed:", error);
+                    showMessage("Authentication failed. Please try again.", "error");
+                    await signInAnonymously(auth);
+                });
+            } else {
+                signInAnonymously(auth).then(async (userCredential) => {
+                    userId = userCredential.user.uid;
+                    userIdDisplay.textContent = `User ID: ${userId}`;
+                    await fetchAttendance();
+                    setupEventListeners();
+                }).catch((error) => {
+                    console.error("Anonymous sign-in failed:", error);
+                    showMessage("Authentication failed. Please try again.", "error");
+                });
+            }
+        });
     </script>
 </body>
 </html>
