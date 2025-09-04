@@ -483,7 +483,7 @@
     <!-- JavaScript for Clock and Dropdown -->
     <script src="../h/js/hr_script.js"></script>
     <script src="../h/hr_script.js"></script>
-    <script src="../security.js"></script>
+    <!-- <script src="../security.js"></script> -->
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -503,7 +503,7 @@
     </script>
 </body>
 
-<script> // Set user role to 'admin' for admin dashboard    
+<script>
 function toggleDropdown(event) {
     event.preventDefault();
     var dropdown = event.target.closest('.more-dropdown');
@@ -522,13 +522,6 @@ document.addEventListener('click', function(e) {
             el.classList.remove('open');
         });
     }
-});
-</script>
-<script> 
-document.addEventListener("DOMContentLoaded", () => {
-    const token = localStorage.getItem("token");
-    const userId = localStorage.getItem("user_id");
-    const roleId = localStorage.getItem("role_id");
 });
 </script>
 </html>
