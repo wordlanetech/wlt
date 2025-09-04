@@ -312,8 +312,8 @@
                     <div class="mb-6">
                         <p class="text-sm font-medium text-gray-500 mb-1">Today's Status</p>
                         <div class="flex items-center justify-center">
-                            <span id="attendance-status-dot" class="w-3 h-3 rounded-full mr-2"></span>
-                            <p id="attendance-status-text" class="text-2xl font-bold text-gray-800">Loading...</p>
+                            <span id="attendance-status-dot" class="w-3 h-3 rounded-full mr-2 bg-gray-400"></span>
+                            <p id="attendance-status-text" class="text-2xl font-bold text-gray-800">Clocked Out</p>
                         </div>
                     </div>
                     
@@ -325,9 +325,9 @@
                     </div>
 
                     <div class="w-full text-center clock-btn-container">
-                        <button id="clock-button" class="clock-button w-full px-8 py-4 text-xl font-bold text-white rounded-full shadow-md transition-all duration-300 ease-in-out" disabled>
+                        <button id="clock-button" class="clock-button w-full px-8 py-4 text-xl font-bold text-white rounded-full bg-gradient-to-r from-green-500 to-green-600 shadow-md transition-all duration-300 ease-in-out">
                             <i id="clock-icon" class="fas fa-play mr-2"></i>
-                            <span id="clock-button-text">Loading...</span>
+                            <span id="clock-button-text">Start My Day</span>
                         </button>
                     </div>
                 </div>
@@ -435,7 +435,6 @@
 
         // UI update function
         function updateUI(isClockedIn) {
-            clockButton.disabled = false;
             clockButton.classList.remove('bg-gradient-to-r', 'from-green-500', 'to-green-600', 'bg-orange-500', 'hover:bg-orange-600', 'shadow-md', 'shadow-lg');
 
             if (isClockedIn) {
