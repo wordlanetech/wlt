@@ -13,7 +13,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-    <link rel="stylesheet" href="hr_styles.css">
     <style>
         /* Custom form element styles for a polished look */
         .form-input,
@@ -120,7 +119,7 @@
 
         .clock-button:hover:not(:disabled) {
             transform: scale(1.05) translateY(-2px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.3);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.3);
         }
 
         .clock-button:active:not(:disabled) {
@@ -130,6 +129,109 @@
         .clock-button:disabled {
             opacity: 0.6;
             cursor: not-allowed;
+        }
+
+        .header-gradient {
+            background: #fafafa;
+            border-bottom: 1px solid #e5e7eb;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .profile-container {
+            display: flex;
+            align-items: center;
+            padding: 8px 16px;
+            border-radius: 9999px;
+            background: #E5E7EB;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .profile-container:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        .profile-picture {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin-right: 12px;
+        }
+
+        .profile-picture img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-info {
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+        }
+
+        .profile-name {
+            font-weight: 600;
+            color: #374151;
+            font-size: 1rem;
+        }
+
+        .profile-role {
+            font-size: 0.875rem;
+            color: #6B7280;
+        }
+
+        .profile-dropdown {
+            position: absolute;
+            right: 0;
+            top: 100%;
+            margin-top: 1rem;
+            width: 200px;
+            background: #ffffff;
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            padding: 0.5rem;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+            z-index: 20;
+        }
+
+        .profile-dropdown.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .profile-dropdown a {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            color: #4B5563;
+            text-decoration: none;
+            border-radius: 0.5rem;
+            transition: all 0.2s ease;
+        }
+
+        .profile-dropdown a:hover {
+            background: #F3F4F6;
+            color: #1F446A;
+        }
+
+        .profile-dropdown a i {
+            margin-right: 0.75rem;
+            color: #9CA3AF;
+        }
+        
+        .nav-link.active {
+            background-color: white;
+            color: #1F446A;
+            font-weight: 600;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            border: 1px solid #E5E7EB;
         }
     </style>
 </head>
@@ -192,8 +294,6 @@
                 </a>
             </div>
 
-
-
             <!-- Success/Error Messages -->
             <div id="successMessage" class="message success">
                 <i class="fas fa-check-circle mr-2"></i>
@@ -204,9 +304,9 @@
                 <span id="errorText">An error occurred. Please try again.</span>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="flex flex-col items-center gap-6">
                 <!-- Clock In/Out Card -->
-                <div class="md:col-span-1 bg-white p-8 rounded-3xl shadow-lg border border-gray-200 flex flex-col justify-between items-center text-center">
+                <div class="w-full max-w-md bg-white p-8 rounded-3xl shadow-lg border border-gray-200 flex flex-col justify-between items-center text-center">
                     <div class="mb-6">
                         <p class="text-sm font-medium text-gray-500 mb-1">Today's Status</p>
                         <div class="flex items-center justify-center">
@@ -215,37 +315,39 @@
                         </div>
                     </div>
                     
-                    <!-- Timer Displays -->
-                    <div id="timer-container" class="mb-2 flex flex-col items-center">
+                    <!-- New Time Display Section -->
+                    <div id="timer-section" class="w-full text-center mb-6 hidden">
                         <p class="text-sm font-medium text-gray-500 mb-1">Time Elapsed</p>
-                        <p id="timer-display" class="text-4xl font-extrabold text-[#1F446A] hidden">00:00:00</p>
-                    </div>
-
-                    <div id="remaining-time-container" class="mb-6 flex flex-col items-center">
-                        <p class="text-sm font-medium text-gray-500 mb-1">Time Remaining</p>
-                        <p id="remaining-time-display" class="text-4xl font-extrabold text-red-500 hidden">08:00:00</p>
+                        <p id="elapsed-time" class="text-4xl font-extrabold text-gray-900"></p>
+                        <p id="finish-time" class="text-sm text-gray-500 mt-2"></p>
                     </div>
 
                     <div class="w-full text-center clock-btn-container">
                         <button id="clock-button" class="clock-button w-full px-8 py-4 text-xl font-bold text-white rounded-full shadow-md transition-all duration-300 ease-in-out">
-                            <i class="fas fa-sign-in-alt mr-2"></i>
+                            <i id="clock-icon" class="fas fa-play mr-2"></i>
                             <span id="clock-button-text">Clock In</span>
                         </button>
                     </div>
                 </div>
-
-                <!-- Recent History Section -->
-                <div class="md:col-span-2 bg-white p-8 rounded-3xl shadow-lg border border-gray-200">
-                    <h3 class="text-2xl font-bold text-gray-900 mb-6">Recent Activity</h3>
-                    <div id="attendance-history" class="space-y-4 max-h-96 overflow-y-auto pr-4">
-                        <!-- History cards will be dynamically inserted here -->
-                    </div>
-                </div>
             </div>
-
-
         </div>
     </main>
+    
+    <!-- Confirmation Modal -->
+    <div id="confirmationModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white p-8 rounded-xl shadow-2xl max-w-sm w-full transform transition-all duration-300 scale-95 opacity-0">
+            <h3 class="text-2xl font-bold text-gray-900 mb-4">Confirm Clock Out</h3>
+            <p class="text-gray-600 mb-6">Are you sure you want to end your day?</p>
+            <div class="flex justify-end space-x-4">
+                <button id="cancelClockOutBtn" class="btn-secondary">
+                    Cancel
+                </button>
+                <button id="confirmClockOutBtn" class="bg-red-500 text-white font-semibold py-2 px-4 rounded-full shadow hover:bg-red-600 transition-colors">
+                    Confirm
+                </button>
+            </div>
+        </div>
+    </div>
 
     <!-- Footer Section -->
     <footer class="bg-gray-800 text-white p-4 text-center mt-auto rounded-t-lg">
@@ -253,237 +355,216 @@
     </footer>
 
     <!-- JavaScript for Form Functionality -->
-    <script src="hr_script.js"></script>
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-    setupEventListeners();
-    populateHistory();
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            setupEventListeners();
+            const isClockedIn = localStorage.getItem('isClockedIn') === 'true';
+            updateUI(isClockedIn);
 
-    const isClockedIn = localStorage.getItem('isClockedIn') === 'true';
-    updateUI(isClockedIn);
-});
+            const profileButton = document.getElementById('profileButton');
+            const profileDropdown = document.getElementById('profileDropdown');
+            profileButton.addEventListener('click', () => {
+                profileDropdown.classList.toggle('show');
+            });
+            window.addEventListener('click', (e) => {
+                if (!profileButton.contains(e.target) && !profileDropdown.contains(e.target)) {
+                    profileDropdown.classList.remove('show');
+                }
+            });
+        });
 
-const clockButton = document.getElementById('clock-button');
-const clockButtonText = document.getElementById('clock-button-text');
-const attendanceStatusDot = document.getElementById('attendance-status-dot');
-const attendanceStatusText = document.getElementById('attendance-status-text');
-const attendanceHistoryContainer = document.getElementById('attendance-history');
-const timerDisplay = document.getElementById('timer-display');
-const remainingTimeDisplay = document.getElementById('remaining-time-display');
-let timerInterval;
+        const clockButton = document.getElementById('clock-button');
+        const clockButtonText = document.getElementById('clock-button-text');
+        const attendanceStatusDot = document.getElementById('attendance-status-dot');
+        const attendanceStatusText = document.getElementById('attendance-status-text');
+        const elapsedTimeDisplay = document.getElementById('elapsed-time');
+        const finishTimeDisplay = document.getElementById('finish-time');
+        const timerSection = document.getElementById('timer-section');
 
-const EIGHT_HOURS_MS = 8 * 60 * 60 * 1000;
-const ATTENDANCE_HISTORY_KEY = 'hrAttendanceHistory';
-const API_BASE = 'http://localhost:3001/api/'; // Change if needed
+        // Modal elements
+        const confirmationModal = document.getElementById('confirmationModal');
+        const confirmClockOutBtn = document.getElementById('confirmClockOutBtn');
+        const cancelClockOutBtn = document.getElementById('cancelClockOutBtn');
 
-function setupEventListeners() {
-    clockButton.addEventListener('click', () => {
-        const isCurrentlyClockedIn = localStorage.getItem('isClockedIn') === 'true';
-        if (!isCurrentlyClockedIn) handleClockIn();
-        else handleClockOut();
-    });
-}
+        let timerInterval = null;
+        
+        const API_BASE = 'http://localhost:3001/api/'; // Change if needed
 
-function getAttendanceHistory() {
-    const storedHistory = localStorage.getItem(ATTENDANCE_HISTORY_KEY);
-    return storedHistory ? JSON.parse(storedHistory) : [];
-}
+        function setupEventListeners() {
+            clockButton.addEventListener('click', () => {
+                const isCurrentlyClockedIn = localStorage.getItem('isClockedIn') === 'true';
+                if (!isCurrentlyClockedIn) {
+                    handleClockIn();
+                } else {
+                    showConfirmationModal();
+                }
+            });
 
-function createHistoryCard(entry) {
-    const card = document.createElement('div');
-    card.className = 'bg-gray-100 p-4 rounded-xl flex items-center justify-between border-l-4 border-[#1F446A]';
-    card.innerHTML = `
-        <div class="flex-grow">
-            <p class="font-semibold text-gray-800">${entry.date}</p>
-            <p class="text-sm text-gray-600">In: ${entry.clockIn} | Out: ${entry.clockOut || 'N/A'}</p>
-        </div>
-        <div class="text-right">
-            <p class="text-sm font-bold text-[#1F446A]">${entry.duration || 'N/A'}</p>
-        </div>
-    `;
-    return card;
-}
+            // Modal button event listeners
+            confirmClockOutBtn.addEventListener('click', () => {
+                hideConfirmationModal();
+                handleClockOut();
+            });
 
-async function handleClockIn() {
-    const now = new Date();
-    localStorage.setItem('isClockedIn', 'true');
-    localStorage.setItem('clockInTime', now.getTime());
-
-    try {
-    await fetch(`${API_BASE}/addOrUpdate`, {
-    method: 'POST',
-    headers: { 
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + localStorage.getItem('token') // JWT stored on login
-    },
-    body: JSON.stringify({
-        attendance_date: now.toISOString().split('T')[0],
-        punch_in_time: now.toISOString(),
-        punch_out_time: null
-    })
-});
-
-        showMessage("Clock-in recorded successfully!", "success");
-    } catch (err) {
-        console.error("Clock-in API error:", err);
-        showMessage("Failed to record clock-in!", "error");
-    }
-
-    updateUI(true);
-    populateHistory();
-}
-
-async function handleClockOut() {
-    const now = new Date();
-    const clockInTime = parseInt(localStorage.getItem('clockInTime'), 10);
-    const elapsedTime = now.getTime() - clockInTime;
-    const duration = formatDuration(elapsedTime);
-
-    const currentHistory = getAttendanceHistory();
-    const lastEntry = currentHistory[0];
-    if (lastEntry) {
-        lastEntry.clockOut = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
-        lastEntry.duration = duration;
-    }
-    localStorage.setItem(ATTENDANCE_HISTORY_KEY, JSON.stringify(currentHistory));
-    localStorage.setItem('isClockedIn', 'false');
-    localStorage.removeItem('clockInTime');
-
-    try {
-        await fetch(`${API_BASE}/addOrUpdate`, {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + localStorage.getItem('token') // store token after login
-    },
-    body: JSON.stringify({
-        attendance_date: now.toISOString().split('T')[0],
-        punch_in_time: now.toISOString(),
-        punch_out_time: null
-    })
-});
-
-        showMessage("Clock-out recorded successfully!", "success");
-    } catch (err) {
-        console.error("Clock-out API error:", err);
-        showMessage("Failed to record clock-out!", "error");
-    }
-
-    updateUI(false);
-    populateHistory();
-}
-
-function updateUI(isClockedIn) {
-    if (isClockedIn) {
-        clockButton.classList.replace('bg-[#1F446A]', 'bg-red-500');
-        clockButton.classList.replace('hover:bg-[#153452]', 'hover:bg-red-600');
-        clockButtonText.textContent = 'Clock Out';
-        attendanceStatusDot.className = 'w-3 h-3 rounded-full mr-2 bg-green-500';
-        attendanceStatusText.textContent = 'Clocked In';
-        startTimer();
-    } else {
-        clockButton.classList.replace('bg-red-500', 'bg-[#1F446A]');
-        clockButton.classList.replace('hover:bg-red-600', 'hover:bg-[#153452]');
-        clockButtonText.textContent = 'Clock In';
-        attendanceStatusDot.className = 'w-3 h-3 rounded-full mr-2 bg-gray-400';
-        attendanceStatusText.textContent = 'Clocked Out';
-        stopTimer();
-        remainingTimeDisplay.textContent = "08:00:00";
-        remainingTimeDisplay.classList.remove('text-green-500');
-        remainingTimeDisplay.classList.add('text-red-500');
-    }
-}
-
-function startTimer() {
-    const clockInTime = parseInt(localStorage.getItem('clockInTime'), 10);
-    if (!clockInTime) return;
-
-    timerDisplay.classList.remove('hidden');
-    remainingTimeDisplay.classList.remove('hidden');
-
-    timerInterval = setInterval(() => {
-        const now = Date.now();
-        const elapsedTime = now - clockInTime;
-        const remainingTime = EIGHT_HOURS_MS - elapsedTime;
-
-        timerDisplay.textContent = formatTime(elapsedTime);
-
-        if (remainingTime > 0) {
-            remainingTimeDisplay.textContent = formatRemainingTime(remainingTime);
-            remainingTimeDisplay.classList.replace('text-green-500', 'text-red-500');
-        } else {
-            remainingTimeDisplay.textContent = formatRemainingTime(remainingTime);
-            remainingTimeDisplay.classList.replace('text-red-500', 'text-green-500');
+            cancelClockOutBtn.addEventListener('click', () => {
+                hideConfirmationModal();
+            });
         }
-    }, 1000);
-}
+        
+        function showConfirmationModal() {
+            confirmationModal.classList.remove('hidden');
+            // Animate in
+            setTimeout(() => {
+                confirmationModal.querySelector('div').classList.remove('scale-95', 'opacity-0');
+                confirmationModal.querySelector('div').classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
 
-function stopTimer() {
-    clearInterval(timerInterval);
-    timerDisplay.classList.add('hidden');
-    remainingTimeDisplay.classList.add('hidden');
-}
+        function hideConfirmationModal() {
+            // Animate out
+            confirmationModal.querySelector('div').classList.remove('scale-100', 'opacity-100');
+            confirmationModal.querySelector('div').classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                confirmationModal.classList.add('hidden');
+            }, 300);
+        }
 
-function formatTime(ms) {
-    const totalSeconds = Math.floor(ms / 1000);
-    const hours = Math.floor(totalSeconds / 3600);
-    const minutes = Math.floor((totalSeconds % 3600) / 60);
-    const seconds = totalSeconds % 60;
-    const pad = n => String(n).padStart(2,'0');
-    return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
-}
+        async function handleClockIn() {
+            const now = new Date();
+            localStorage.setItem('isClockedIn', 'true');
+            localStorage.setItem('clockInTime', now.getTime());
+            
+            try {
+                await fetch(`${API_BASE}/addOrUpdate`, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + localStorage.getItem('token') // JWT stored on login
+                    },
+                    body: JSON.stringify({
+                        attendance_date: now.toISOString().split('T')[0],
+                        punch_in_time: now.toISOString(),
+                        punch_out_time: null
+                    })
+                });
 
-function formatRemainingTime(ms) {
-    const sign = ms < 0 ? '+' : '';
-    const totalSeconds = Math.floor(Math.abs(ms)/1000);
-    const hours = Math.floor(totalSeconds/3600);
-    const minutes = Math.floor((totalSeconds % 3600)/60);
-    const seconds = totalSeconds % 60;
-    const pad = n => String(n).padStart(2,'0');
-    return `${sign}${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
-}
+                showMessage("Clock-in recorded successfully!", "success");
+            } catch (err) {
+                console.error("Clock-in API error:", err);
+                showMessage("Failed to record clock-in!", "error");
+            }
 
-function formatDuration(ms) {
-    const totalMinutes = Math.floor(ms / 60000);
-    const hours = Math.floor(totalMinutes/60);
-    const minutes = totalMinutes % 60;
-    return `${hours}h ${minutes}m`;
-}
-function populateHistory() {
-    attendanceHistoryContainer.innerHTML = '';
-    const currentHistory = getAttendanceHistory();
-    
-    if (currentHistory.length === 0) {
-        const noData = document.createElement('p');
-        noData.className = 'text-gray-500 py-4 text-center';
-        noData.textContent = 'No attendance records found.';
-        attendanceHistoryContainer.appendChild(noData);
-        return;
-    }
-    
-    currentHistory.forEach(entry => {
-        attendanceHistoryContainer.appendChild(createHistoryCard(entry));
-    });
-}
+            updateUI(true);
+        }
 
-function showMessage(message, type) {
-    const successEl = document.getElementById('successMessage');
-    const errorEl = document.getElementById('errorMessage');
+        async function handleClockOut() {
+            stopTimer(); // Stop the timer when clocking out
+            const now = new Date();
+            localStorage.setItem('isClockedIn', 'false');
+            localStorage.removeItem('clockInTime');
 
-    successEl.style.display = 'none';
-    errorEl.style.display = 'none';
+            try {
+                await fetch(`${API_BASE}/addOrUpdate`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + localStorage.getItem('token') // store token after login
+                    },
+                    body: JSON.stringify({
+                        attendance_date: now.toISOString().split('T')[0],
+                        punch_in_time: now.toISOString(),
+                        punch_out_time: now.toISOString()
+                    })
+                });
 
-    if (type === 'success') {
-        successEl.querySelector('#successText').textContent = message;
-        successEl.style.display = 'block';
-    } else {
-        errorEl.querySelector('#errorText').textContent = message;
-        errorEl.style.display = 'block';
-    }
-}
-</script>
+                showMessage("Clock-out recorded successfully!", "success");
+            } catch (err) {
+                console.error("Clock-out API error:", err);
+                showMessage("Failed to record clock-out!", "error");
+            }
 
+            updateUI(false);
+        }
 
+        function updateUI(isClockedIn) {
+            const clockIcon = document.getElementById('clock-icon');
+            const buttonClasses = ['shadow-md', 'shadow-lg', 'bg-green-500', 'hover:bg-green-600', 'bg-gradient-to-r', 'from-green-500', 'to-green-600', 'border-none', 'bg-orange-500', 'hover:bg-orange-600', 'border', 'border-orange-600'];
+
+            if (isClockedIn) {
+                // Clocked In (ready to clock out) state
+                clockButton.classList.remove(...buttonClasses);
+                clockButton.classList.add('bg-orange-500', 'hover:bg-orange-600', 'shadow-lg', 'border', 'border-orange-600');
+                clockButtonText.textContent = 'End My Day';
+                clockIcon.className = 'fas fa-stop mr-2';
+                attendanceStatusDot.className = 'w-3 h-3 rounded-full mr-2 bg-green-500';
+                attendanceStatusText.textContent = 'Clocked In';
+                attendanceStatusText.classList.replace('text-gray-800', 'text-green-600');
+                timerSection.classList.remove('hidden');
+                startTimer(); // Start the timer
+            } else {
+                // Clocked Out (ready to clock in) state
+                clockButton.classList.remove(...buttonClasses);
+                clockButton.classList.add('bg-gradient-to-r', 'from-green-500', 'to-green-600', 'shadow-md', 'border-none');
+                clockButtonText.textContent = 'Start My Day';
+                clockIcon.className = 'fas fa-play mr-2';
+                attendanceStatusDot.className = 'w-3 h-3 rounded-full mr-2 bg-gray-400';
+                attendanceStatusText.textContent = 'Clocked Out';
+                attendanceStatusText.classList.replace('text-green-600', 'text-gray-800');
+                timerSection.classList.add('hidden');
+            }
+        }
+
+        function startTimer() {
+            // Clear any existing timer to prevent duplicates
+            stopTimer();
+
+            const clockInTime = parseInt(localStorage.getItem('clockInTime'));
+            if (!clockInTime) return;
+
+            // Update the timer every second
+            timerInterval = setInterval(() => {
+                const now = Date.now();
+                const elapsedMilliseconds = now - clockInTime;
+
+                // Calculate hours, minutes, and seconds
+                const totalSeconds = Math.floor(elapsedMilliseconds / 1000);
+                const hours = Math.floor(totalSeconds / 3600);
+                const minutes = Math.floor((totalSeconds % 3600) / 60);
+                const seconds = totalSeconds % 60;
+
+                // Format the elapsed time
+                const formattedTime = `${String(hours).padStart(2, '0')}h ${String(minutes).padStart(2, '0')}m ${String(seconds).padStart(2, '0')}s`;
+                elapsedTimeDisplay.textContent = formattedTime;
+
+                // Calculate estimated finish time (8 hours from punch in)
+                const eightHours = 8 * 60 * 60 * 1000;
+                const finishTime = new Date(clockInTime + eightHours);
+                const formattedFinishTime = `${String(finishTime.getHours()).padStart(2, '0')}:${String(finishTime.getMinutes()).padStart(2, '0')}`;
+                finishTimeDisplay.textContent = `Estimated finish time: ${formattedFinishTime}`;
+
+            }, 1000);
+        }
+
+        function stopTimer() {
+            clearInterval(timerInterval);
+            timerInterval = null;
+        }
+
+        function showMessage(message, type) {
+            const successEl = document.getElementById('successMessage');
+            const errorEl = document.getElementById('errorMessage');
+
+            successEl.style.display = 'none';
+            errorEl.style.display = 'none';
+
+            if (type === 'success') {
+                successEl.querySelector('#successText').textContent = message;
+                successEl.style.display = 'block';
+            } else {
+                errorEl.querySelector('#errorText').textContent = message;
+                errorEl.style.display = 'block';
+            }
+        }
+    </script>
 </body>
-
 </html>
