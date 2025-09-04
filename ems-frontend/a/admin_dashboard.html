@@ -503,7 +503,7 @@
     </script>
 </body>
 
-<script>
+<script> // Set user role to 'admin' for admin dashboard    
 function toggleDropdown(event) {
     event.preventDefault();
     var dropdown = event.target.closest('.more-dropdown');
@@ -523,5 +523,8 @@ document.addEventListener('click', function(e) {
         });
     }
 });
+</script>
+<script> 
+    localStorage.setItem('token', data.token);
 </script>
 </html>
