@@ -457,122 +457,127 @@
         <p class="text-sm">&copy; 2025 Wordlane Tech. All rights reserved.</p>
     </footer>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // --- DATA ---
-            // Mock data for the projects page. This could be fetched from an API in a real application.
-            const projectsData = [{
-                id: 'proj-001',
-                name: 'Project Atlas',
-                description: 'Develop a new internal tool for client management, improving efficiency and data accessibility for the sales team.',
-                status: 'In Progress',
-                completion: 75,
-                deadline: 'Dec 31, 2025',
-                team: ['John Parker', 'Jane Doe', 'Peter Jones']
-            }, {
-                id: 'proj-002',
-                name: 'Website Redesign',
-                description: 'Complete overhaul of the company\'s public-facing website with a focus on modern aesthetics and improved user experience.',
-                status: 'Completed',
-                completion: 100,
-                deadline: 'Oct 15, 2025',
-                team: ['John Parker', 'Jane Doe']
-            }, {
-                id: 'proj-003',
-                name: 'Mobile App Integration',
-                description: 'Integrate existing backend services and APIs with the new mobile application for seamless data synchronization.',
-                status: 'In Progress',
-                completion: 45,
-                deadline: 'Jan 31, 2026',
-                team: ['John Parker', 'Mark Smith']
-            }, {
-                id: 'proj-004',
-                name: 'Internal Reporting Tool',
-                description: 'Build a new reporting dashboard for the sales team, providing real-time analytics and customizable report generation.',
-                status: 'Pending',
-                completion: 0,
-                deadline: 'Nov 30, 2025',
-                team: ['John Parker', 'Emily White']
-            }, ];
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+    const profileButton = document.getElementById('profileButton');
+    const profileDropdown = document.getElementById('profileDropdown');
+    const projectsContainer = document.getElementById('projectsContainer');
+    const logoutButton = document.getElementById('logoutButton');
+    const profileName = document.getElementById('profileName');
 
-            // --- UI ELEMENT SELECTION ---
-            const profileButton = document.getElementById('profileButton');
-            const profileDropdown = document.getElementById('profileDropdown');
-            const projectsContainer = document.getElementById('projectsContainer');
-            const logoutButton = document.getElementById('logoutButton'); // Get the logout button
+    const token = localStorage.getItem("token");
 
-            // --- EVENT LISTENERS ---
-            // Toggle the profile dropdown menu visibility
-            profileButton.addEventListener('click', (e) => {
-                e.stopPropagation();
-                profileDropdown.classList.toggle('show');
+    // -----------------------
+    // Fetch & Set Profile Name
+    // -----------------------
+    let storedName = localStorage.getItem("user_name");
+
+    if (!storedName && token) {
+        try {
+            const res = await fetch("https://dashboard.wordlanetech.com/api/profile", {
+                headers: { "Authorization": `Bearer ${token}` }
             });
+            if (res.ok) {
+                const user = await res.json();
+                storedName = user.displayName || `${user.first_name || ''} ${user.last_name || ''}`.trim();
+                localStorage.setItem("user_name", storedName);
+            }
+        } catch (err) {
+            console.error("Failed to fetch user profile:", err);
+        }
+    }
 
-            // Close the dropdown when clicking anywhere else on the page
-            document.addEventListener('click', () => {
-                profileDropdown.classList.remove('show');
-            });
+    profileName.textContent = storedName || "Admin";
 
-            // Handle the logout button click
-            logoutButton.addEventListener('click', (e) => {
-                e.preventDefault(); // Prevent the default link behavior
-                // Simulate a logout by clearing local storage
-                localStorage.clear();
-                // Redirect the user to the login page
-                window.location.href = '../login.html';
-            });
+    // -----------------------
+    // Profile Dropdown Toggle
+    // -----------------------
+    profileButton.addEventListener('click', (e) => {
+        e.stopPropagation();
+        profileDropdown.classList.toggle('show');
+    });
 
-            // --- DYNAMIC RENDERING ---
-            // Function to generate the HTML for a single project card
-            function createProjectCard(project) {
-                let statusClass = '';
-                switch (project.status) {
-                    case 'In Progress':
-                        statusClass = 'status-badge-progress';
-                        break;
-                    case 'Completed':
-                        statusClass = 'status-badge-completed';
-                        break;
-                    case 'Pending':
-                        statusClass = 'status-badge-pending';
-                        break;
-                }
+    document.addEventListener('click', () => {
+        profileDropdown.classList.remove('show');
+    });
 
-                // Return the HTML string for the project card, with a clickable card
-                return `
-                    <div class="project-card p-6 flex flex-col gap-4 cursor-pointer" onclick="window.location.href = '../e/task.html?projectId=${project.id}';">
-                        <div class="flex justify-between items-start">
-                            <h3 class="text-xl font-bold text-gray-900">${project.name}</h3>
-                            <span class="status-badge ${statusClass}">${project.status}</span>
-                        </div>
-                        <p class="text-gray-600 text-sm flex-grow">${project.description}</p>
-                        <div>
-                            <div class="text-xs text-gray-500 font-medium mb-1">Team: ${project.team.join(', ')}</div>
-                            <div class="text-xs text-gray-500 font-medium mb-2">Deadline: ${project.deadline}</div>
-                            <div class="progress-bar-container">
-                                <div class="progress-bar" style="width: ${project.completion}%;">
-                                    <span class="progress-bar-text">${project.completion}%</span>
-                                </div>
-                            </div>
+    // -----------------------
+    // Logout
+    // -----------------------
+    logoutButton.addEventListener('click', (e) => {
+        e.preventDefault();
+        localStorage.clear();
+        window.location.href = '../login.html';
+    });
+
+    // -----------------------
+    // Project Cards
+    // -----------------------
+    function createProjectCard(project) {
+        let statusClass = '';
+        switch (project.status) {
+            case 'In Progress': statusClass = 'status-badge-progress'; break;
+            case 'Completed': statusClass = 'status-badge-completed'; break;
+            case 'Pending': statusClass = 'status-badge-pending'; break;
+        }
+        return `
+            <div class="project-card p-6 flex flex-col gap-4 cursor-pointer" 
+                 onclick="window.location.href = 'admin_tasks.html?projectId=${project.project_id}';">
+                <div class="flex justify-between items-start">
+                    <h3 class="text-xl font-bold text-gray-900">${project.name}</h3>
+                    <span class="status-badge ${statusClass}">${project.status}</span>
+                </div>
+                <p class="text-gray-600 text-sm flex-grow">${project.description}</p>
+                <div>
+                    <div class="text-xs text-gray-500 font-medium mb-1">Team: ${project.team_assigned || 'N/A'}</div>
+                    <div class="text-xs text-gray-500 font-medium mb-2">Start Date: ${project.start_date || 'N/A'}</div>
+                    <div class="text-xs text-gray-500 font-medium mb-2">Deadline: ${project.end_date || 'N/A'}</div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" style="width: ${project.completion || 0}%;">
+                            <span class="progress-bar-text">${project.completion || 0}%</span>
                         </div>
                     </div>
-                `;
+                </div>
+            </div>
+        `;
+    }
+
+    // -----------------------
+    // Load Projects
+    // -----------------------
+    async function populateProjects() {
+        try {
+            if (!token) {
+                window.location.href = '../login.html';
+                return;
             }
 
-            // Function to populate the projects container with cards
-            function populateProjects() {
-                // Clear any existing content to prevent duplicates on re-render
-                projectsContainer.innerHTML = '';
+            const response = await fetch('https://dashboard.wordlanetech.com/api/projects', {
+                method: 'GET',
+                headers: { 
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
 
-                // Map over the data and join the HTML strings to render them at once
-                const projectCardsHtml = projectsData.map(createProjectCard).join('');
-                projectsContainer.innerHTML = projectCardsHtml;
+            if (!response.ok) {
+                throw new Error('Failed to fetch projects');
             }
 
-            // Initial call to populate the projects on page load
-            populateProjects();
-        });
-    </script>
+            const projectsData = await response.json();
+            projectsContainer.innerHTML = projectsData.length 
+                ? projectsData.map(createProjectCard).join('') 
+                : `<p class="text-gray-500">No projects available</p>`;
+
+        } catch (err) {
+            console.error('Error fetching projects:', err);
+            projectsContainer.innerHTML = `<p class="text-red-500">Failed to load projects</p>`;
+        }
+    }
+
+    populateProjects();
+});
+</script>
     <script src="../security.js"></script>
 </body>
 
