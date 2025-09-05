@@ -581,411 +581,232 @@
         <p class="text-sm">&copy; 2025 Wordlane Tech. All rights reserved.</p>
     </footer>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // --- DATA ---
-            // Mock data for projects to get the project name
-            const projectsData = [{
-                id: 'proj-001',
-                name: 'Project Atlas'
-            }, {
-                id: 'proj-002',
-                name: 'Website Redesign'
-            }, {
-                id: 'proj-003',
-                name: 'Mobile App Integration'
-            }, {
-                id: 'proj-004',
-                name: 'Internal Reporting Tool'
-            }, ];
+      <script>
+document.addEventListener('DOMContentLoaded', () => {
+    const API_BASE_URL = 'https://dashboard.wordlanetech.com/api'; // Change to your backend API
+    const tasksData = [];
+    const addTaskBtn = document.getElementById('addTaskBtn');
+    const logoutButton = document.getElementById('logoutButton');
+    const tasksContainer = document.getElementById('tasksContainer');
+    const filterStatus = document.getElementById('filterStatus');
 
-            // Mock data for tasks - this will be a mutable array now
-            let allTasksData = [{
-                id: 'task-001',
-                projectId: 'proj-001',
-                name: 'UI/UX Design for Dashboard',
-                assignee: 'Jane Doe',
-                status: 'In Progress',
-                dueDate: '2025-10-30',
-                description: 'Complete the high-fidelity UI designs for the main dashboard and get stakeholder approval.',
-            }, {
-                id: 'task-002',
-                projectId: 'proj-001',
-                name: 'Backend API Development',
-                assignee: 'John Parker',
-                status: 'In Progress',
-                dueDate: '2025-11-15',
-                description: 'Develop and test the RESTful API endpoints for user authentication and task management.',
-            }, {
-                id: 'task-003',
-                projectId: 'proj-001',
-                name: 'Database Schema Design',
-                assignee: 'Peter Jones',
-                status: 'Completed',
-                dueDate: '2025-10-10',
-                description: 'Finalize the database schema for the Project Atlas application.',
-            }, {
-                id: 'task-004',
-                projectId: 'proj-002',
-                name: 'Homepage Content Creation',
-                assignee: 'Jane Doe',
-                status: 'Completed',
-                dueDate: '2025-09-25',
-                description: 'Write compelling marketing copy and source images for the new homepage design.',
-            }, {
-                id: 'task-005',
-                projectId: 'proj-002',
-                name: 'Styling and Animations',
-                assignee: 'John Parker',
-                status: 'Completed',
-                dueDate: '2025-10-10',
-                description: 'Implement CSS styling, transitions, and keyframe animations for the website redesign.',
-            }, {
-                id: 'task-006',
-                projectId: 'proj-003',
-                name: 'Mobile App Wireframes',
-                assignee: 'Mark Smith',
-                status: 'In Progress',
-                dueDate: '2025-12-01',
-                description: 'Create low-fidelity wireframes for the core user flows of the new mobile app.',
-            }, {
-                id: 'task-007',
-                projectId: 'proj-004',
-                name: 'Initial Requirement Gathering',
-                assignee: 'Emily White',
-                status: 'Pending',
-                dueDate: '2025-11-10',
-                description: 'Conduct interviews with stakeholders to gather initial requirements for the internal reporting tool.',
-            }, {
-                id: 'task-008',
-                projectId: 'proj-004',
-                name: 'User Stories Documentation',
-                assignee: 'Emily White',
-                status: 'Pending',
-                dueDate: '2025-11-15',
-                description: 'Document all user stories based on the requirement gathering phase.',
-            }, ];
+    addTaskBtn.addEventListener('click', () => {
+        addTaskModal.classList.add('active');
+        addTaskModal.querySelector('.modal-content').classList.add('active');
+        document.body.style.overflow = 'hidden';
+    });
 
-            // --- UI ELEMENT SELECTION ---
-            const profileButton = document.getElementById('profileButton');
-            const profileDropdown = document.getElementById('profileDropdown');
-            const tasksContainer = document.getElementById('tasksContainer');
-            const pageTitle = document.getElementById('pageTitle');
-            const taskModal = document.getElementById('taskModal');
-            const modalTitle = document.getElementById('modal-title');
-            const modalBody = document.getElementById('modal-body');
+    logoutButton.addEventListener('click', (e) => {
+        e.preventDefault();
+        localStorage.clear();
+        window.location.href = '../login.html';
+    });
 
-            // --- URL PARAMETER PARSING ---
-            const urlParams = new URLSearchParams(window.location.search);
-            const projectId = urlParams.get('projectId');
+    // Create task card HTML
+    function createTaskCard(task) {
+        let statusClass = '';
+        switch (task.status.toLowerCase()) {
+            case 'in progress': statusClass = 'status-badge-progress'; break;
+            case 'completed': statusClass = 'status-badge-completed'; break;
+            case 'pending': statusClass = 'status-badge-pending'; break;
+            case 'review': statusClass = 'status-badge-review'; break;
+            case 'overdue': statusClass = 'status-badge-overdue'; break;
+        }
 
-            // --- EVENT LISTENERS ---
-            // Toggles the profile dropdown menu
-            function setupProfileDropdown() {
-                profileButton.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    profileDropdown.classList.toggle('show');
-                });
-
-                document.addEventListener('click', () => {
-                    if (profileDropdown.classList.contains('show')) {
-                        profileDropdown.classList.remove('show');
-                    }
-                });
-            }
-
-            // --- MODAL FUNCTIONS ---
-            // Shows the task detail modal and populates it with data
-            function showModal(task) {
-                modalTitle.textContent = task.name;
-
-                // Convert the ISO date to a more readable format
-                const readableDate = new Date(task.dueDate).toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'short',
-                    day: 'numeric'
-                });
-
-                // Check if the task is completed or submitted for review
-                const canSubmit = (task.status === 'In Progress' || task.status === 'Pending' || task.status === 'Overdue');
-                
-                // Form HTML for submission
-                const submissionFormHtml = `
-                    <div class="mt-6 border-t pt-4 border-gray-200">
-                        <h4 class="text-lg font-bold mb-4">Submit Remarks & Documents</h4>
-                        <form id="documentUploadForm" class="flex flex-col gap-4">
-                            <div>
-                                <label for="remarks" class="block text-sm font-medium text-gray-700 mb-1">Remarks</label>
-                                <textarea id="remarks" name="remarks" rows="3" placeholder="Add your remarks here..." class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"></textarea>
-                            </div>
-                            <div class="document-upload-box flex flex-col items-center justify-center relative">
-                                <input type="file" id="fileUpload" name="fileUpload" class="absolute inset-0 opacity-0">
-                                <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-2"></i>
-                                <p class="text-gray-600 font-medium">Click to browse or drag and drop a file</p>
-                                <p id="fileName" class="text-sm text-gray-500 mt-2"></p>
-                            </div>
-                            <div id="messageBox" class="message-box"></div>
-                            <div class="flex justify-end mt-2">
-                                <button type="submit" id="submitButton" class="bg-[#1F446A] hover:bg-[#15344F] text-white font-bold py-2 px-6 rounded-full shadow-lg transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-2" disabled>
-                                    <i class="fas fa-upload" id="submitIcon"></i>
-                                    <span id="submitText">Submit</span>
-                                </button>
-                            </div>
-                        </form>
+        return `
+            <div class="task-card">
+                <div class="task-id">${task.task_id}</div>
+                <h3 class="task-title">${task.name}</h3>
+                <div class="task-info">
+                    <div>
+                        <div class="task-info-label">Project</div>
+                        <div class="task-info-value">${task.project_name}</div>
                     </div>
-                `;
-
-                // Message to show if the task is already submitted or completed
-                const submittedMessageHtml = `
-                    <div class="mt-6 border-t pt-4 border-gray-200 text-center text-gray-500">
-                        <p class="text-md font-semibold"><i class="fas fa-check-circle text-green-500 mr-2"></i>This task has been submitted for review.</p>
-                        <p class="text-sm mt-2">No further action is required at this time.</p>
+                    <div>
+                        <div class="task-info-label">Due Date</div>
+                        <div class="task-info-value">${task.end_date}</div>
                     </div>
-                `;
-                
-                // The main body of the modal
-                modalBody.innerHTML = `
-                    <div class="mb-4">
-                        <p class="mb-2 text-sm"><strong>Project:</strong> ${projectsData.find(p => p.id === task.projectId)?.name || 'N/A'}</p>
-                        <p class="mb-2 text-sm"><strong>Assignee:</strong> ${task.assignee}</p>
-                        <p class="mb-2 text-sm"><strong>Status:</strong> <span class="status-badge ${getTaskStatusClass(task)}">${task.status}</span></p>
-                        <p class="mb-2 text-sm"><strong>Due Date:</strong> ${readableDate}</p>
-                        <p class="mt-4 text-sm"><strong>Description:</strong></p>
-                        <p class="text-sm">${task.description || 'No description provided.'}</p>
-                    </div>
-                    ${canSubmit ? submissionFormHtml : submittedMessageHtml}
-                `;
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="status-badge ${statusClass}">
+                        <i class="fas fa-circle text-xs"></i>
+                        ${task.status}
+                    </span>
+                </div>
+                <div class="task-actions">
+                    <button class="task-action-btn" title="View Details" 
+                        onclick="showTaskDetails(${encodeURIComponent(JSON.stringify(task))})">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+            </div>
+        `;
+    }
 
-                // Add event listeners for the new form only if it's rendered
-                if (canSubmit) {
-                    const fileUploadInput = document.getElementById('fileUpload');
-                    const remarksInput = document.getElementById('remarks');
-                    const fileNameDisplay = document.getElementById('fileName');
-                    const documentUploadForm = document.getElementById('documentUploadForm');
-                    const messageBox = document.getElementById('messageBox');
-                    const submitButton = document.getElementById('submitButton');
-                    const submitIcon = document.getElementById('submitIcon');
-                    const submitText = document.getElementById('submitText');
+    // Populate tasks
+    function populateTasks(filter = 'all') {
+        tasksContainer.innerHTML = '';
+        const filteredTasks = filter === 'all' 
+            ? tasksData 
+            : tasksData.filter(task => task.status.toLowerCase() === filter);
+        tasksContainer.innerHTML = filteredTasks.map(createTaskCard).join('');
+    }
 
-                    // Show selected file name and enable submit button
-                    fileUploadInput.addEventListener('change', () => {
-                        if (fileUploadInput.files.length > 0 || remarksInput.value.trim() !== '') {
-                            fileNameDisplay.textContent = fileUploadInput.files[0] ? `Selected file: ${fileUploadInput.files[0].name}` : '';
-                            submitButton.disabled = false;
-                            submitButton.classList.remove('opacity-50', 'cursor-not-allowed');
-                        } else {
-                            fileNameDisplay.textContent = '';
-                            submitButton.disabled = true;
-                            submitButton.classList.add('opacity-50', 'cursor-not-allowed');
-                        }
-                        messageBox.style.display = 'none'; // Clear previous messages
-                    });
-
-                    // Enable submit button if remarks are present, even without a file
-                    remarksInput.addEventListener('input', () => {
-                        if (remarksInput.value.trim() !== '' || fileUploadInput.files.length > 0) {
-                            submitButton.disabled = false;
-                            submitButton.classList.remove('opacity-50', 'cursor-not-allowed');
-                        } else {
-                            submitButton.disabled = true;
-                            submitButton.classList.add('opacity-50', 'cursor-not-allowed');
-                        }
-                    });
-
-                    // Initially disable the button
-                    submitButton.disabled = true;
-                    submitButton.classList.add('opacity-50', 'cursor-not-allowed');
-
-
-                    // Handle the form submission
-                    documentUploadForm.addEventListener('submit', (e) => {
-                        e.preventDefault();
-
-                        const file = fileUploadInput.files[0];
-                        const remarks = remarksInput.value.trim();
-
-                        if (!file && !remarks) {
-                            messageBox.textContent = 'Please provide a file or some remarks.';
-                            messageBox.classList.remove('success');
-                            messageBox.classList.add('error');
-                            messageBox.style.display = 'block';
-                            return;
-                        }
-
-                        // Simulate loading state
-                        submitButton.disabled = true;
-                        submitButton.classList.add('opacity-50', 'cursor-not-allowed');
-                        submitIcon.style.display = 'none';
-                        submitText.innerHTML = '<div class="spinner"></div>';
-
-                        // Simulate a network request
-                        setTimeout(() => {
-                            // Find the task in our data array and update its status
-                            const taskToUpdate = allTasksData.find(t => t.id === task.id);
-                            if (taskToUpdate) {
-                                taskToUpdate.status = 'Submitted for Review';
-                                populateTasks(); // Re-render the task list to reflect the change
-                            }
-
-                            // Update the modal's content to show the new status and hide the form
-                            showModal(taskToUpdate);
-
-                        }, 2000); // 2-second simulated delay
-                    });
-                }
-
-                taskModal.style.display = 'flex';
-                // Add a small delay to allow the display change to register before the transition
-                setTimeout(() => taskModal.classList.add('active'), 10);
-            }
-
-            // Closes the task detail modal
-            function closeModal() {
-                taskModal.classList.remove('active');
-                setTimeout(() => taskModal.style.display = 'none', 300); // Hide after transition
-            }
-
-            // Allow clicking outside the modal content to close it
-            taskModal.addEventListener('click', (e) => {
-                if (e.target === taskModal) {
-                    closeModal();
-                }
+    // Fetch tasks from API
+    async function fetchTasks() {
+        try {
+            const token = localStorage.getItem('token'); // If using auth
+            const res = await fetch(`${API_BASE_URL}/tasks`, {
+                headers: { Authorization: `Bearer ${token}` }
             });
-
-            // --- DYNAMIC RENDERING ---
-            // Determines the appropriate CSS class for a task's status
-            function getTaskStatusClass(task) {
-                const today = new Date();
-                const dueDate = new Date(task.dueDate);
-
-                // Check if the task is overdue, but only if it's not already completed
-                if (task.status !== 'Completed' && task.status !== 'Submitted for Review' && dueDate < today) {
-                    task.status = 'Overdue';
-                }
-
-                if (task.status === 'In Progress') {
-                    return 'status-badge-progress';
-                } else if (task.status === 'Submitted for Review') {
-                    return 'status-badge-review';
-                } else if (task.status === 'Completed') {
-                    return 'status-badge-completed';
-                } else if (task.status === 'Overdue') {
-                    return 'status-badge-overdue';
-                } else {
-                    // Default to pending if no other status matches
-                    task.status = 'Pending';
-                    return 'status-badge-pending';
-                }
-            }
-
-            // Function to render a single task card
-            function createTaskCard(task) {
-                const card = document.createElement('div');
-                card.className = 'task-card p-6 flex flex-col gap-4';
-
-                // Find project name for display
-                const projectName = projectsData.find(p => p.id === task.projectId)?.name || 'N/A';
-
-                const statusClass = getTaskStatusClass(task);
-
-                // Convert the ISO date to a more readable format for the card
-                const readableDate = new Date(task.dueDate).toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'short',
-                    day: 'numeric'
-                });
-
-                card.innerHTML = `
-                    <div class="flex justify-between items-start">
-                        <h3 class="text-xl font-bold text-gray-900">${task.name}</h3>
-                        <span class="status-badge ${statusClass}">${task.status}</span>
-                    </div>
-                    <div class="flex-grow text-sm text-gray-600">
-                        <p class="mb-1"><strong>Project:</strong> ${projectName}</p>
-                        <p class="mb-1"><strong>Assignee:</strong> ${task.assignee}</p>
-                        <p><strong>Due:</strong> ${readableDate}</p>
-                    </div>
-                    <div class="flex justify-end">
-                        <a href="#" class="view-details-link text-[#0ea5e9] font-semibold hover:underline text-sm flex items-center gap-1">
-                            View Details <i class="fas fa-arrow-right"></i>
-                        </a>
-                    </div>
-                `;
-
-                // Add click listener to the View Details link
-                card.querySelector('.view-details-link').addEventListener('click', (e) => {
-                    e.preventDefault();
-                    showModal(task);
-                });
-
-                return card;
-            }
-
-            // Shows a loading state
-            function showLoading() {
-                tasksContainer.innerHTML = `
-                    <div class="col-span-1 md:col-span-2 lg:col-span-3 flex flex-col items-center justify-center p-10 text-gray-500">
-                        <i class="fas fa-spinner fa-spin text-4xl mb-4"></i>
-                        <p class="text-lg font-medium">Loading tasks...</p>
-                    </div>
-                `;
-            }
-
-            // Shows an empty state
-            function showEmptyState(message) {
-                tasksContainer.innerHTML = `
-                    <div class="col-span-1 md:col-span-2 lg:col-span-3 flex flex-col items-center justify-center p-10 text-gray-500 rounded-2xl bg-white shadow-md">
-                        <i class="fas fa-folder-open text-6xl mb-6 text-gray-400"></i>
-                        <h4 class="text-xl font-semibold mb-2">Nothing to see here</h4>
-                        <p class="text-center max-w-sm">${message}</p>
-                    </div>
-                `;
-            }
-
-            // Populates the tasks container with tasks (filtered or all)
-            function populateTasks() {
-                showLoading(); // Show loading indicator
-
-                setTimeout(() => { // Simulate network delay
-                    let tasksToDisplay = allTasksData;
-                    if (projectId) {
-                        tasksToDisplay = allTasksData.filter(task => task.projectId === projectId);
-                        const project = projectsData.find(p => p.id === projectId);
-                        if (project) {
-                            pageTitle.textContent = `Tasks for ${project.name}`;
-                        } else {
-                            pageTitle.textContent = 'Project Not Found';
-                            tasksToDisplay = [];
-                        }
-                    } else {
-                        pageTitle.textContent = 'All Tasks';
-                    }
-
-                    tasksContainer.innerHTML = ''; // Clear existing content
-
-                    if (tasksToDisplay.length === 0) {
-                        showEmptyState('No tasks found for this project.');
-                    } else {
-                        tasksToDisplay.forEach(task => {
-                            const card = createTaskCard(task);
-                            tasksContainer.appendChild(card);
-                        });
-                    }
-                }, 1000); // 1-second delay
-            }
-
-            // Run the setup functions on page load
-            setupProfileDropdown();
+            if (!res.ok) throw new Error('Failed to fetch tasks');
+            const data = await res.json();
+            tasksData.splice(0, tasksData.length, ...data); // Update array without breaking reference
             populateTasks();
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    filterStatus.addEventListener('change', (e) => {
+        populateTasks(e.target.value);
+    });
+
+    // Modal Functions
+    window.showTaskDetails = function(taskJson) {
+        const task = JSON.parse(decodeURIComponent(taskJson));
+        const modal = document.getElementById('taskModal');
+        const modalTitle = document.getElementById('modal-title');
+        const modalBody = document.getElementById('modal-body');
+
+        modalTitle.textContent = task.task_name;
+        const readableDate = new Date(task.deadline).toLocaleDateString('en-US', {
+            year: 'numeric', month: 'long', day: 'numeric'
         });
 
-        // This function is now global so the modal's close button can access it
-        function closeModal() {
-            const taskModal = document.getElementById('taskModal');
-            taskModal.classList.remove('active');
-            setTimeout(() => taskModal.style.display = 'none', 300); // Hide after transition
+        let statusClass = '';
+        switch (task.status.toLowerCase()) {
+            case 'In Progress': statusClass = 'status-badge-progress'; break;
+            case 'completed': statusClass = 'status-badge-completed'; break;
+            case 'pending': statusClass = 'status-badge-pending'; break;
+            case 'review': statusClass = 'status-badge-review'; break;
+            case 'overdue': statusClass = 'status-badge-overdue'; break;
         }
-    </script>
+
+        const canSubmit = ['in progress', 'pending', 'overdue'].includes(task.status.toLowerCase());
+
+        const submissionFormHtml = `
+            <div class="mt-6 border-t pt-4 border-gray-200">
+                <h4 class="text-lg font-bold mb-4">Submit Remarks & Documents</h4>
+                <form id="documentUploadForm" class="flex flex-col gap-4">
+                    <div>
+                        <label for="remarks" class="block text-sm font-medium text-gray-700 mb-1">Remarks</label>
+                        <textarea id="remarks" name="remarks" rows="3" placeholder="Add your remarks here..." 
+                            class="w-full p-3 border border-gray-300 rounded-md"></textarea>
+                    </div>
+                    <div class="document-upload-box flex flex-col items-center justify-center relative">
+                        <input type="file" id="fileUpload" name="fileUpload" class="absolute inset-0 opacity-0 cursor-pointer">
+                        <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-2"></i>
+                        <p class="text-gray-600 font-medium">Click to browse or drag and drop a file</p>
+                        <p id="fileName" class="text-sm text-gray-500 mt-2"></p>
+                    </div>
+                    <div id="messageBox" class="message-box"></div>
+                    <div class="flex justify-end mt-2">
+                        <button type="submit" id="submitButton" 
+                            class="bg-[#1F446A] hover:bg-[#15344F] text-white font-bold py-2 px-6 rounded-full shadow-lg" disabled>
+                            <i class="fas fa-upload" id="submitIcon"></i>
+                            <span id="submitText">Submit</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        `;
+
+        const submittedMessageHtml = `
+            <div class="mt-6 border-t pt-4 border-gray-200 text-center text-gray-500">
+                <p class="text-md font-semibold"><i class="fas fa-check-circle text-green-500 mr-2"></i>This task has been submitted for review.</p>
+            </div>
+        `;
+
+        modalBody.innerHTML = `
+            <div class="mb-4">
+                <p><strong>Project:</strong> ${task.project_id}</p>
+                <p><strong>Assignee:</strong> ${task.assignee || 'N/A'}</p>
+                <p><strong>Status:</strong> <span class="status-badge ${statusClass}">${task.status}</span></p>
+                <p><strong>Due Date:</strong> ${readableDate}</p>
+                <p class="mt-4"><strong>Description:</strong> ${task.description || 'No description provided.'}</p>
+            </div>
+            ${canSubmit ? submissionFormHtml : submittedMessageHtml}
+        `;
+
+        modal.style.display = 'flex';
+        setTimeout(() => {
+            modal.classList.add('active');
+            if (canSubmit) {
+                const fileUpload = document.getElementById('fileUpload');
+                const remarks = document.getElementById('remarks');
+                const fileName = document.getElementById('fileName');
+                const submitButton = document.getElementById('submitButton');
+                const form = document.getElementById('documentUploadForm');
+
+                const updateSubmitButton = () => {
+                    const hasFile = fileUpload.files.length > 0;
+                    const hasRemarks = remarks.value.trim() !== '';
+                    submitButton.disabled = !hasFile && !hasRemarks;
+                };
+
+                fileUpload.addEventListener('change', () => {
+                    fileName.textContent = fileUpload.files.length ? `Selected file: ${fileUpload.files[0].name}` : '';
+                    updateSubmitButton();
+                });
+                remarks.addEventListener('input', updateSubmitButton);
+
+                form.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    submitButton.disabled = true;
+                    const formData = new FormData();
+                    formData.append('remarks', remarks.value);
+                    formData.append('task_id', task.task_id);
+                    if (fileUpload.files.length > 0) {
+                        formData.append('file', fileUpload.files[0]);
+                    }
+
+                    try {
+                        const token = localStorage.getItem('token');
+                        const res = await fetch(`${API_BASE_URL}/tasks/submit`, {
+                            method: 'POST',
+                            headers: { Authorization: `Bearer ${token}` },
+                            body: formData
+                        });
+                        if (!res.ok) throw new Error('Submission failed');
+                        await fetchTasks();
+                        closeModal();
+                    } catch (err) {
+                        console.error(err);
+                    }
+                });
+            }
+        }, 10);
+
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeModal();
+        });
+    };
+
+    window.closeModal = function() {
+        const modal = document.getElementById('taskModal');
+        modal.classList.remove('active');
+        setTimeout(() => modal.style.display = 'none', 300);
+    };
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeModal();
+    });
+
+    // Initial API load
+    fetchTasks();
+});
+</script>
     <script src="../security.js"></script>
 </body>
 
