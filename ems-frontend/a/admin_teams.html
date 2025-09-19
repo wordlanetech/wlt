@@ -17,66 +17,402 @@
     <link rel="stylesheet" href="admin.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-       
-        @media (max-width: 768px) {
-            .header-gradient { padding: 1rem; }
-            .header-gradient h1 { font-size: 1.75rem; }
-            .header-gradient img { width: 35px; height: 35px; }
-            .nav-list { flex-direction: column; align-items: center; gap: 0.25rem; padding: 0.5rem 0; }
-            .nav-item { width: 100%; }
-            .nav-link { justify-content: center; padding: 0.75rem 1rem; border-radius: 0.375rem; }
-            .page-title { font-size: 2.5rem; }
-            .profile-dropdown { right: 1rem; min-width: unset; width: calc(100% - 2rem); }
-            .profile-container { padding: 0.5rem 1rem; gap: 0.75rem; }
-            .profile-picture { width: 40px; height: 40px; }
-            .profile-name { font-size: 0.85rem; }
-            .profile-role { font-size: 0.7rem; }
-        }
-        .team-card {
+        /* Enhanced gradient backgrounds */
+        body { 
             background: #ffffff;
-            border-radius: 1.5rem;
-            border: 1px solid #e2e7ed;
-            box-shadow: 0 2px 8px 0 rgba(31, 68, 106, 0.06);
-            transition: all 0.3s ease;
+            min-height: 100vh;
         }
-        .team-card:hover {
-            box-shadow: 0 8px 24px 0 rgba(31, 68, 106, 0.12);
-            transform: translateY(-2px);
+        .header-gradient { 
+            background: #ffffff;
+            box-shadow: 0 4px 20px rgba(31, 68, 106, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.7);
+        }
+        main { 
+            background: #ffffff;
+            padding: 2rem;
+        }
+        
+        /* Enhanced team card styles */
+        .team-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%);
+            border-radius: 1.25rem; 
+            border: 1px solid rgba(226, 231, 237, 0.7);
+            box-shadow: 0 4px 12px rgba(31, 68, 106, 0.08),
+                        0 0 0 1px rgba(226, 231, 237, 0.5);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            transform: translateY(0);
+        }
+        .team-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #1F446A, #0ea5e9);
+        }
+        .team-card:hover { 
+            box-shadow: 0 12px 24px rgba(31, 68, 106, 0.15),
+                        0 0 0 1px rgba(178, 195, 221, 0.8);
+            transform: translateY(-5px);
             border-color: #b6cbe1;
         }
+        
+        /* Enhanced button styles */
+        .add-team-btn {
+            background: linear-gradient(135deg, #1F446A 0%, #0ea5e9 100%);
+            color: white;
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 12px rgba(30, 64, 175, 0.3);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: none;
+            cursor: pointer;
+        }
+        .add-team-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(30, 64, 175, 0.4);
+        }
+        .add-team-btn:active {
+            transform: translateY(-1px);
+        }
+        
+        /* Page header */
+        .page-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(226, 231, 237, 0.7);
+        }
+        
+        .page-title {
+            background: linear-gradient(135deg, #1F446A 0%, #0ea5e9 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+        
+        /* Team grid */
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.75rem;
+        }
+        
+        /* Team title */
+        .team-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin: 0;
+        }
+        
+        /* Team description */
+        .team-description {
+            color: #64748b;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin: 0.75rem 0;
+        }
+        
+        /* Team details */
+        .team-details {
+            margin-top: auto;
+            padding-top: 1rem;
+            border-top: 1px solid #e2e8f0;
+        }
+        
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.85rem;
+        }
+        
+        .detail-label {
+            color: #94a3b8;
+            font-weight: 500;
+        }
+        
+        .detail-value {
+            color: #1e293b;
+            font-weight: 500;
+        }
+        
+        /* View details button */
+        .view-details-btn {
+            background: linear-gradient(135deg, #1F446A 0%, #0ea5e9 100%);
+            color: white;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .view-details-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+        
+        /* Modal styles */
         .modal {
+            display: none;
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(31, 68, 106, 0.7);
-            backdrop-filter: blur(8px);
-            display: none;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
             justify-content: center;
             align-items: center;
-            z-index: 50;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .modal.show {
+            opacity: 1;
         }
         .modal-content {
-            background: #ffffff;
-            border-radius: 1.5rem;
-            padding: 2rem;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border-radius: 1rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
             width: 90%;
             max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
             position: relative;
-            transform: scale(0.95);
-            opacity: 0;
-            transition: all 0.3s ease-in-out;
-            z-index: 51;
+            animation: modalAppear 0.3s ease-out;
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
         }
         .modal.show .modal-content {
-            transform: scale(1);
-            opacity: 1;
+            transform: translateY(0);
+        }
+        @keyframes modalAppear {
+            from { opacity: 0; transform: translateY(-50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin: 0;
+        }
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #94a3b8;
+            transition: color 0.2s;
+        }
+        .close-modal:hover {
+            color: #1e293b;
+        }
+        .modal-body {
+            padding: 1.5rem;
+        }
+        
+        /* Member list */
+        .member-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            background-color: #f8fafc;
+            margin-bottom: 0.5rem;
+            transition: all 0.2s ease;
+        }
+        .member-item:hover {
+            background-color: #f1f5f9;
+            transform: translateX(5px);
+        }
+        .member-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 1rem;
+            border: 2px solid #e2e8f0;
+        }
+        .member-info {
+            flex: 1;
+        }
+        .member-name {
+            font-weight: 600;
+            color: #1e293b;
+            margin: 0;
+        }
+        .member-role {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin: 0;
+        }
+        
+        /* Notification */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            color: white;
+            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 1100;
+            transform: translateX(120%);
+            transition: transform 0.3s ease;
+        }
+        .notification.show {
+            transform: translateX(0);
+        }
+        .notification.success {
+            background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+        }
+        .notification.error {
+            background: linear-gradient(135deg, #ef4444 0%, #f87171 100%);
+        }
+        
+        /* Stats cards */
+        .stats-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%);
+            border-radius: 1rem;
+            border: 1px solid rgba(226, 231, 237, 0.7);
+            box-shadow: 0 4px 12px rgba(31, 68, 106, 0.08);
+            transition: all 0.3s ease;
+        }
+        .stats-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(31, 68, 106, 0.12);
+        }
+        
+        /* Search bar */
+        .search-bar {
+            background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%);
+            border: 1px solid rgba(226, 231, 237, 0.7);
+            border-radius: 0.75rem;
+            box-shadow: 0 2px 8px rgba(31, 68, 106, 0.05);
+            transition: all 0.3s ease;
+        }
+        .search-bar:focus-within {
+            box-shadow: 0 4px 12px rgba(30, 64, 175, 0.15);
+            border-color: #0ea5e9;
+        }
+        
+        footer {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            margin-top: auto;
+        }
+        
+        /* Remove member button */
+        .remove-member-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .remove-member-btn:hover {
+            background-color: #fee2e2;
+        }
+        
+        /* Add member button */
+        #addMemberBtn {
+            transition: all 0.2s ease;
+        }
+        #addMemberBtn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Current members container */
+        #currentTeamMembers {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        /* Member item */
+        .member-item {
+            transition: background-color 0.2s ease;
+        }
+        .member-item:hover {
+            background-color: #f9fafb;
+        }
+        
+        @media (max-width: 768px) {
+            .header-gradient { 
+                flex-direction: column; 
+                padding: 1rem; 
+            }
+            .nav-list { 
+                flex-direction: column; 
+                align-items: center; 
+                gap: 0.25rem; 
+                padding: 0.5rem 0; 
+            }
+            .nav-item { 
+                width: 100%; 
+            }
+            .nav-link { 
+                justify-content: center; 
+                padding: 0.75rem 1rem; 
+                border-radius: 0.375rem; 
+            }
+            .page-title { 
+                font-size: 2rem; 
+            }
+            .profile-dropdown { 
+                right: 1rem; 
+                min-width: unset; 
+                width: calc(100% - 2rem); 
+            }
+            .profile-container { 
+                padding: 0.5rem 1rem; 
+                gap: 0.75rem; 
+            }
+            .profile-picture { 
+                width: 40px; 
+                height: 40px; 
+            }
+            .profile-name { 
+                font-size: 0.85rem; 
+            }
+            .profile-role { 
+                font-size: 0.7rem; 
+            }
+            main {
+                padding: 1rem;
+            }
+            .team-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
-<body class="bg-gray-50 min-h-screen flex flex-col">
+<body class="bg-white min-h-screen flex flex-col">
 
     <!-- Header Section -->
     <header class="header-gradient p-3 shadow-lg flex flex-col sm:flex-row items-center justify-between sticky top-0 z-10 mt-3 mr-5 ml-5 mb-3" style="border-radius: 25px;">
@@ -126,42 +462,240 @@
     </header>
 
     <!-- Main Content Area - Employee Teams -->
-    <main class="flex-grow p-8 bg-gray-50">
+    <main class="flex-grow p-8 bg-white">
         <div class="max-w-7xl mx-auto">
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8">
-                <h2 class="text-3xl font-extrabold text-gray-900 mb-2">Our Teams</h2>
-                <button id="addTeamBtn" class="bg-gradient-to-r from-[#1F446A] to-[#0ea5e9] text-white font-bold py-2 px-4 rounded-lg shadow-md transition-all duration-500 ease-in-out flex items-center hover:shadow-lg hover:scale-105">
-                    <i class="fas fa-plus mr-2"></i> Add New Team
-                </button>
+            <div class="page-header">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center">
+                    <h2 class="text-4xl font-extrabold page-title mb-4 sm:mb-0">Teams Dashboard</h2>
+                    <button id="addTeamBtn" class="add-team-btn">
+                        <i class="fas fa-plus"></i> Add New Team
+                    </button>
+                </div>
+                <p class="text-gray-600 mt-2">Manage all your teams, view members, and track team performance.</p>
             </div>
+            
+            <!-- Search and Filter -->
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+                <div class="w-full sm:w-1/3">
+                    <div class="search-bar flex items-center">
+                        <i class="fas fa-search text-gray-400 ml-3"></i>
+                        <input type="text" id="searchTeams" placeholder="Search teams..." class="w-full px-4 py-2 bg-transparent border-0 focus:ring-0 focus:outline-none" style="border-radius: 0.75rem;">
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Stats Section -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8" id="teamsStats">
+                <div class="stats-card p-6">
+                    <div class="flex items-center">
+                        <div class="p-3 rounded-lg bg-blue-100 mr-4">
+                            <i class="fas fa-users text-blue-600 text-xl"></i>
+                        </div>
+                        <div>
+                            <div class="text-gray-500 text-sm font-medium">Total Teams</div>
+                            <div class="text-2xl font-bold text-gray-900" id="totalTeams">0</div>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <div class="flex items-center text-green-600 text-sm">
+                            <i class="fas fa-arrow-up mr-1"></i>
+                            <span>+2 this month</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="stats-card p-6">
+                    <div class="flex items-center">
+                        <div class="p-3 rounded-lg bg-purple-100 mr-4">
+                            <i class="fas fa-user-friends text-purple-600 text-xl"></i>
+                        </div>
+                        <div>
+                            <div class="text-gray-500 text-sm font-medium">Total Members</div>
+                            <div class="text-2xl font-bold text-gray-900" id="totalMembers">0</div>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <div class="flex items-center text-blue-600 text-sm">
+                            <i class="fas fa-info-circle mr-1"></i>
+                            <span>Across all teams</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="stats-card p-6">
+                    <div class="flex items-center">
+                        <div class="p-3 rounded-lg bg-green-100 mr-4">
+                            <i class="fas fa-chart-line text-green-600 text-xl"></i>
+                        </div>
+                        <div>
+                            <div class="text-gray-500 text-sm font-medium">Avg. Team Size</div>
+                            <div class="text-2xl font-bold text-gray-900" id="avgTeamSize">0</div>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <div class="flex items-center text-purple-600 text-sm">
+                            <i class="fas fa-users mr-1"></i>
+                            <span>Members per team</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
             <!-- Teams Grid -->
-            <div id="teams-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div id="teams-grid" class="team-grid">
                 <!-- Team cards will be dynamically inserted here -->
             </div>
         </div>
     </main>
 
-    <!-- Modal for Team Details -->
+    <!-- Notification -->
+    <div id="notification" class="notification"></div>
+
+    <!-- Add Team Modal -->
+    <div id="addTeamModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Add New Team</h3>
+                <button class="close-modal" id="closeAddTeamModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="addTeamForm">
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="teamName">
+                            Team Name *
+                        </label>
+                        <input type="text" id="teamName" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter team name" required>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="teamDescription">
+                            Description
+                        </label>
+                        <textarea id="teamDescription" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter team description" rows="3"></textarea>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="teamLeader">
+                            Team Leader
+                        </label>
+                        <select id="teamLeader" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="">Select a team leader</option>
+                        </select>
+                    </div>
+                    <div class="flex justify-end gap-3 mt-6">
+                        <button type="button" id="cancelAddTeam" class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">
+                            Cancel
+                        </button>
+                        <button type="submit" id="submitAddTeam" class="px-4 py-2 bg-gradient-to-r from-[#1F446A] to-[#0ea5e9] text-white rounded-md hover:opacity-90">
+                            Create Team
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Team Details Modal -->
     <div id="teamDetailModal" class="modal">
         <div class="modal-content">
-            <div class="flex justify-between items-center mb-6">
-                <h3 id="modal-team-name" class="text-2xl font-bold text-gray-900"></h3>
-                <button id="closeModalBtn" class="text-gray-400 hover:text-gray-600 transition-colors">
-                    <i class="fas fa-times text-2xl"></i>
-                </button>
+            <div class="modal-header">
+                <h3 class="modal-title" id="modal-team-name"></h3>
+                <button class="close-modal" id="closeModalBtn">&times;</button>
             </div>
-            <div class="space-y-4">
-                <p class="text-sm text-gray-600" id="modal-team-description"></p>
-                <div class="flex items-center text-gray-700">
-                    <i class="fas fa-crown mr-2 text-yellow-500"></i>
-                    <p class="text-lg font-semibold">Team Lead: <span id="modal-team-lead" class="font-normal text-gray-600"></span></p>
+            <div class="modal-body">
+                <div class="mb-6">
+                    <h4 class="text-lg font-semibold text-gray-800 mb-2">Description</h4>
+                    <p class="text-gray-600" id="modal-team-description"></p>
                 </div>
+                
+                <div class="mb-6">
+                    <h4 class="text-lg font-semibold text-gray-800 mb-2">Team Lead</h4>
+                    <div class="flex items-center p-3 bg-gray-50 rounded-lg">
+                        <i class="fas fa-crown text-yellow-500 mr-2"></i>
+                        <span id="modal-team-lead" class="font-medium text-gray-700"></span>
+                    </div>
+                </div>
+                
                 <div>
-                    <h4 class="text-lg font-semibold mb-2 text-gray-800">Members (<span id="modal-member-count"></span>)</h4>
-                    <div id="modal-member-list" class="space-y-2 max-h-60 overflow-y-auto pr-4">
+                    <div class="flex justify-between items-center mb-3">
+                        <h4 class="text-lg font-semibold text-gray-800">Members</h4>
+                        <span class="text-sm font-medium text-gray-500" id="modal-member-count"></span>
+                    </div>
+                    <div id="modal-member-list" class="max-h-60 overflow-y-auto pr-2">
                         <!-- Member list will be dynamically inserted here -->
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Team Modal -->
+    <div id="editTeamModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Edit Team</h3>
+                <button class="close-modal" id="closeEditTeamModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="editTeamForm">
+                    <input type="hidden" id="editTeamId">
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="editTeamName">
+                            Team Name *
+                        </label>
+                        <input type="text" id="editTeamName" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter team name" required>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="editTeamDescription">
+                            Description
+                        </label>
+                        <textarea id="editTeamDescription" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter team description" rows="3"></textarea>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="editTeamLeader">
+                            Team Leader
+                        </label>
+                        <select id="editTeamLeader" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="">Select a team leader</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Team Members Section -->
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-bold mb-2">
+                            Team Members
+                        </label>
+                        <div class="border border-gray-300 rounded-md p-4">
+                            <div class="mb-3">
+                                <label class="block text-gray-700 text-sm mb-2" for="addTeamMember">
+                                    Add Team Member
+                                </label>
+                                <div class="flex gap-2">
+                                    <select id="addTeamMember" class="flex-grow px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                        <option value="">Select an employee</option>
+                                    </select>
+                                    <button type="button" id="addMemberBtn" class="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600">
+                                        Add
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-4">
+                                <label class="block text-gray-700 text-sm mb-2">
+                                    Current Members
+                                </label>
+                                <div id="currentTeamMembers" class="max-h-40 overflow-y-auto border border-gray-200 rounded-md p-2">
+                                    <!-- Current members will be populated here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-end gap-3 mt-6">
+                        <button type="button" id="cancelEditTeam" class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">
+                            Cancel
+                        </button>
+                        <button type="submit" id="submitEditTeam" class="px-4 py-2 bg-gradient-to-r from-[#1F446A] to-[#0ea5e9] text-white rounded-md hover:opacity-90">
+                            Update Team
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -172,32 +706,361 @@
     </footer>
 
    <script>
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM fully loaded and parsed');
     let teamsData = [];
 
     // Fetch teams from backend
     async function fetchTeams() {
         try {
-            const res = await fetch('https://dashboard.wordlanetech.com/api/teams', {
+            console.log('Fetching teams from API...');
+            showLoadingState();
+            
+            // Try the cloud API endpoint first
+            let response = await fetch('https://dashboard.wordlanetech.com/api/teams', {
                 method: 'GET',
                 headers: { 'Accept': 'application/json' }
             });
-            const data = await res.json();
-            console.log('Teams fetched:', data);
+            
+            console.log('Teams API response status:', response.status);
+            console.log('Teams API response headers:', [...response.headers.entries()]);
+            
+            // If the direct fetch fails, try with credentials
+            if (!response.ok) {
+                console.log('Trying with credentials...');
+                response = await fetch('https://dashboard.wordlanetech.com/api/teams', {
+                    method: 'GET',
+                    headers: { 'Accept': 'application/json' },
+                    credentials: 'include'
+                });
+            }
+            
+            if (!response.ok) {
+                throw new Error(`Failed to fetch teams: ${response.status} ${response.statusText}`);
+            }
+            
+            const contentType = response.headers.get('content-type');
+            if (!contentType || !contentType.includes('application/json')) {
+                const text = await response.text();
+                console.error('Non-JSON response:', text);
+                throw new Error('Received non-JSON response from teams API');
+            }
+            
+            const data = await response.json();
+            console.log('Teams data received:', data);
 
-            // Ensure members array exists
-            teamsData = data.map(team => ({
-                ...team,
-                members: Array.isArray(team.members) ? team.members : []
-            }));
+            // Process the data to ensure members array exists
+            teamsData = data.map(team => {
+                console.log('Processing team:', team);
+                const processedTeam = {
+                    ...team,
+                    members: Array.isArray(team.members) ? team.members : []
+                };
+                console.log('Processed team:', processedTeam);
+                return processedTeam;
+            });
 
+            console.log('Processed teams data:', teamsData);
+            populateTeamsStats();
             populateTeamsGrid();
+            hideLoadingState();
         } catch (err) {
             console.error('Error fetching teams:', err);
+            showNotification('Failed to load teams. Please try again later.', 'error');
+            showErrorMessage('Failed to load teams: ' + err.message);
+            
+            // For testing purposes, let's use sample data
+            console.log('Using sample data for testing');
+            teamsData = [
+                {
+                    id: 1,
+                    name: 'Development Team',
+                    description: 'Frontend and backend developers working on web applications',
+                    leader: 'John Smith',
+                    team_leader: 1,
+                    memberCount: 8,
+                    members: [
+                        { id: 1, name: 'John Smith', email: 'john@example.com', designation: 'Team Lead' },
+                        { id: 2, name: 'Jane Doe', email: 'jane@example.com', designation: 'Frontend Developer' },
+                        { id: 3, name: 'Bob Johnson', email: 'bob@example.com', designation: 'Backend Developer' }
+                    ]
+                },
+                {
+                    id: 2,
+                    name: 'Design Team',
+                    description: 'UI/UX designers creating beautiful user experiences',
+                    leader: 'Sarah Wilson',
+                    team_leader: 2,
+                    memberCount: 5,
+                    members: [
+                        { id: 4, name: 'Sarah Wilson', email: 'sarah@example.com', designation: 'Design Lead' },
+                        { id: 5, name: 'Mike Brown', email: 'mike@example.com', designation: 'UI Designer' }
+                    ]
+                }
+            ];
+            populateTeamsStats();
+            populateTeamsGrid();
+            hideLoadingState();
         }
     }
 
-    // Profile dropdown toggle
+    function showLoadingState() {
+        const teamsGrid = document.getElementById('teams-grid');
+        if (teamsGrid) {
+            teamsGrid.innerHTML = `
+                <div class="col-span-full text-center py-12">
+                    <div class="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500 mb-4"></div>
+                    <p class="text-gray-600">Loading teams...</p>
+                </div>
+            `;
+        }
+    }
+
+    function hideLoadingState() {
+        // Loading state is automatically replaced when populateTeamsGrid is called
+    }
+
+    function showErrorMessage(message) {
+        const teamsGrid = document.getElementById('teams-grid');
+        if (teamsGrid) {
+            teamsGrid.innerHTML = `
+                <div class="col-span-full text-center py-12">
+                    <div class="text-red-500 text-lg font-medium mb-2">Failed to Load Teams</div>
+                    <p class="text-gray-600 mb-4">There was an error loading the teams data.</p>
+                    <p class="text-gray-500 text-sm mb-4">${message}</p>
+                    <button id="retryTeamsBtn" class="px-4 py-2 bg-gradient-to-r from-[#1F446A] to-[#0ea5e9] text-white rounded-md hover:opacity-90">
+                        Retry
+                    </button>
+                </div>
+            `;
+            // Add event listener to retry button
+            document.getElementById('retryTeamsBtn')?.addEventListener('click', fetchTeams);
+        }
+    }
+
+    // Render all team cards
+    function populateTeamsGrid() {
+        const teamsGrid = document.getElementById('teams-grid');
+        console.log('Populating teams grid with data:', teamsData);
+        
+        if (!teamsGrid) {
+            console.error('Teams grid element not found');
+            return;
+        }
+        
+        if (teamsData.length === 0) {
+            teamsGrid.innerHTML = `
+                <div class="col-span-full text-center py-12">
+                    <div class="text-gray-400 text-lg font-medium mb-2">No Teams Found</div>
+                    <p class="text-gray-600 mb-4">There are currently no teams in the system.</p>
+                    <button id="addFirstTeamBtn" class="px-4 py-2 bg-gradient-to-r from-[#1F446A] to-[#0ea5e9] text-white rounded-md hover:opacity-90">
+                        Create Your First Team
+                    </button>
+                </div>
+            `;
+            // Add event listener to the button
+            document.getElementById('addFirstTeamBtn')?.addEventListener('click', () => {
+                openAddTeamModal();
+            });
+        } else {
+            const teamCards = teamsData.map(createTeamCard).join('');
+            console.log('Generated team cards HTML:', teamCards);
+            teamsGrid.innerHTML = teamCards;
+        }
+    }
+
+    // Create team card HTML
+    function createTeamCard(team) {
+        console.log('Creating card for team:', team);
+        // Ensure members array exists and has the correct structure
+        const members = Array.isArray(team.members) ? team.members : [];
+        const displayedMembers = members.slice(0, 3);
+        const remainingMembersCount = Math.max(members.length - 3, 0);
+        // Use memberCount if available, otherwise count the members array
+        const memberCount = members.length || team.memberCount || team.MemberCount || 0;
+        
+        // Get team name and description with fallbacks
+        const teamName = team.name || team.team_name || 'Unnamed Team';
+        const teamDescription = team.description || team.team_description || 'No description provided for this team.';
+        const teamLeader = team.leader || 'No Leader Assigned';
+        // Use leader_user_id if available, otherwise use team_leader or show N/A
+        const teamLeaderId = team.leader_user_id || team.team_leader || 'N/A';
+
+        return `
+            <div class="team-card p-6 flex flex-col gap-4">
+                <div class="flex justify-between items-start">
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 bg-gradient-to-br from-[#1F446A] to-[#0ea5e9] rounded-full flex items-center justify-center mr-4">
+                            <i class="fas fa-users text-xl text-white"></i>
+                        </div>
+                        <h3 class="team-title">${escapeHtml(teamName)}</h3>
+                    </div>
+                </div>
+                
+                <p class="team-description">${escapeHtml(teamDescription)}</p>
+                
+                <div class="team-details">
+                    <div class="detail-item">
+                        <span class="detail-label">Team Lead:</span>
+                        <span class="detail-value">${escapeHtml(teamLeader)}${teamLeaderId !== 'N/A' ? ' (ID: ' + escapeHtml(teamLeaderId) + ')' : ''}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Members:</span>
+                        <span class="detail-value">${memberCount} Member${memberCount !== 1 ? 's' : ''}</span>
+                    </div>
+                    
+                    <div class="flex items-center justify-between mt-4">
+                        <div class="flex -space-x-2 overflow-hidden">
+                            ${displayedMembers.map(m => {
+                                // Use the name property directly from the API response
+                                const memberName = m.name || 'Unknown Member';
+                                return `
+                                <img class="inline-block h-8 w-8 rounded-full ring-2 ring-white" 
+                                     src="https://placehold.co/32x32/CCCCCC/FFFFFF?text=${encodeURIComponent(memberName.charAt(0))}" 
+                                     alt="${escapeHtml(memberName)}">
+                            `}).join('')}
+                            ${remainingMembersCount > 0 ? `
+                                <span class="flex items-center justify-center h-8 w-8 rounded-full bg-gray-200 text-xs font-medium text-gray-600 ring-2 ring-white">
+                                    +${remainingMembersCount}
+                                </span>
+                            ` : ''}
+                        </div>
+                        <div class="flex gap-2">
+                            <button class="view-details-btn" data-team-id="${team.id || team.team_id || 0}">
+                                View Details
+                            </button>
+                            <button class="edit-team-btn bg-gray-200 text-gray-700 hover:bg-gray-300 px-3 py-1 rounded-md text-sm" data-team-id="${team.id || team.team_id || 0}" data-team='${JSON.stringify(team)}'>
+                                Edit
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    // Populate teams stats
+    function populateTeamsStats() {
+        const totalTeamsEl = document.getElementById('totalTeams');
+        const totalMembersEl = document.getElementById('totalMembers');
+        const avgTeamSizeEl = document.getElementById('avgTeamSize');
+        
+        if (!totalTeamsEl || !totalMembersEl || !avgTeamSizeEl) return;
+        
+        const totalTeams = teamsData.length;
+        let totalMembers = 0;
+        
+        teamsData.forEach(team => {
+            // Use the members array length if available, otherwise use memberCount
+            const membersArray = Array.isArray(team.members) ? team.members : [];
+            const teamMemberCount = membersArray.length || team.memberCount || team.MemberCount || 0;
+            totalMembers += teamMemberCount;
+        });
+        
+        const avgTeamSize = totalTeams > 0 ? Math.round(totalMembers / totalTeams) : 0;
+        
+        totalTeamsEl.textContent = totalTeams;
+        totalMembersEl.textContent = totalMembers;
+        avgTeamSizeEl.textContent = avgTeamSize;
+    }
+
+    function openTeamDetailModal(team) {
+        console.log('Opening team detail modal for:', team);
+        document.getElementById('modal-team-name').textContent = escapeHtml(team.name || team.team_name || 'Unnamed Team');
+        document.getElementById('modal-team-description').textContent = escapeHtml(team.description || team.team_description || '');
+        
+        // Handle team leader information
+        const teamLeader = team.leader || 'No Leader Assigned';
+        const teamLeaderId = team.leader_user_id || team.team_leader;
+        const teamLeaderDisplay = teamLeaderId ? `${teamLeader} (ID: ${teamLeaderId})` : teamLeader;
+        document.getElementById('modal-team-lead').textContent = teamLeaderDisplay;
+        
+        // Ensure members array exists
+        const members = Array.isArray(team.members) ? team.members : [];
+        document.getElementById('modal-member-count').textContent = `${members.length} Member${members.length !== 1 ? 's' : ''}`;
+
+        document.getElementById('modal-member-list').innerHTML = members.map(m => {
+            // Use the properties from the API response
+            const memberName = m.name || 'Unknown Member';
+            const memberRole = m.designation || m.role || m.Designation || 'Team Member';
+            // Use user_id instead of id
+            const memberId = m.user_id || m.id || 'N/A';
+            return `
+            <div class="member-item">
+                <img class="member-avatar" src="https://placehold.co/40x40/CCCCCC/FFFFFF?text=${encodeURIComponent(memberName.charAt(0))}" alt="${escapeHtml(memberName)}">
+                <div class="member-info">
+                    <p class="member-name">${escapeHtml(memberName)}</p>
+                    <p class="member-role">${escapeHtml(memberRole)}</p>
+                    <p class="text-xs text-gray-500">ID: ${escapeHtml(memberId)}</p>
+                </div>
+            </div>
+        `}).join('');
+
+        const teamDetailModal = document.getElementById('teamDetailModal');
+        teamDetailModal.style.display = 'flex';
+        setTimeout(() => teamDetailModal.classList.add('show'), 10);
+    }
+
+    function closeModal() {
+        const teamDetailModal = document.getElementById('teamDetailModal');
+        teamDetailModal.classList.remove('show');
+        setTimeout(() => { teamDetailModal.style.display = 'none'; }, 300);
+    }
+
+    function openAddTeamModal() {
+        const addTeamModal = document.getElementById('addTeamModal');
+        if (addTeamModal) {
+            // Fetch team leaders when opening the modal
+            fetchTeamLeaders();
+            
+            addTeamModal.style.display = 'flex';
+            setTimeout(() => {
+                addTeamModal.classList.add('show');
+            }, 10);
+        }
+    }
+
+    function closeAddTeamModal() {
+        const addTeamModal = document.getElementById('addTeamModal');
+        if (addTeamModal) {
+            addTeamModal.classList.remove('show');
+            setTimeout(() => {
+                addTeamModal.style.display = 'none';
+                // Reset form
+                const addTeamForm = document.getElementById('addTeamForm');
+                if (addTeamForm) addTeamForm.reset();
+            }, 300);
+        }
+    }
+
+    // Show notification
+    function showNotification(message, type) {
+        const notification = document.getElementById('notification');
+        if (!notification) return;
+        
+        notification.textContent = message;
+        notification.className = 'notification ' + type;
+        notification.classList.add('show');
+        
+        setTimeout(() => {
+            notification.classList.remove('show');
+        }, 3000);
+    }
+
+    // Utility function to escape HTML
+    function escapeHtml(text) {
+        if (!text) return '';
+        const map = {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#039;'
+        };
+        return text.toString().replace(/[&<>"']/g, function(m) { return map[m]; });
+    }
+
+    // Setup profile dropdown
     function setupProfileDropdown() {
         const profileButton = document.getElementById('profileButton');
         const profileDropdown = document.getElementById('profileDropdown');
@@ -214,104 +1077,489 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Create team card HTML
-    function createTeamCard(team) {
-        const displayedMembers = team.members.slice(0, 3);
-        const remainingMembersCount = Math.max(team.members.length - 3, 0);
-
-        return `
-            <div class="team-card p-6 flex flex-col justify-between">
-                <div>
-                    <div class="flex items-center mb-4">
-                        <div class="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center mr-4">
-                            <i class="fas fa-users text-xl text-gray-600"></i>
-                        </div>
-                        <h3 class="text-2xl font-bold text-gray-900">${team.name}</h3>
-                    </div>
-                    <p class="text-gray-600 mb-4">${team.description || ''}</p>
-                    <div class="text-sm text-gray-500 flex justify-between items-center mb-6">
-                        <span class="flex items-center">
-                            <i class="fas fa-crown text-yellow-500 mr-2"></i>Lead: ${team.leader || 'N/A'}
-                        </span>
-                        <span class="flex items-center">
-                            <i class="fas fa-users text-gray-400 mr-2"></i>${team.memberCount} Members
-                        </span>
-                    </div>
-                </div>
-                <div class="flex items-center justify-between mt-auto">
-                    <div class="flex -space-x-2 overflow-hidden">
-                        ${displayedMembers.map(m => `
-                            <img class="inline-block h-8 w-8 rounded-full ring-2 ring-white" 
-                                 src="${m.avatar || 'https://via.placeholder.com/32'}" 
-                                 alt="${m.name || 'Member'}">
-                        `).join('')}
-                        ${remainingMembersCount > 0 ? `
-                            <span class="flex items-center justify-center h-8 w-8 rounded-full bg-gray-300 text-xs font-medium text-gray-700 ring-2 ring-white">
-                                +${remainingMembersCount}
-                            </span>
-                        ` : ''}
-                    </div>
-                    <button class="view-details-btn bg-[#1F446A] text-white text-sm font-semibold py-2 px-4 rounded-full shadow-md hover:bg-[#153452] transition-colors" data-team-id="${team.id}">
-                        View Details
-                    </button>
-                </div>
-            </div>
-        `;
+    // Fetch all employees for team leader dropdown
+    // Modified to load all employees instead of just those with role_id = 3
+    async function fetchTeamLeaders() {
+        try {
+            const response = await fetch('https://dashboard.wordlanetech.com/api/employees/list');
+            if (!response.ok) {
+                throw new Error(`Failed to fetch employees: ${response.status} ${response.statusText}`);
+            }
+            
+            const employees = await response.json();
+            
+            // Use all employees instead of filtering by role_id = 3
+            const teamLeaders = employees;
+            
+            // Populate the team leader dropdowns
+            const teamLeaderSelects = document.querySelectorAll('#teamLeader, #editTeamLeader');
+            teamLeaderSelects.forEach(select => {
+                if (select) {
+                    // Save the current selection if any
+                    const currentValue = select.value;
+                    
+                    // Clear and repopulate
+                    select.innerHTML = '<option value="">Select a team leader</option>';
+                    
+                    teamLeaders.forEach(leader => {
+                        const option = document.createElement('option');
+                        // Use user_id instead of id for team leaders
+                        option.value = leader.user_id;
+                        // Display both name and user_id for clarity
+                        option.textContent = `${leader.first_name} ${leader.last_name} (ID: ${leader.user_id})`;
+                        select.appendChild(option);
+                    });
+                    
+                    // Restore the selection if it still exists
+                    if (currentValue) {
+                        select.value = currentValue;
+                    }
+                }
+            });
+            
+            return teamLeaders;
+        } catch (err) {
+            console.error('Error fetching employees:', err);
+            showNotification('Failed to load employees. Please try again later.', 'error');
+            throw err;
+        }
     }
 
-    // Render all team cards
-    function populateTeamsGrid() {
-        const teamsGrid = document.getElementById('teams-grid');
-        teamsGrid.innerHTML = teamsData.length
-            ? teamsData.map(createTeamCard).join('')
-            : '<p class="text-center text-gray-500 text-lg col-span-full">No teams found.</p>';
-    }
+    // Initialize the page
+    setupProfileDropdown();
+    fetchTeams();
+    // Fetch team leaders on page load
+    fetchTeamLeaders();
 
-    // --- Modal Logic ---
-    const teamDetailModal = document.getElementById('teamDetailModal');
-    const closeModalBtn = document.getElementById('closeModalBtn');
-
-    document.getElementById('teams-grid').addEventListener('click', (e) => {
-        if (e.target.classList.contains('view-details-btn')) {
-            const teamId = e.target.dataset.teamId;
-            const team = teamsData.find(t => String(t.id) === String(teamId));
-            if (team) openTeamDetailModal(team);
+    // Event delegation for view details buttons
+    document.addEventListener('click', function(e) {
+        if (e.target && e.target.classList.contains('view-details-btn')) {
+            const teamId = e.target.getAttribute('data-team-id');
+            const team = teamsData.find(t => 
+                t.id == teamId || t.team_id == teamId
+            );
+            if (team) {
+                openTeamDetailModal(team);
+            }
         }
     });
 
-    function openTeamDetailModal(team) {
-        document.getElementById('modal-team-name').textContent = team.name;
-        document.getElementById('modal-team-description').textContent = team.description || '';
-        document.getElementById('modal-team-lead').textContent = team.leader || 'N/A';
-        document.getElementById('modal-member-count').textContent = team.members.length;
-
-        document.getElementById('modal-member-list').innerHTML = team.members.map(m => `
-            <div class="flex items-center space-x-3 p-2 bg-gray-50 rounded-lg">
-                <img class="h-9 w-9 rounded-full" src="${m.avatar || 'https://via.placeholder.com/36'}" alt="${m.name || 'Member'}">
-                <div>
-                    <p class="text-sm font-semibold text-gray-800">${m.name || ''}</p>
-                    <p class="text-xs text-gray-500">${m.role || ''}</p>
-                </div>
-            </div>
-        `).join('');
-
-        teamDetailModal.style.display = 'flex';
-        setTimeout(() => teamDetailModal.classList.add('show'), 10);
+    // Search functionality
+    const searchInput = document.getElementById('searchTeams');
+    if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase().trim();
+            console.log('Search term:', searchTerm);
+            
+            if (searchTerm === '') {
+                // If search is empty, show all teams
+                populateTeamsGrid();
+                return;
+            }
+            
+            // Filter teams based on search term
+            const filteredTeams = teamsData.filter(team => {
+                const name = team.name || team.team_name || '';
+                const description = team.description || team.team_description || '';
+                const leader = team.leader || '';
+                
+                const nameMatch = name.toLowerCase().includes(searchTerm);
+                const descriptionMatch = description.toLowerCase().includes(searchTerm);
+                const leaderMatch = leader.toLowerCase().includes(searchTerm);
+                return nameMatch || descriptionMatch || leaderMatch;
+            });
+            
+            console.log('Filtered teams:', filteredTeams);
+            
+            // Update the grid with filtered teams
+            const teamsGrid = document.getElementById('teams-grid');
+            if (teamsGrid) {
+                if (filteredTeams.length === 0) {
+                    teamsGrid.innerHTML = '<p class="text-center text-gray-500 text-lg col-span-full py-12">No teams found matching your search.</p>';
+                } else {
+                    teamsGrid.innerHTML = filteredTeams.map(createTeamCard).join('');
+                }
+            }
+        });
     }
 
-    function closeModal() {
-        teamDetailModal.classList.remove('show');
-        setTimeout(() => { teamDetailModal.style.display = 'none'; }, 300);
+    // Add Team Modal Event Listeners
+    const addTeamBtn = document.getElementById('addTeamBtn');
+    if (addTeamBtn) {
+        addTeamBtn.addEventListener('click', openAddTeamModal);
     }
 
-    closeModalBtn.addEventListener('click', closeModal);
-    window.addEventListener('click', (e) => { if (e.target === teamDetailModal) closeModal(); });
+    const closeAddTeamModalBtn = document.getElementById('closeAddTeamModal');
+    if (closeAddTeamModalBtn) {
+        closeAddTeamModalBtn.addEventListener('click', closeAddTeamModal);
+    }
 
-    // Init
-    setupProfileDropdown();
-    fetchTeams();
+    const cancelAddTeam = document.getElementById('cancelAddTeam');
+    if (cancelAddTeam) {
+        cancelAddTeam.addEventListener('click', closeAddTeamModal);
+    }
+
+    const addTeamModal = document.getElementById('addTeamModal');
+    if (addTeamModal) {
+        addTeamModal.addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeAddTeamModal();
+            }
+        });
+    }
+
+    // Team Detail Modal Event Listeners
+    const closeModalBtn = document.getElementById('closeModalBtn');
+    if (closeModalBtn) {
+        closeModalBtn.addEventListener('click', closeModal);
+    }
+
+    const teamDetailModal = document.getElementById('teamDetailModal');
+    if (teamDetailModal) {
+        teamDetailModal.addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+    }
+
+    // Handle form submission for adding a new team
+    const addTeamForm = document.getElementById('addTeamForm');
+    if (addTeamForm) {
+        addTeamForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const teamName = document.getElementById('teamName').value;
+            const teamDescription = document.getElementById('teamDescription').value;
+            // Use userId instead of employeeId for team leader
+            const teamLeaderUserId = document.getElementById('teamLeader').value;
+            
+            if (!teamName) {
+                showNotification('Team name is required', 'error');
+                return;
+            }
+            
+            // Team leader is required
+            if (!teamLeaderUserId) {
+                showNotification('Team leader is required', 'error');
+                return;
+            }
+            
+            try {
+                // Use the cloud API endpoint instead of localhost
+                const response = await fetch('https://dashboard.wordlanetech.com/api/teams', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        name: teamName,
+                        description: teamDescription,
+                        created_by: 'admin', // This should be replaced with actual user ID
+                        // Send user_id instead of employee ID
+                        team_leader: teamLeaderUserId
+                    })
+                });
+                
+                if (response.ok) {
+                    showNotification('Team created successfully!', 'success');
+                    closeAddTeamModal();
+                    // Refresh teams list
+                    fetchTeams();
+                } else {
+                    const errorData = await response.json();
+                    showNotification(errorData.message || 'Failed to create team', 'error');
+                }
+            } catch (error) {
+                console.error('Error creating team:', error);
+                showNotification('Error creating team. Please try again.', 'error');
+            }
+        });
+    }
+
+    // Handle form submission for editing a team
+    const editTeamForm = document.getElementById('editTeamForm');
+    if (editTeamForm) {
+        editTeamForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const teamId = document.getElementById('editTeamId').value;
+            const teamName = document.getElementById('editTeamName').value;
+            const teamDescription = document.getElementById('editTeamDescription').value;
+            // Use userId instead of employeeId for team leader
+            const teamLeaderUserId = document.getElementById('editTeamLeader').value;
+            
+            if (!teamName) {
+                showNotification('Team name is required', 'error');
+                return;
+            }
+            
+            // Team leader is required
+            if (!teamLeaderUserId) {
+                showNotification('Team leader is required', 'error');
+                return;
+            }
+            
+            try {
+                // Use the cloud API endpoint instead of localhost
+                const response = await fetch(`https://dashboard.wordlanetech.com/api/teams/${teamId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        name: teamName,
+                        description: teamDescription,
+                        // Send user_id instead of employee ID
+                        team_leader: teamLeaderUserId
+                    })
+                });
+                
+                if (response.ok) {
+                    showNotification('Team updated successfully!', 'success');
+                    closeEditTeamModal();
+                    // Refresh teams list
+                    fetchTeams();
+                } else {
+                    const errorData = await response.json();
+                    showNotification(errorData.message || 'Failed to update team', 'error');
+                }
+            } catch (error) {
+                console.error('Error updating team:', error);
+                showNotification('Error updating team. Please try again.', 'error');
+            }
+        });
+    }
+
+    // Handle edit team button clicks
+    document.addEventListener('click', function(e) {
+        if (e.target && e.target.classList.contains('edit-team-btn')) {
+            const teamData = e.target.getAttribute('data-team');
+            if (teamData) {
+                try {
+                    const team = JSON.parse(teamData);
+                    openEditTeamModal(team);
+                } catch (err) {
+                    console.error('Error parsing team data:', err);
+                }
+            }
+        }
+    });
+
+    // Open edit team modal
+    function openEditTeamModal(team) {
+        console.log('Opening edit team modal for:', team);
+        
+        // Set form values
+        document.getElementById('editTeamId').value = team.id;
+        document.getElementById('editTeamName').value = team.name || team.team_name || '';
+        document.getElementById('editTeamDescription').value = team.description || team.team_description || '';
+        
+        // Fetch team leaders and populate dropdown
+        fetchTeamLeaders().then(() => {
+            const teamLeaderSelect = document.getElementById('editTeamLeader');
+            if (teamLeaderSelect) {
+                // Set the selected team leader using leader_user_id
+                if (team.leader_user_id) {
+                    teamLeaderSelect.value = team.leader_user_id;
+                } else if (team.team_leader) {
+                    // Fallback to team_leader if leader_user_id is not available
+                    teamLeaderSelect.value = team.team_leader;
+                }
+            }
+        });
+        
+        // Fetch available employees and current team members
+        fetchAvailableEmployees(team.id);
+        fetchCurrentTeamMembers(team.id);
+        
+        const editTeamModal = document.getElementById('editTeamModal');
+        if (editTeamModal) {
+            editTeamModal.style.display = 'flex';
+            setTimeout(() => {
+                editTeamModal.classList.add('show');
+            }, 10);
+        }
+    }
+
+    // Fetch available employees for a team
+    async function fetchAvailableEmployees(teamId) {
+        try {
+            console.log('Fetching available employees for team:', teamId);
+            const response = await fetch(`https://dashboard.wordlanetech.com/api/teams/${teamId}/available-employees`);
+            console.log('Available employees response status:', response.status);
+            
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error('Error response from server:', errorText);
+                throw new Error(`Failed to fetch available employees: ${response.status} ${response.statusText} - ${errorText}`);
+            }
+            
+            const employees = await response.json();
+            console.log('Received employees:', employees);
+            
+            // Populate the add member dropdown
+            const addMemberSelect = document.getElementById('addTeamMember');
+            if (addMemberSelect) {
+                addMemberSelect.innerHTML = '<option value="">Select an employee</option>';
+                
+                employees.forEach(employee => {
+                    const option = document.createElement('option');
+                    // Use user_id instead of id for employees
+                    option.value = employee.user_id;
+                    option.textContent = `${employee.first_name} ${employee.last_name} (ID: ${employee.user_id})`;
+                    addMemberSelect.appendChild(option);
+                });
+            }
+        } catch (err) {
+            console.error('Error fetching available employees:', err);
+            showNotification('Failed to load available employees. Please try again later.', 'error');
+        }
+    }
+
+    // Fetch current team members
+    async function fetchCurrentTeamMembers(teamId) {
+        try {
+            const response = await fetch(`https://dashboard.wordlanetech.com/api/teams/${teamId}`);
+            if (!response.ok) {
+                throw new Error(`Failed to fetch team members: ${response.status} ${response.statusText}`);
+            }
+            
+            const team = await response.json();
+            
+            // Populate current members list
+            const membersContainer = document.getElementById('currentTeamMembers');
+            if (membersContainer) {
+                if (team.members && team.members.length > 0) {
+                    membersContainer.innerHTML = team.members.map(member => `
+                        <div class="flex justify-between items-center p-2 hover:bg-gray-100 rounded">
+                            <div>
+                                <span class="font-medium">${escapeHtml(member.name)}</span>
+                                <!-- Display user_id instead of employee id -->
+                                <span class="text-gray-500 text-sm ml-2">(ID: ${member.user_id})</span>
+                            </div>
+                            <!-- Use user_id instead of employee_id for removing members -->
+                            <button class="remove-member-btn text-red-500 hover:text-red-700" data-team-id="${teamId}" data-user-id="${member.user_id}">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    `).join('');
+                } else {
+                    membersContainer.innerHTML = '<p class="text-gray-500 text-center py-2">No members in this team</p>';
+                }
+            }
+        } catch (err) {
+            console.error('Error fetching team members:', err);
+            showNotification('Failed to load team members. Please try again later.', 'error');
+        }
+    }
+
+    // Add member to team
+    document.getElementById('addMemberBtn').addEventListener('click', async function() {
+        const teamId = document.getElementById('editTeamId').value;
+        const employeeSelect = document.getElementById('addTeamMember');
+        // Use userId instead of employeeId
+        const userId = employeeSelect.value;
+        
+        if (!userId) {
+            showNotification('Please select an employee to add', 'error');
+            return;
+        }
+        
+        try {
+            // Use userId in the API endpoint
+            const response = await fetch(`https://dashboard.wordlanetech.com/api/teams/${teamId}/members/${userId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            });
+            
+            if (response.ok) {
+                showNotification('Employee added to team successfully!', 'success');
+                employeeSelect.value = '';
+                // Refresh the members list
+                fetchCurrentTeamMembers(teamId);
+                // Refresh available employees
+                fetchAvailableEmployees(teamId);
+            } else {
+                const errorData = await response.json();
+                showNotification(errorData.error || 'Failed to add employee to team', 'error');
+            }
+        } catch (error) {
+            console.error('Error adding team member:', error);
+            showNotification('Error adding employee to team. Please try again.', 'error');
+        }
+    });
+
+    // Remove member from team (using event delegation)
+    document.getElementById('currentTeamMembers').addEventListener('click', async function(e) {
+        if (e.target.closest('.remove-member-btn')) {
+            const removeBtn = e.target.closest('.remove-member-btn');
+            const teamId = removeBtn.getAttribute('data-team-id');
+            // Use userId instead of employeeId
+            const userId = removeBtn.getAttribute('data-user-id');
+            
+            if (confirm('Are you sure you want to remove this member from the team?')) {
+                try {
+                    // Use userId in the API endpoint
+                    const response = await fetch(`https://dashboard.wordlanetech.com/api/teams/${teamId}/members/${userId}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        }
+                    });
+                    
+                    if (response.ok) {
+                        showNotification('Employee removed from team successfully!', 'success');
+                        // Refresh the members list
+                        fetchCurrentTeamMembers(teamId);
+                        // Refresh available employees
+                        fetchAvailableEmployees(teamId);
+                    } else {
+                        const errorData = await response.json();
+                        showNotification(errorData.error || 'Failed to remove employee from team', 'error');
+                    }
+                } catch (error) {
+                    console.error('Error removing team member:', error);
+                    showNotification('Error removing employee from team. Please try again.', 'error');
+                }
+            }
+        }
+    });
+
+    // Close edit team modal
+    function closeEditTeamModal() {
+        const editTeamModal = document.getElementById('editTeamModal');
+        if (editTeamModal) {
+            editTeamModal.classList.remove('show');
+            setTimeout(() => {
+                editTeamModal.style.display = 'none';
+                // Reset form
+                const editTeamForm = document.getElementById('editTeamForm');
+                if (editTeamForm) editTeamForm.reset();
+            }, 300);
+        }
+    }
+
+    // Edit Team Modal Event Listeners
+    const closeEditTeamModalBtn = document.getElementById('closeEditTeamModal');
+    if (closeEditTeamModalBtn) {
+        closeEditTeamModalBtn.addEventListener('click', closeEditTeamModal);
+    }
+
+    const cancelEditTeam = document.getElementById('cancelEditTeam');
+    if (cancelEditTeam) {
+        cancelEditTeam.addEventListener('click', closeEditTeamModal);
+    }
+
+    const editTeamModal = document.getElementById('editTeamModal');
+    if (editTeamModal) {
+        editTeamModal.addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeEditTeamModal();
+            }
+        });
+    }
 });
 </script>
-<script src="../security.js"></script>
-</body>
-</html> 
