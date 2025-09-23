@@ -17,15 +17,15 @@
     <link rel="stylesheet" href="./css/manager_documents.css">
    
 </head>
-<body class="bg-gray-50 min-h-screen flex flex-col">
+<body class="bg-white min-h-screen flex flex-col">
 
     <!-- Header Section -->
-    <header class="header-gradient p-5 shadow-lg flex flex-col sm:flex-row items-center justify-between sticky top-0 z-10 mt-5 mr-5 ml-5 mb-5" style="border-radius: 40px;">
+    <header class="bg-white p-5 shadow-lg flex flex-col sm:flex-row items-center justify-between sticky top-0 z-10 mt-5 mr-5 ml-5 mb-5" style="border-radius: 40px;">
         <!-- Left side: Logo and Company Name (clickable to dashboard) -->
         <a href="manager_dashboard.html" class="flex items-center mb-4 sm:mb-0 text-gray-800 no-underline hover:opacity-80 transition duration-200">
             <!-- Company Logo -->
-            <img src="/images/WLT_LOGO2.jpg" alt="Wordlane Tech Logo" class="mr-3 w-12 h-12 " style="object-fit: cover; border-radius: 50px; border: 3px solid #1F446A;">
-            <h1 class="text-2xl font-bold tracking-wide" style="color: #1F446A;">WordLane Tech</h1>
+            <img src="/images/WLT_LOGO2.jpg" alt="Wordlane Tech Logo" class="mr-3 w-12 h-12 " style="object-fit: cover; border-radius: 50px; border: 3px solid #87CEEB;">
+            <h1 class="text-2xl font-bold tracking-wide" style="background: linear-gradient(90deg, #87CEEB, #00BFFF); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">WordLane Tech</h1>
         </a>
         <!-- Center: Navigation Links -->
          <nav class="navbar">
@@ -68,15 +68,15 @@
     </header>
 
     <!-- Main Content Area - Manager Documents -->
-    <main class="flex-grow p-8 bg-gray-50">
+    <main class="flex-grow p-8 bg-white">
         <div class="max-w-7xl mx-auto">
             <div class="flex justify-between items-center mb-8">
-                <h2 class="text-3xl font-extrabold text-gray-900 page-title">Document Management</h2>
+                <h2 class="text-3xl font-extrabold text-gray-900 page-title" style="background: linear-gradient(90deg, #87CEEB, #00BFFF); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Document Management</h2>
                 <div class="flex space-x-3">
-                    <button onclick="uploadDocument()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out">
+                    <button onclick="uploadDocument()" class="bg-gradient-to-r from-sky-500 to-sky-600 hover:from-sky-600 hover:to-sky-700 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105">
                         <i class="fas fa-upload mr-2"></i> Upload Document
                     </button>
-                    <button onclick="createFolder()" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out">
+                    <button onclick="createFolder()" class="bg-gradient-to-r from-sky-500 to-sky-600 hover:from-sky-600 hover:to-sky-700 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105">
                         <i class="fas fa-folder-plus mr-2"></i> Create Folder
                     </button>
                 </div>
@@ -123,7 +123,7 @@
             </div>
 
             <!-- Filters and Search -->
-            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-8 border border-gray-100">
                 <div class="flex flex-wrap justify-between items-center gap-4">
                     <div class="flex flex-wrap gap-4">
                         <div>
@@ -167,7 +167,7 @@
 
             <!-- Loading State -->
             <div id="loadingState" class="text-center py-10 hidden">
-                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto"></div>
+                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-sky-500 mx-auto"></div>
                 <p class="mt-4 text-gray-600">Loading documents...</p>
             </div>
 
@@ -215,15 +215,16 @@
                 </div>
                 <div class="flex justify-end space-x-3">
                     <button type="button" id="cancelUpload" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-lg">Cancel</button>
-                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg">Upload</button>
+                    <button type="submit" class="bg-gradient-to-r from-sky-500 to-sky-600 hover:from-sky-600 hover:to-sky-700 text-white font-bold py-2 px-4 rounded-lg">Upload</button>
                 </div>
             </form>
         </div>
     </div>
 
     <!-- Footer Section -->
-    <footer class="bg-gray-800 text-white p-4 text-center mt-auto rounded-t-lg">
+    <footer class="bg-gradient-to-r from-sky-500 to-sky-600 text-white p-4 text-center mt-auto rounded-t-lg">
         <p class="text-sm">&copy; 2025 Wordlane Tech. All rights reserved.</p>
+        <p class="text-xs mt-1 opacity-80">Empowering Innovation, Enabling Success</p>
     </footer>
 
     <script src="../js/manager_documents.js"></script>

@@ -1,3 +1,5 @@
+const pool = require('../config/db');
+
 // Function to check if an employee exists (any employee can be a team leader now)
 async function isValidTeamLeader(pool, userId) {
     try {
@@ -179,7 +181,12 @@ exports.updateTeam = async (req, res) => {
 // Add a member to a team
 exports.addTeamMember = async (req, res) => {
     const { teamId } = req.params;
-    const { userId } = req.body;  // Changed from employeeId to userId
+    // Get userId from either URL parameter or request body
+    const userId = req.params.userId || req.body.userId;
+    
+    if (!userId) {
+        return res.status(400).json({ error: 'User ID is required' });
+    }
     
     try {
         // Get the employee ID from user_id

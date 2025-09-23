@@ -17,15 +17,15 @@
     <link rel="stylesheet" href="./css/manager_apply_leave.css">
     
 </head>
-<body class="bg-gray-50 min-h-screen flex flex-col">
+<body class="bg-white min-h-screen flex flex-col">
 
     <!-- Header Section -->
-    <header class="header-gradient p-5 shadow-lg flex flex-col sm:flex-row items-center justify-between sticky top-0 z-10 mt-5 mr-5 ml-5 mb-5" style="border-radius: 40px;">
+    <header class="bg-white p-5 shadow-lg flex flex-col sm:flex-row items-center justify-between sticky top-0 z-10 mt-5 mr-5 ml-5 mb-5" style="border-radius: 40px;">
         <!-- Left side: Logo and Company Name (clickable to dashboard) -->
         <a href="manager_dashboard.html" class="flex items-center mb-4 sm:mb-0 text-gray-800 no-underline hover:opacity-80 transition duration-200">
             <!-- Company Logo -->
-            <img src="/images/WLT_LOGO2.jpg" alt="Wordlane Tech Logo" class="mr-3 w-12 h-12 " style="object-fit: cover; border-radius: 50px; border: 3px solid #1F446A;">
-            <h1 class="text-2xl font-bold tracking-wide" style="color: #1F446A;">WordLane Tech</h1>
+            <img src="/images/WLT_LOGO2.jpg" alt="Wordlane Tech Logo" class="mr-3 w-12 h-12 " style="object-fit: cover; border-radius: 50px; border: 3px solid #87CEEB;">
+            <h1 class="text-2xl font-bold tracking-wide" style="background: linear-gradient(90deg, #87CEEB, #00BFFF); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">WordLane Tech</h1>
         </a>
         <!-- Center: Navigation Links -->
          <nav class="navbar">
@@ -68,17 +68,17 @@
     </header>
 
     <!-- Main Content Area - Apply for Leave Form -->
-    <main class="flex-grow p-8 bg-gray-50">
-        <div class="max-w-xl mx-auto bg-white rounded-xl shadow-lg p-8">
+    <main class="flex-grow p-8 bg-white">
+        <div class="max-w-xl mx-auto bg-white rounded-xl shadow-lg p-8 border border-gray-100">
             <div class="text-center mb-8">
-                <h2 class="text-3xl font-extrabold text-gray-900 mb-2">Apply for Leave</h2>
+                <h2 class="text-3xl font-extrabold text-gray-900 mb-2" style="background: linear-gradient(90deg, #87CEEB, #00BFFF); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Apply for Leave</h2>
                 <p class="text-gray-600">Submit your leave request for approval</p>
             </div>
 
             <form id="leaveForm" class="space-y-6">
                 <!-- Loading State -->
                 <div id="loadingState" class="text-center py-10 hidden">
-                    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto"></div>
+                    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-sky-500 mx-auto"></div>
                     <p class="mt-4 text-gray-600">Loading form data...</p>
                 </div>
 
@@ -96,12 +96,12 @@
 
                 <div>
                     <label for="managerId" class="block text-sm font-medium text-gray-700 mb-1">Manager ID</label>
-                    <input type="text" id="managerId" name="manager_id" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm bg-gray-50" readonly>
+                    <input type="text" id="managerId" name="manager_id" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-sky-500 focus:border-sky-500 sm:text-sm bg-gray-50" readonly>
                 </div>
 
                 <div>
                     <label for="leaveType" class="block text-sm font-medium text-gray-700 mb-1">Leave Type</label>
-                    <select id="leaveType" name="leave_type" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" required>
+                    <select id="leaveType" name="leave_type" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-sky-500 focus:border-sky-500 sm:text-sm" required>
                         <option value="">Select Leave Type</option>
                         <!-- Leave types will be populated dynamically -->
                     </select>
@@ -110,34 +110,34 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label for="startDate" class="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
-                        <input type="date" id="startDate" name="start_date" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" required>
+                        <input type="date" id="startDate" name="start_date" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-sky-500 focus:border-sky-500 sm:text-sm" required>
                     </div>
                     <div>
                         <label for="endDate" class="block text-sm font-medium text-gray-700 mb-1">End Date</label>
-                        <input type="date" id="endDate" name="end_date" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" required>
+                        <input type="date" id="endDate" name="end_date" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-sky-500 focus:border-sky-500 sm:text-sm" required>
                     </div>
                 </div>
 
                 <div>
                     <label for="totalDays" class="block text-sm font-medium text-gray-700 mb-1">Total Days</label>
-                    <input type="number" id="totalDays" name="total_days" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm bg-gray-50" readonly>
+                    <input type="number" id="totalDays" name="total_days" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-sky-500 focus:border-sky-500 sm:text-sm bg-gray-50" readonly>
                 </div>
 
                 <div>
                     <label for="reason" class="block text-sm font-medium text-gray-700 mb-1">Reason for Leave</label>
-                    <textarea id="reason" name="reason" rows="4" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" placeholder="Please provide detailed reason for your leave request..." required></textarea>
+                    <textarea id="reason" name="reason" rows="4" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-sky-500 focus:border-sky-500 sm:text-sm" placeholder="Please provide detailed reason for your leave request..." required></textarea>
                 </div>
 
                 <div>
                     <label for="handoverNotes" class="block text-sm font-medium text-gray-700 mb-1">Handover Notes (Optional)</label>
-                    <textarea id="handoverNotes" name="handover_notes" rows="3" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" placeholder="Any important tasks or responsibilities to be handled during your absence..."></textarea>
+                    <textarea id="handoverNotes" name="handover_notes" rows="3" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-sky-500 focus:border-sky-500 sm:text-sm" placeholder="Any important tasks or responsibilities to be handled during your absence..."></textarea>
                 </div>
 
                 <div class="flex justify-end space-x-4 mt-8">
                     <button type="button" onclick="window.location.href='manager_dashboard.html'" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-6 rounded-lg shadow-md transition duration-300 ease-in-out">
                         <i class="fas fa-times mr-2"></i> Cancel
                     </button>
-                    <button type="submit" id="submitButton" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg shadow-md transition duration-300 ease-in-out">
+                    <button type="submit" id="submitButton" class="bg-gradient-to-r from-sky-500 to-sky-600 hover:from-sky-600 hover:to-sky-700 text-white font-bold py-2 px-6 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105">
                         <i class="fas fa-paper-plane mr-2"></i> Submit Request
                     </button>
                 </div>
@@ -146,8 +146,9 @@
     </main>
 
     <!-- Footer Section -->
-    <footer class="bg-gray-800 text-white p-4 text-center mt-auto rounded-t-lg">
+    <footer class="bg-gradient-to-r from-sky-500 to-sky-600 text-white p-4 text-center mt-auto rounded-t-lg">
         <p class="text-sm">&copy; 2025 Wordlane Tech. All rights reserved.</p>
+        <p class="text-xs mt-1 opacity-80">Empowering Innovation, Enabling Success</p>
     </footer>
 
     <script src="../js/manager_apply_leave.js"></script>

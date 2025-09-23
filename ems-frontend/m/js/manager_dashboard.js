@@ -7,17 +7,27 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
     }
 
+    // Update the last updated timestamp
+    const updateTimeElement = document.getElementById('updateTime');
+    if (updateTimeElement) {
+        const now = new Date();
+        updateTimeElement.textContent = now.toLocaleTimeString('en-IN', {
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    }
+
     const API_BASE = 'https://dashboard.wordlanetech.com/api/manager';
 
     const formatDate = (dateStr) => {
-    const date = new Date(dateStr);
-    return isNaN(date)
-        ? 'N/A'
-        : date.toLocaleDateString('en-IN', {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric'
-        });
+        const date = new Date(dateStr);
+        return isNaN(date)
+            ? 'N/A'
+            : date.toLocaleDateString('en-IN', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
     };
 
     const fetchAndUpdate = async (endpoint, onSuccess) => {
@@ -92,4 +102,15 @@ document.addEventListener('DOMContentLoaded', async () => {
             profileDropdown.classList.remove('show');
         }
     });
+    
+    // Add periodic updates every 30 seconds
+    setInterval(() => {
+        const now = new Date();
+        if (updateTimeElement) {
+            updateTimeElement.textContent = now.toLocaleTimeString('en-IN', {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+    }, 30000);
 });

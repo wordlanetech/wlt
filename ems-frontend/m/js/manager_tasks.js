@@ -1,144 +1,149 @@
-const profileButton = document.getElementById('profileButton');
-const profileDropdown = document.getElementById('profileDropdown');
-const tasksGrid = document.getElementById('tasksGrid');
-const loadingState = document.getElementById('loadingState');
-const errorState = document.getElementById('errorState');
-
-// Toggle dropdown visibility
-profileButton.addEventListener('click', (event) => {
-    event.stopPropagation();
-    profileDropdown.classList.toggle('show');
-});
-
-// Close dropdown when clicking outside
-document.addEventListener('click', (event) => {
-    if (!profileDropdown.contains(event.target) && !profileButton.contains(event.target)) {
-        profileDropdown.classList.remove('show');
+document.addEventListener('DOMContentLoaded', async () => {
+    const user_id = localStorage.getItem('user_id');
+    if (!user_id) {
+        alert('User not logged in. Redirecting to login page.');
+        window.location.href = '/ems-frontend/login.html';
+        return;
     }
-});
 
-// Helper function to format date
-function formatDate(dateString) {
-    if (!dateString) return 'N/A';
-    return new Date(dateString).toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric'
-    });
-}
+    // Profile dropdown functionality
+    const profileButton = document.getElementById('profileButton');
+    const profileDropdown = document.getElementById('profileDropdown');
 
-// Function to create a task card
-function createTaskCard(task) {
-    const statusClass = task.status.toLowerCase().replace(/\s/g, '-');
-    const priorityClass = task.priority.toLowerCase();
+    if (profileButton && profileDropdown) {
+        profileButton.addEventListener('click', (event) => {
+            event.stopPropagation();
+            profileDropdown.classList.toggle('show');
+        });
 
-    return `
-        <div class="task-card" data-status="${statusClass}">
-            <h3>${task.name}</h3>
-            <p class="task-id">${task.id}</p>
-            <p>${task.description}</p>
-            
-            <div class="task-info">
-                <div class="info-item">
-                    <span class="info-label">Project</span>
-                    <span class="info-value">${task.project} (${task.projectId})</span>
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (event) => {
+            if (!profileDropdown.contains(event.target) && !profileButton.contains(event.target)) {
+                profileDropdown.classList.remove('show');
+            }
+        });
+    }
+
+    const tasksGrid = document.getElementById('tasksGrid');
+    const loadingState = document.getElementById('loadingState');
+    const errorState = document.getElementById('errorState');
+    const addNewTaskBtn = document.getElementById('addNewTaskBtn');
+
+    // Helper function to format date
+    function formatDate(dateString) {
+        if (!dateString) return 'N/A';
+        return new Date(dateString).toLocaleDateString('en-IN', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+        });
+    }
+
+    // Function to get status class
+    function getStatusClass(status) {
+        switch (status?.toLowerCase()) {
+            case 'in progress':
+                return 'status-in-progress';
+            case 'completed':
+                return 'status-completed';
+            case 'pending':
+                return 'status-pending';
+            case 'on hold':
+                return 'status-on-hold';
+            default:
+                return 'status-pending';
+        }
+    }
+
+    // Function to create a task card with new design
+    function createTaskCard(task, index) {
+        const statusClass = getStatusClass(task.status);
+        const priorityClass = task.priority?.toLowerCase() || 'medium';
+
+        return `
+            <div class="task-card animate-fade-in-up" style="--delay: ${index * 0.1}s">
+                <h3>${task.name || 'Untitled Task'}</h3>
+                <p class="task-id">Task ID: ${task.id || 'N/A'}</p>
+                
+                <div class="task-dates">
+                    <div class="date-item">
+                        <span class="date-label">Start Date</span>
+                        <span class="date-value">${formatDate(task.start_date)}</span>
+                    </div>
+                    <div class="date-item">
+                        <span class="date-label">Due Date</span>
+                        <span class="date-value">${formatDate(task.end_date)}</span>
+                    </div>
                 </div>
-                <div class="info-item">
-                    <span class="info-label">Due Date</span>
-                    <span class="info-value">${formatDate(task.dueDate)}</span>
-                </div>
-            </div>
-            
-            <span class="status-badge status-${statusClass}">${task.status}</span>
-            
-            <div class="card-footer">
-                <span class="priority-badge priority-${priorityClass}">${task.priority}</span>
-                <div class="task-actions">
-                    <a href="#" class="action-btn" onclick="viewTaskDetails('${task.taskIdRaw}')" title="View Details">
-                        <i class="fas fa-eye"></i>
+                
+                <span class="status-badge ${statusClass}">
+                    <i class="fas fa-circle mr-2"></i>
+                    ${task.status || 'Pending'}
+                </span>
+                
+                <p>${task.description || 'No description provided for this task.'}</p>
+                
+                <div class="card-footer">
+                    <span class="priority-badge priority-${priorityClass}">
+                        ${task.priority || 'Medium'} Priority
+                    </span>
+                    <a href="#" class="view-details">
+                        View Details <i class="fas fa-arrow-right"></i>
                     </a>
-                    ${task.status !== 'Completed' ? `
-                    <a href="#" class="action-btn" onclick="markTaskComplete('${task.taskIdRaw}')" title="Mark as Complete">
-                        <i class="fas fa-check-circle"></i>
-                    </a>` : ''}
                 </div>
             </div>
-        </div>
-    `;
-}
-
-// Function to view task details
-function viewTaskDetails(taskId) {
-    console.log('Viewing task details for:', taskId);
-    alert(`Task details for ${taskId} will be shown here.`);
-}
-
-// Function to mark task as complete
-async function markTaskComplete(taskId) {
-    if (!confirm(`Mark task ${taskId} as complete?`)) return;
-
-    try {
-        const response = await fetch(`https://dashboard.wordlanetech.com/api/tasks/${taskId}/complete`, {
-            method: 'PATCH'
-        });
-
-        if (!response.ok) {
-            throw new Error('Failed to update task');
-        }
-
-        alert(`Task ${taskId} marked as complete.`);
-        fetchEmployeeTasksData(); // Reload task list
-    } catch (error) {
-        console.error('Error marking task complete:', error);
-        alert('Failed to mark task as complete.');
+        `;
     }
-}
 
-// Function to fetch and display tasks
-async function fetchEmployeeTasksData() {
-    try {
-        loadingState.classList.remove('hidden');
-        errorState.classList.add('hidden');
-        tasksGrid.innerHTML = '';
+    // Function to fetch and display tasks
+    async function fetchEmployeeTasksData() {
+        try {
+            loadingState.classList.remove('hidden');
+            errorState.classList.add('hidden');
+            tasksGrid.innerHTML = '';
 
-        const response = await fetch('https://dashboard.wordlanetech.com/api/tasks');
-        const tasks = await response.json();
+            const response = await fetch(`https://dashboard.wordlanetech.com/api/manager/tasks/list?user_id=${user_id}`);
+            const tasks = await response.json();
 
-        loadingState.classList.add('hidden');
+            loadingState.classList.add('hidden');
 
-        if (!Array.isArray(tasks)) {
-            throw new Error('Invalid response format');
+            if (!Array.isArray(tasks) || tasks.length === 0) {
+                tasksGrid.innerHTML = `
+                    <div class="text-center text-gray-500 col-span-3 py-10">
+                        <i class="fas fa-tasks text-4xl mb-4 text-gray-300"></i>
+                        <h3 class="text-xl font-semibold mb-2">No tasks found</h3>
+                        <p class="text-gray-500">You don't have any tasks assigned yet.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            tasks.forEach((task, index) => {
+                tasksGrid.insertAdjacentHTML('beforeend', createTaskCard(task, index));
+            });
+
+        } catch (error) {
+            console.error('Error fetching employee tasks data:', error);
+            loadingState.classList.add('hidden');
+            errorState.classList.remove('hidden');
+            
+            // Hide error after 5 seconds
+            setTimeout(() => {
+                errorState.classList.add('hidden');
+            }, 5000);
         }
-
-        tasks.forEach(task => {
-            tasksGrid.insertAdjacentHTML('beforeend', createTaskCard({
-                taskIdRaw: task.id,
-                id: `TASK${String(task.id).padStart(3, '0')}`,
-                name: task.name,
-                description: task.description || 'No description.',
-                status: task.status || 'Pending',
-                project: task.project || 'Unknown',
-                projectId: task.project_id || 'N/A',
-                dueDate: task.end_date,
-                priority: 'Medium', // You can change this if priority is stored in DB
-                assignedBy: task.assigned_by
-            }));
-        });
-
-    } catch (error) {
-        console.error('Error fetching employee tasks data:', error);
-        loadingState.classList.add('hidden');
-        errorState.classList.remove('hidden');
     }
-}
 
-function addNewTask() {
-    // Placeholder for adding a new task
-    alert('Add New Task functionality will be implemented here.');
-}
+    // Function for adding new task (placeholder)
+    function addNewTask() {
+        alert('Add New Task functionality will be implemented here.');
+    }
 
-const addNewTaskBtn = document.getElementById('addNewTaskBtn');
-addNewTaskBtn.addEventListener('click', addNewTask);
+    // Event listener for add new task button
+    if (addNewTaskBtn) {
+        addNewTaskBtn.addEventListener('click', addNewTask);
+    }
 
-// Initial load
-document.addEventListener('DOMContentLoaded', fetchEmployeeTasksData);
+    // Initial load
+    fetchEmployeeTasksData();
+});

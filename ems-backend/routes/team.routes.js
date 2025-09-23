@@ -17,6 +17,8 @@ router.put('/:id', teamController.updateTeam);
 
 // Add a member to a team
 router.post('/:teamId/members/:userId', teamController.addTeamMember);
+// Add a member to a team (alternative endpoint with userId in body)
+router.post('/:teamId/members', teamController.addTeamMember);
 
 // Remove a member from a team
 router.delete('/:teamId/members/:userId', teamController.removeTeamMember);
