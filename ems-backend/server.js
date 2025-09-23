@@ -8,7 +8,7 @@ const port = process.env.PORT || 3001;
 
 // Middleware
 app.use(cors({
-  origin: 'https://dashboard.wordlanetech.com',
+  origin: ['https://dashboard.wordlanetech.com', 'http://localhost:3000', 'http://127.0.0.1:3000'],
   credentials: true
 }));
 app.use(express.json());
@@ -39,20 +39,33 @@ app.use('/api/auth', authRoutes);
 app.use('/api/hr/dashboard', dashboardRoutes);
 app.use('/api/employee', employeeRoutes);
 app.use('/api/employees', employeeRoutes);
-app.use('/api', referenceRoutes);
 app.use('/api/full-departments', departmentRoutes);
 app.use('/api/attendance', attendanceRoutes);
-app.use('/api', managerDashboardRoutes);
 app.use('/api/manager', managerRoute);
-app.use('/api/tasks', taskRoutes);
-app.use('/api/', a_dashboard);
+app.use('/api/tasks', authMiddleware, taskRoutes);
 app.use('/api/teams', teamRoutes);
 app.use('/api/leaves', leaveRoutes);
 app.use('/api/Profile', profileRoutes);
+app.use('/api/projects', authMiddleware, projectRoutes);
+app.use('/api/', a_dashboard);
+// Generic API routes should be last to avoid conflicts
+app.use('/api', referenceRoutes);
+app.use('/api', managerDashboardRoutes);
 
 // Health check route
 app.get('/', (req, res) => {
     res.send('EMS Backend is running.');
+});
+
+// Test database connection route
+app.get('/api/test-db', async (req, res) => {
+    try {
+        const pool = require('./config/db');
+        const [result] = await pool.query('SELECT 1 as test');
+        res.json({ success: true, message: 'Database connection successful', result });
+    } catch (err) {
+        res.status(500).json({ success: false, message: 'Database connection failed', error: err.message });
+    }
 });
 
 // Global error handler for JSON parse issues

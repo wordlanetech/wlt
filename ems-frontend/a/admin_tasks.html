@@ -675,13 +675,6 @@
             border-color: #3b82f6;
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
         }
-        .modal-footer {
-            padding: 1.5rem;
-            border-top: 1px solid #e2e8f0;
-            display: flex;
-            justify-content: flex-end;
-            gap: 1rem;
-        }
         .btn {
             padding: 0.75rem 1.5rem;
             border-radius: 0.5rem;
@@ -912,9 +905,6 @@
                             <label class="form-label" for="projectId">Project</label>
                             <select id="projectId" class="form-control">
                                 <option value="">Select a project</option>
-                                <option value="1">Project Alpha</option>
-                                <option value="2">Project Beta</option>
-                                <option value="3">Project Gamma</option>
                             </select>
                         </div>
                         <div class="form-group">
@@ -942,10 +932,27 @@
                         <label class="form-label" for="assignedTo">Assign To</label>
                         <select id="assignedTo" class="form-control">
                             <option value="">Select an employee</option>
-                            <option value="1">John Doe</option>
-                            <option value="2">Jane Smith</option>
-                            <option value="3">Robert Johnson</option>
                         </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="priority">Priority</label>
+                        <select id="priority" class="form-control">
+                            <option value="Low">Low</option>
+                            <option value="Medium" selected>Medium</option>
+                            <option value="High">High</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="tags">Tags</label>
+                        <input type="text" id="tags" class="form-control" placeholder="Enter tags separated by commas">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="attachments">Attachments</label>
+                        <input type="file" id="attachments" class="form-control" multiple>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="notes">Notes</label>
+                        <textarea id="notes" class="form-control" placeholder="Enter any additional notes" rows="3"></textarea>
                     </div>
                 </form>
             </div>
@@ -1029,18 +1036,28 @@ document.addEventListener('DOMContentLoaded', async () => {
                 </div>
                 <div class="task-actions">
                     <button class="task-action-btn" title="View Details" 
-                        onclick="showTaskDetails(${encodeURIComponent(JSON.stringify(task))})">
+                        onclick="showTaskDetails('${encodeURIComponent(JSON.stringify(task))}')">
                         <i class="fas fa-eye"></i>
                     </button>
-                    <button class="task-action-btn" title="Edit Task">
+                    <button class="task-action-btn" title="Edit Task" onclick="editTask('${encodeURIComponent(JSON.stringify(task))}')">
                         <i class="fas fa-edit"></i>
                     </button>
-                    <button class="task-action-btn" title="Assign Task">
+                    <button class="task-action-btn" title="Assign Task" onclick="assignTask(${task.id})">
                         <i class="fas fa-user-plus"></i>
                     </button>
-                    <button class="task-action-btn" title="More Options">
-                        <i class="fas fa-ellipsis-h"></i>
+                    <button class="task-action-btn" title="Delete Task" onclick="deleteTask(${task.id})">
+                        <i class="fas fa-trash"></i>
                     </button>
+                    <div class="more-dropdown relative">
+                        <button class="task-action-btn" title="More Options" onclick="toggleDropdown(event)">
+                            <i class="fas fa-ellipsis-h"></i>
+                        </button>
+                        <div class="dropdown-menu absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10">
+                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onclick="markAsComplete(${task.id})">
+                                <i class="fas fa-check-circle mr-2"></i>Mark Complete
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
         `;
@@ -1133,7 +1150,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 return;
             }
             
-            const res = await fetch(`${API_BASE_URL}/employees`, {
+            const res = await fetch(`${API_BASE_URL}/employees/list`, {
                 headers: { 
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
@@ -1189,18 +1206,17 @@ document.addEventListener('DOMContentLoaded', async () => {
             
             employees.forEach(employee => {
                 const option = document.createElement('option');
-                option.value = employee.employee_id || employee.id || employee.user_id;
+                // Use the correct field for employee ID
+                option.value = employee.id || employee.user_id || employee.employee_id || '';
                 
                 // Display employee name, or email if name is not available
                 let displayName = 'Unknown Employee';
-                if (employee.name) {
-                    displayName = employee.name;
-                } else if (employee.first_name || employee.last_name) {
+                if (employee.first_name || employee.last_name) {
                     displayName = (employee.first_name || '') + ' ' + (employee.last_name || '');
                 } else if (employee.email) {
                     displayName = employee.email;
-                } else if (employee.username) {
-                    displayName = employee.username;
+                } else {
+                    displayName = 'Unknown Employee';
                 }
                 
                 option.textContent = displayName.trim() || 'Unknown Employee';
@@ -1379,6 +1395,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         setTimeout(() => {
             modal.style.display = 'none';
             document.getElementById('addTaskForm').reset();
+            // Reset submit button to default
+            const submitButton = document.getElementById('submitTask');
+            submitButton.textContent = 'Create Task';
+            submitButton.onclick = null;
         }, 300);
     }
 
@@ -1432,7 +1452,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             status: taskStatus,
             start_date: startDate || null,
             end_date: endDate || null,
-            assigned_to: assignedTo || null
+            emp_id: assignedTo || null
         };
         
         // Submit to API
@@ -1472,6 +1492,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Toggle dropdown function for task actions
     window.toggleDropdown = function(event) {
         event.preventDefault();
+        event.stopPropagation();
         var dropdown = event.target.closest('.more-dropdown');
         if (dropdown.classList.contains('open')) {
             dropdown.classList.remove('open');
@@ -1490,6 +1511,308 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
         }
     });
+
+    // Edit task function
+    window.editTask = async function(taskJson) {
+        const task = JSON.parse(decodeURIComponent(taskJson));
+        console.log('Edit task:', task);
+        
+        // Make sure we have a valid task ID
+        const taskId = task.id;
+        if (!taskId) {
+            showNotification('Invalid task data. Cannot edit task.', 'error');
+            return;
+        }
+        
+        // Populate project and employee dropdowns when editing
+        await Promise.all([populateProjectDropdown(), populateEmployeeDropdown()]);
+        
+        // Pre-fill the add task modal with task data
+        document.getElementById('taskName').value = task.name || '';
+        document.getElementById('taskDescription').value = task.description || '';
+        document.getElementById('projectId').value = task.project_id || '';
+        document.getElementById('taskStatus').value = task.status || 'Pending';
+        document.getElementById('startDate').value = task.start_date || '';
+        document.getElementById('endDate').value = task.end_date || '';
+        // Use the correct field for employee ID
+        document.getElementById('assignedTo').value = task.emp_id || task.assigned_to || '';
+        
+        // Change the submit button to update instead of create
+        const submitButton = document.getElementById('submitTask');
+        submitButton.textContent = 'Update Task';
+        submitButton.onclick = async function(e) {
+            e.preventDefault();
+            
+            // Get form data
+            const taskName = document.getElementById('taskName').value;
+            const taskDescription = document.getElementById('taskDescription').value;
+            const projectId = document.getElementById('projectId').value;
+            const taskStatus = document.getElementById('taskStatus').value;
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            const assignedTo = document.getElementById('assignedTo').value;
+            
+            // Validate required fields
+            if (!taskName) {
+                showNotification('Task name is required', 'error');
+                return;
+            }
+            
+            // Prepare data for submission
+            const taskData = {
+                name: taskName,
+                description: taskDescription || '',
+                project_id: projectId || null,
+                status: taskStatus,
+                start_date: startDate || null,
+                end_date: endDate || null,
+                emp_id: assignedTo || null,
+                assigned_by: null // This should be the ID of the user who is assigning the task
+            };
+            
+            // Submit to API
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    showNotification('Authentication required. Please log in again.', 'error');
+                    window.location.href = '../login.html';
+                    return;
+                }
+                
+                const response = await fetch(`${API_BASE_URL}/tasks/${taskId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(taskData)
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    showNotification('Task updated successfully!', 'success');
+                    closeAddTaskModal();
+                    // Refresh tasks list
+                    await fetchTasks();
+                    // Reset submit button
+                    submitButton.textContent = 'Create Task';
+                    submitButton.onclick = null;
+                } else {
+                    const errorData = await response.json();
+                    showNotification(errorData.message || 'Failed to update task', 'error');
+                }
+            } catch (error) {
+                console.error('Error updating task:', error);
+                showNotification('Error updating task. Please try again.', 'error');
+            }
+        };
+        
+        // Open the modal
+        const modal = document.getElementById('addTaskModal');
+        modal.style.display = 'flex';
+        // Add active class for animation
+        setTimeout(() => {
+            modal.classList.add('active');
+        }, 10);
+    }
+
+    // Assign task function
+    window.assignTask = async function(taskId) {
+        try {
+            // In a real implementation, this would open a modal to select an employee
+            // For now, we'll just show a notification
+            showNotification('Assign task functionality would open a modal to select an employee', 'success');
+            console.log('Assign task ID:', taskId);
+            
+            // First, populate the employee dropdown
+            await populateEmployeeDropdown();
+            
+            // Get the employee select element
+            const employeeSelect = document.getElementById('assignedTo');
+            
+            // Create a simple modal for assignment
+            const modalHtml = `
+                <div id="assignTaskModal" class="modal-overlay">
+                    <div class="modal-content">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-xl font-bold">Assign Task</h3>
+                            <button id="closeAssignModal" class="text-gray-500 hover:text-gray-800 transition-colors">
+                                <i class="fas fa-times text-xl"></i>
+                            </button>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label" for="assignEmployeeSelect">Select Employee</label>
+                            <select id="assignEmployeeSelect" class="form-control">
+                                ${employeeSelect.innerHTML}
+                            </select>
+                        </div>
+                        <div class="flex justify-end gap-2">
+                            <button id="cancelAssign" class="btn btn-secondary">Cancel</button>
+                            <button id="confirmAssign" class="btn btn-primary">Assign</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Add modal to body
+            const modalContainer = document.createElement('div');
+            modalContainer.innerHTML = modalHtml;
+            document.body.appendChild(modalContainer.firstChild);
+            
+            // Get the newly created modal elements
+            const assignModal = document.getElementById('assignTaskModal');
+            const closeAssignModal = document.getElementById('closeAssignModal');
+            const cancelAssign = document.getElementById('cancelAssign');
+            const confirmAssign = document.getElementById('confirmAssign');
+            const assignEmployeeSelect = document.getElementById('assignEmployeeSelect');
+            
+            // Show the modal
+            assignModal.style.display = 'flex';
+            setTimeout(() => {
+                assignModal.classList.add('active');
+            }, 10);
+            
+            // Close modal functions
+            function closeAssignModalFunc() {
+                assignModal.classList.remove('active');
+                setTimeout(() => {
+                    assignModal.remove();
+                }, 300);
+            }
+            
+            // Event listeners for closing
+            closeAssignModal.addEventListener('click', closeAssignModalFunc);
+            cancelAssign.addEventListener('click', closeAssignModalFunc);
+            
+            // Confirm assignment
+            confirmAssign.addEventListener('click', async function() {
+                const selectedEmployeeId = assignEmployeeSelect.value;
+                
+                if (!selectedEmployeeId) {
+                    showNotification('Please select an employee', 'error');
+                    return;
+                }
+                
+                try {
+                    const token = localStorage.getItem('token');
+                    if (!token) {
+                        window.location.href = '../login.html';
+                        return;
+                    }
+                    
+                    const response = await fetch(`${API_BASE_URL}/tasks/${taskId}/assign`, {
+                        method: 'PATCH',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ emp_id: selectedEmployeeId })
+                    });
+                    
+                    if (response.ok) {
+                        showNotification('Task assigned successfully!', 'success');
+                        closeAssignModalFunc();
+                        // Refresh tasks list
+                        await fetchTasks();
+                    } else {
+                        const errorData = await response.json();
+                        showNotification(errorData.message || 'Failed to assign task', 'error');
+                    }
+                } catch (error) {
+                    console.error('Error assigning task:', error);
+                    showNotification('Error assigning task. Please try again.', 'error');
+                }
+            });
+        } catch (error) {
+            console.error('Error in assignTask function:', error);
+            showNotification('Error opening assign task modal. Please try again.', 'error');
+        }
+    }
+
+    // Mark task as complete function
+    window.markAsComplete = async function(taskId) {
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = '../login.html';
+                return;
+            }
+            
+            const response = await fetch(`${API_BASE_URL}/tasks/${taskId}/complete`, {
+                method: 'PATCH',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            
+            if (response.ok) {
+                showNotification('Task marked as complete!', 'success');
+                // Refresh tasks list
+                await fetchTasks();
+            } else {
+                const errorData = await response.json();
+                showNotification(errorData.message || 'Failed to mark task as complete', 'error');
+            }
+        } catch (error) {
+            console.error('Error marking task as complete:', error);
+            showNotification('Error marking task as complete. Please try again.', 'error');
+        }
+    }
+
+    // Delete task function
+    window.deleteTask = async function(taskId) {
+        // Validate taskId
+        if (!taskId) {
+            showNotification('Invalid task ID. Cannot delete task.', 'error');
+            return;
+        }
+        
+        console.log('Attempting to delete task with ID:', taskId);
+        if (confirm('Are you sure you want to delete this task? This action cannot be undone.')) {
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    window.location.href = '../login.html';
+                    return;
+                }
+                
+                const response = await fetch(`${API_BASE_URL}/tasks/${taskId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                console.log('Delete response status:', response.status);
+                console.log('Delete response ok:', response.ok);
+                
+                if (response.ok) {
+                    showNotification('Task deleted successfully!', 'success');
+                    // Refresh tasks list
+                    await fetchTasks();
+                } else {
+                    let errorMessage = 'Failed to delete task';
+                    try {
+                        const errorData = await response.json();
+                        console.log('Error response data:', errorData);
+                        errorMessage = errorData.error || errorData.message || errorMessage;
+                        if (errorData.details) {
+                            errorMessage += ': ' + errorData.details;
+                        }
+                    } catch (e) {
+                        // If we can't parse JSON, use the status text
+                        errorMessage = response.statusText || errorMessage;
+                    }
+                    showNotification(errorMessage, 'error');
+                }
+            } catch (error) {
+                console.error('Error deleting task:', error);
+                showNotification('Network error. Please check your connection and try again.', 'error');
+            }
+        }
+    }
 
     // Initial API load
     fetchTasks();
