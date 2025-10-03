@@ -27,7 +27,7 @@ exports.getProjects = async (req, res) => {
       p.project_code
       FROM emp_projects p
       LEFT JOIN emp_teams t ON p.team_assigned = t.id
-      ORDER BY p.project_id ASC;
+      ORDER BY p.project_id DESC;
 
       `;
     } else {
