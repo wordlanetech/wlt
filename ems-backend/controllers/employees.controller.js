@@ -23,7 +23,7 @@ exports.getAllEmployees = async (req, res) => {
       LEFT JOIN emp_designations ds ON e.designation_id = ds.id
       LEFT JOIN emp_roles r ON e.role_id = r.id
       LEFT JOIN emp_genders g ON e.gender_id = g.id
-      ORDER BY e.user_id ASC
+      ORDER BY e.user_id desc;
     `);
     
     res.json(employees);
